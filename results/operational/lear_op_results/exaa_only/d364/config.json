@@ -1,0 +1,22 @@
+{
+  "mode": "daily_operational",
+  "model": "exaa_only_d364",
+  "train_days": 364,
+  "weather_source": null,
+  "n_clusters": null,
+  "use_exaa": true,
+  "use_exaa_only": true,
+  "use_vst": true,
+  "dwd_operational_run_hour": "06",
+  "dwd_history_run_hour": "09",
+  "load_feature_included": false,
+  "skipped_historical_weather_days": [],
+  "skipped_historical_exaa_days": [],
+  "skipped_point_forecast_days": [],
+  "missing_weather_policy": "require complete target-day weather and skip unavailable historical DWD delivery days",
+  "missing_exaa_policy": "require complete target-day EXAA prices and retry unavailable historical EXAA delivery days on each run before skipping them",
+  "missing_price_policy": "skip incomplete training rows and suppress unavailable target-day EPEX lag columns",
+  "forecast_schema_version": 2,
+  "forecast_index": "delivery_date_mtu",
+  "mtus_per_delivery_day": 96
+}
