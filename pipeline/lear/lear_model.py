@@ -19,6 +19,7 @@ from typing import Dict, Iterable, List, Optional, Sequence, Set, Tuple
 import holidays
 import numpy as np
 import pandas as pd
+from bs4 import BeautifulSoup
 from entsoe import EntsoePandasClient, EntsoeRawClient
 from entsoe.parsers import parse_prices
 from scipy.stats import norm
@@ -54,15 +55,16 @@ def fetch_prices(
     country_code: str = COUNTRY_CODE_ENTSOE,
 ) -> pd.DataFrame:
     """Fetch DE-LU SDAC prices and return a 15-minute aligned series."""
-    client = EntsoePandasClient(api_key=api_key)
+    client = EntsoeRawClient(api_key=api_key)
     query_start = start_day.tz_convert(target_tz)
     query_end = (end_day + pd.Timedelta(days=1)).tz_convert(target_tz)
 
-    raw_series = client.query_day_ahead_prices(
+    raw_xml = client.query_day_ahead_prices(
         country_code,
         start=query_start,
         end=query_end,
     )
+    raw_series = _parse_day_ahead_price_sequence(raw_xml, sequence=1)
     if raw_series.empty:
         raise ValueError("No day-ahead price data returned by the ENTSO-E API.")
 
@@ -99,6 +101,36 @@ def fetch_prices(
     )
 
 
+def _parse_day_ahead_price_sequence(xml: str, *, sequence: int) -> pd.Series:
+    """Parse only the requested ENTSO-E day-ahead price sequence."""
+    soup = BeautifulSoup(xml, "html.parser")
+    selected_count = 0
+    for time_series in soup.find_all("timeseries"):
+        sequence_position = time_series.find(
+            "classificationsequence_attributeinstancecomponent.position"
+        )
+        if (
+            sequence_position is not None
+            and sequence_position.get_text(strip=True) == str(sequence)
+        ):
+            selected_count += 1
+        else:
+            time_series.decompose()
+
+    if not selected_count:
+        raise ValueError(
+            f"ENTSO-E response contains no day-ahead price sequence {sequence}."
+        )
+
+    parsed = parse_prices(str(soup))
+    series = parsed.get("15T")
+    if not isinstance(series, pd.Series) or series.empty:
+        raise ValueError(
+            f"ENTSO-E response contains no 15-minute prices for sequence {sequence}."
+        )
+    return series
+
+
 def fetch_prices_exaa(
     start_day: pd.Timestamp,
     end_day: pd.Timestamp,
@@ -123,18 +155,8 @@ def fetch_prices_exaa(
             country_code,
             start=query_start,
             end=query_end,
-            sequence=2,
         )
-        parsed = parse_prices(xml)
-
-        if isinstance(parsed, dict):
-            chunk_series = (
-                next(iter(parsed.values()))
-                if len(parsed) == 1
-                else max(parsed.values(), key=len)
-            )
-        else:
-            chunk_series = parsed
+        chunk_series = _parse_day_ahead_price_sequence(xml, sequence=2)
 
         if chunk_series is None or len(chunk_series) == 0:
             current_start = current_end + pd.Timedelta(days=1)

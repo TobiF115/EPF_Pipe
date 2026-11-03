@@ -102,6 +102,10 @@ SQRA_RUNS: dict[str, SqraRun] = {
             "lear_op_results/dwd/d56/c25/fundamental/forecast.csv",
         ),
     ),
+    "dwd_fundamental_c5": SqraRun(
+        "dwd_fundamental_c5",
+        ("lear_op_results/dwd/d56/c5/fundamental/forecast.csv",),
+    ),
     "era5_exaa_enriched": SqraRun(
         "era5_exaa_enriched",
         (

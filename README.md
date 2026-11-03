@@ -335,6 +335,11 @@ SQRA_FORECAST_VARIANT=auto
 SQRA_TRAIN_DAYS=60
 SQRA_MTU_SPECIFIC=false
 ```
+
+For a faster C=5-only Fundamental SQRA run, select
+`SQRA_FORECAST_VARIANT=fundamental_c5`. This fits only the C=5 Fundamental
+LEAR member and derives SQRA quantiles from that single member; the default
+`auto` setting continues to use all three cluster resolutions.
 A practical local-time schedule is:
 
 - approximately 10:00: `prepare_dwd_data.py`;

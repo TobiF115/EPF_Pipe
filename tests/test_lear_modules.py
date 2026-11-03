@@ -54,6 +54,84 @@ class LearManifestAndCliTests(unittest.TestCase):
         )
 
 
+class LearPriceFetchingTests(unittest.TestCase):
+    @staticmethod
+    def _price_response() -> tuple[str, list[float], list[float]]:
+        def time_series(sequence: int, base: float) -> tuple[str, list[float]]:
+            values = [base + index for index in range(96)]
+            points = "".join(
+                f"<Point><position>{index}</position>"
+                f"<price.amount>{value}</price.amount></Point>"
+                for index, value in enumerate(values, start=1)
+            )
+            xml = (
+                "<TimeSeries>"
+                f"<classificationSequence_AttributeInstanceComponent.position>"
+                f"{sequence}</classificationSequence_AttributeInstanceComponent.position>"
+                "<curveType>A03</curveType><Period><timeInterval>"
+                "<start>2025-11-02T23:00Z</start>"
+                "<end>2025-11-03T23:00Z</end>"
+                "</timeInterval><resolution>PT15M</resolution>"
+                f"{points}</Period></TimeSeries>"
+            )
+            return xml, values
+
+        sequence_one, values_one = time_series(1, 100.0)
+        sequence_two, values_two = time_series(2, 1000.0)
+        return (
+            f"<Publication_MarketDocument>{sequence_two}{sequence_one}"
+            "</Publication_MarketDocument>",
+            values_one,
+            values_two,
+        )
+
+    def test_fetch_prices_selects_sequence_one(self):
+        timezone = "Europe/Berlin"
+        day = pd.Timestamp("2025-11-03", tz=timezone)
+        response, sequence_one, _ = self._price_response()
+
+        with patch.object(lear_model, "EntsoeRawClient") as client_class:
+            client_class.return_value.query_day_ahead_prices.return_value = response
+
+            result = lear_model.fetch_prices(
+                day,
+                day,
+                api_key="test-key",
+                target_tz=timezone,
+            )
+
+        client_class.return_value.query_day_ahead_prices.assert_called_once_with(
+            lear_model.COUNTRY_CODE_ENTSOE,
+            start=day,
+            end=day + pd.Timedelta(days=1),
+        )
+        self.assertEqual(len(result), 96)
+        self.assertEqual(result["price_da"].tolist(), sequence_one)
+
+    def test_fetch_prices_exaa_selects_sequence_two(self):
+        timezone = "Europe/Berlin"
+        day = pd.Timestamp("2025-11-03", tz=timezone)
+        response, _, sequence_two = self._price_response()
+
+        with patch.object(lear_model, "EntsoeRawClient") as client_class:
+            client_class.return_value.query_day_ahead_prices.return_value = response
+
+            result = lear_model.fetch_prices_exaa(
+                day,
+                day,
+                api_key="test-key",
+                target_tz=timezone,
+            )
+
+        client_class.return_value.query_day_ahead_prices.assert_called_once_with(
+            lear_model.COUNTRY_CODE_ENTSOE,
+            start=day,
+            end=day + pd.Timedelta(days=1),
+        )
+        self.assertEqual(len(result), 96)
+        self.assertEqual(result["price_exaa"].tolist(), sequence_two)
+
+
 class LearExaaOnlyTests(unittest.TestCase):
     def test_market_loader_skips_load_cache(self):
         frame = pd.DataFrame()

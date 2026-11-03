@@ -129,6 +129,7 @@ def _point_name(variant: str, clusters: int) -> str:
 def _sqra_name(variant: str) -> str:
     return {
         "fundamental": "dwd_fundamental",
+        "fundamental_c5": "dwd_fundamental_c5",
         "exaa_enriched": "dwd_exaa_enriched",
         "exaa_only": "exaa_only",
     }[variant]
@@ -151,7 +152,12 @@ def resolve_model_plan(
         if name not in member_names:
             member_names.append(name)
 
-    point_run = get_lear_run(_point_name(config.point_variant, config.point_clusters))
+    if config.resolved_sqra_variant == "fundamental_c5":
+        point_run = get_lear_run("dwd_d56_c5_fundamental")
+    else:
+        point_run = get_lear_run(
+            _point_name(config.point_variant, config.point_clusters)
+        )
     run_names = [*member_names]
     if point_run.name not in run_names:
         run_names.append(point_run.name)
@@ -1124,7 +1130,7 @@ def _required_input_start(
 def _fundamental_dwd_fallback_enabled(config: OperationalConfig) -> bool:
     return (
         config.point_variant == "fundamental"
-        and config.resolved_sqra_variant == "fundamental"
+        and config.resolved_sqra_variant in {"fundamental", "fundamental_c5"}
     )
 
 

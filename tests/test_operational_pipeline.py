@@ -214,6 +214,21 @@ class OperationalModelPlanTests(unittest.TestCase):
         self.assertEqual(sqra_name, "dwd_fundamental")
         self.assertEqual(config.required_dwd_clusters, (1, 5, 25))
 
+    def test_fundamental_c5_sqra_trains_only_the_c5_member(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            config = _config(
+                Path(temporary_directory),
+                point_clusters=1,
+                sqra_variant="fundamental_c5",
+            )
+            runs, point_run, sqra_name, members = resolve_model_plan(config)
+
+        self.assertEqual(tuple(run.name for run in runs), ("dwd_d56_c5_fundamental",))
+        self.assertEqual(point_run.name, "dwd_d56_c5_fundamental")
+        self.assertEqual(members, frozenset({"dwd_d56_c5_fundamental"}))
+        self.assertEqual(sqra_name, "dwd_fundamental_c5")
+        self.assertEqual(config.required_dwd_clusters, (5,))
+
     def test_exaa_only_keeps_d364_reference_and_three_sqra_members(self):
         with tempfile.TemporaryDirectory() as temporary_directory:
             config = _config(

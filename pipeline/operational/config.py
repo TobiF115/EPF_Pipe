@@ -11,7 +11,7 @@ from experiment_config import env_bool, env_int, load_experiment_config
 
 
 MODEL_VARIANTS = ("fundamental", "exaa_enriched", "exaa_only")
-SQRA_VARIANTS = ("auto", *MODEL_VARIANTS)
+SQRA_VARIANTS = ("auto", *MODEL_VARIANTS, "fundamental_c5")
 WEATHER_CLUSTERS = (1, 5, 25)
 
 
@@ -100,6 +100,8 @@ class OperationalConfig:
 
     @property
     def required_dwd_clusters(self) -> tuple[int, ...]:
+        if self.resolved_sqra_variant == "fundamental_c5":
+            return (5,)
         clusters = {self.point_clusters}
         if self.resolved_sqra_variant in {"fundamental", "exaa_enriched"}:
             clusters.update({1, 5, 25})
