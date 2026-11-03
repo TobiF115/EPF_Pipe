@@ -36,6 +36,8 @@ DA_Price_Forecasting_Pipeline_DE_LU/
 │   │   ├── lear_model.py           # reusable LEAR and feature functions
 │   │   ├── run_lear.py             # LEAR/ANC command-line entry point
 │   │   └── lear_pipeline.ipynb     # optional interactive interface
+│   ├── mlp/
+│   │   └── mlp.py                  # experimental C=5 neural point model
 │   ├── sqra/
 │   │   ├── sqra_model.py           # reusable SQRA functions
 │   │   ├── run_sqra.py             # SQRA command-line entry point
@@ -432,6 +434,19 @@ python .\run_full_experiment.py --era5 --d 364
 - `--d 56|112|364` restricts the LEAR calibration window.
 - `--force` recomputes only the selected batch; otherwise complete outputs are
   resumed.
+
+### Experimental C=5 MLP
+
+`pipeline/mlp/mlp.py` contains a daily multi-output point model that consumes
+the existing LEAR C=5 feature matrix and 96-value target matrix. It has a
+32-neuron ReLU hidden layer for non-price inputs and a direct linear skip branch
+for the previous-day final hour and the same-time prices from one, two, and
+seven days earlier. It uses the LEAR fold-wise feature and target transforms
+and returns the canonical `y_pred`/`y_true` delivery-date/MTU index.
+
+The reusable entry point is `rolling_mlp_forecast(X, Y, forecast_days,
+MLPConfig(...))`. This module is experimental and is not yet selected by
+`run_pipeline.py`; it does not submit forecasts to Energy Arena.
 
 ### SQRA experiments
 
