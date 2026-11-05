@@ -1,0 +1,126 @@
+{
+  "target_date": "2026-11-04",
+  "architecture": "32-unit tanh layer -> 32-unit tanh layer -> 96 outputs with masked linear price skip",
+  "training_phases": {
+    "phase_1": "oldest 70% of complete training days",
+    "phase_1_learning_rate": 0.003,
+    "phase_2": "newest 30% of complete training days; fine-tuned from phase 1 weights",
+    "phase_2_learning_rate": 0.0005
+  },
+  "training_window_calendar_days": 116,
+  "complete_training_days_for_target_forecast": 106,
+  "epochs_max_per_phase": 400,
+  "early_stopping_patience": 40,
+  "l2": 0.0001,
+  "validation_fraction_per_phase": 0.2,
+  "random_seed": 42,
+  "evaluation_days": [
+    "2026-10-11",
+    "2026-10-12",
+    "2026-10-13",
+    "2026-10-14",
+    "2026-10-15",
+    "2026-10-16",
+    "2026-10-17",
+    "2026-10-18",
+    "2026-10-19",
+    "2026-10-20",
+    "2026-10-21",
+    "2026-10-22",
+    "2026-10-23",
+    "2026-10-31"
+  ],
+  "evaluation_mtu_count": 1344,
+  "baseline": "Saved operational DWD C=5 Fundamental LEAR, LassoCV/LassoLarsCV per MTU, 56-day configured window",
+  "comparison": {
+    "MLP_2x32_tanh": {
+      "MAE_EUR_per_MWh": 37.7709892753085,
+      "RMSE_EUR_per_MWh": 49.24693574314749,
+      "Bias_EUR_per_MWh": -20.00489499438069
+    },
+    "LEAR_Lasso_C5": {
+      "MAE_EUR_per_MWh": 31.591913386549127,
+      "RMSE_EUR_per_MWh": 55.12885178163238,
+      "Bias_EUR_per_MWh": -23.869559571450157
+    }
+  },
+  "daily_mae": [
+    {
+      "delivery_date": "2026-10-11",
+      "MLP_MAE_EUR_per_MWh": 22.358804791613707,
+      "LEAR_Lasso_MAE_EUR_per_MWh": 21.134549776922785
+    },
+    {
+      "delivery_date": "2026-10-12",
+      "MLP_MAE_EUR_per_MWh": 26.78766163237825,
+      "LEAR_Lasso_MAE_EUR_per_MWh": 31.00165842011566
+    },
+    {
+      "delivery_date": "2026-10-13",
+      "MLP_MAE_EUR_per_MWh": 34.805638615759555,
+      "LEAR_Lasso_MAE_EUR_per_MWh": 15.335847609263453
+    },
+    {
+      "delivery_date": "2026-10-14",
+      "MLP_MAE_EUR_per_MWh": 20.968608753139957,
+      "LEAR_Lasso_MAE_EUR_per_MWh": 22.96910449385142
+    },
+    {
+      "delivery_date": "2026-10-15",
+      "MLP_MAE_EUR_per_MWh": 36.19389806403588,
+      "LEAR_Lasso_MAE_EUR_per_MWh": 12.482970862834213
+    },
+    {
+      "delivery_date": "2026-10-16",
+      "MLP_MAE_EUR_per_MWh": 29.57428412286575,
+      "LEAR_Lasso_MAE_EUR_per_MWh": 41.70809632830578
+    },
+    {
+      "delivery_date": "2026-10-17",
+      "MLP_MAE_EUR_per_MWh": 52.995075165610025,
+      "LEAR_Lasso_MAE_EUR_per_MWh": 33.13694966197273
+    },
+    {
+      "delivery_date": "2026-10-18",
+      "MLP_MAE_EUR_per_MWh": 61.59308443175032,
+      "LEAR_Lasso_MAE_EUR_per_MWh": 54.06217031725233
+    },
+    {
+      "delivery_date": "2026-10-19",
+      "MLP_MAE_EUR_per_MWh": 46.70230739489957,
+      "LEAR_Lasso_MAE_EUR_per_MWh": 42.30256244941708
+    },
+    {
+      "delivery_date": "2026-10-20",
+      "MLP_MAE_EUR_per_MWh": 22.548907799443544,
+      "LEAR_Lasso_MAE_EUR_per_MWh": 22.018201967891923
+    },
+    {
+      "delivery_date": "2026-10-21",
+      "MLP_MAE_EUR_per_MWh": 38.40469550065774,
+      "LEAR_Lasso_MAE_EUR_per_MWh": 14.059960373793919
+    },
+    {
+      "delivery_date": "2026-10-22",
+      "MLP_MAE_EUR_per_MWh": 32.76522875843248,
+      "LEAR_Lasso_MAE_EUR_per_MWh": 25.818781542806377
+    },
+    {
+      "delivery_date": "2026-10-23",
+      "MLP_MAE_EUR_per_MWh": 49.51133495007651,
+      "LEAR_Lasso_MAE_EUR_per_MWh": 68.29324984227738
+    },
+    {
+      "delivery_date": "2026-10-31",
+      "MLP_MAE_EUR_per_MWh": 53.58431987365578,
+      "LEAR_Lasso_MAE_EUR_per_MWh": 37.96268376498268
+    }
+  ],
+  "target_forecast_summary": {
+    "prediction_min": 170.7943866536014,
+    "prediction_mean": 265.4920075942677,
+    "prediction_max": 476.7395457131873,
+    "actual_values_available": 0
+  },
+  "training_and_forecast_runtime_seconds": 23.977859499999997
+}

@@ -21,34 +21,52 @@ from pipeline.lear.lear_model import (
 
 _PRICE_COLUMN = re.compile(r"^price_d([127])_mtu_(\d{2})$")
 _PRICE_LAGS = (1, 2, 7)
-_LAST_HOUR_MTUS = range(MTUS_PER_DAY - 4, MTUS_PER_DAY)
+_PREVIOUS_DAY_WINDOW = 8
 
 
 @dataclass(frozen=True)
 class MLPConfig:
-    """Training settings for the one-hidden-layer daily MLP."""
+    """Training settings for the two-hidden-layer daily MLP."""
 
     hidden_units: int = 32
-    train_days: int = 56
+    hidden_layers: int = 2
+    activation: str = "tanh"
+    train_days: int = 116
     min_training_days: int = 14
     max_epochs: int = 400
     patience: int = 40
     learning_rate: float = 0.003
+    fine_tune_fraction: float = 0.3
+    fine_tune_learning_rate: float = 0.0005
     l2: float = 1e-4
     validation_fraction: float = 0.2
     random_seed: int = 42
 
     def __post_init__(self) -> None:
-        if self.hidden_units != 32:
-            raise ValueError("The MLP architecture requires exactly 32 hidden units.")
+        if self.hidden_units < 1:
+            raise ValueError("hidden_units must be positive.")
+        if self.hidden_layers != 2:
+            raise ValueError("The MLP architecture requires exactly two hidden layers.")
+        if self.activation != "tanh":
+            raise ValueError("The MLP activation must be 'tanh'.")
         if self.train_days < 1:
             raise ValueError("train_days must be positive.")
         if self.min_training_days < 3:
             raise ValueError("min_training_days must be at least 3.")
         if self.max_epochs < 1 or self.patience < 1:
             raise ValueError("max_epochs and patience must be positive.")
-        if self.learning_rate <= 0 or self.l2 < 0:
-            raise ValueError("learning_rate must be positive and l2 non-negative.")
+        if (
+            self.learning_rate <= 0
+            or self.fine_tune_learning_rate <= 0
+            or self.fine_tune_learning_rate >= self.learning_rate
+            or self.l2 < 0
+        ):
+            raise ValueError(
+                "Learning rates must be positive with fine_tune_learning_rate "
+                "below learning_rate, and l2 must be non-negative."
+            )
+        if not 0 < self.fine_tune_fraction < 1:
+            raise ValueError("fine_tune_fraction must be between 0 and 1.")
         if not 0 < self.validation_fraction < 1:
             raise ValueError("validation_fraction must be between 0 and 1.")
 
@@ -90,13 +108,32 @@ def _column_groups(columns: Sequence[str]) -> tuple[list[str], list[str]]:
             )
 
     skip_columns = [
-        by_lag[1][mtu] for mtu in _LAST_HOUR_MTUS
-    ] + [
         by_lag[lag][mtu]
         for lag in _PRICE_LAGS
         for mtu in range(MTUS_PER_DAY)
     ]
     return hidden_columns, skip_columns
+
+
+def _skip_connection_mask(skip_columns: Sequence[str]) -> np.ndarray:
+    """Allow only same-period d2/d7 prices and the cyclic d1 +/-2h window."""
+    mask = np.zeros((len(skip_columns), MTUS_PER_DAY), dtype=bool)
+    for column_index, column in enumerate(skip_columns):
+        match = _PRICE_COLUMN.fullmatch(column)
+        if match is None:
+            raise ValueError(f"Unsupported skip-connection column: {column}.")
+        lag = int(match.group(1))
+        mtu = int(match.group(2))
+        if lag == 1:
+            target_mtus = (
+                (mtu + offset) % MTUS_PER_DAY
+                for offset in range(-_PREVIOUS_DAY_WINDOW, _PREVIOUS_DAY_WINDOW + 1)
+            )
+        else:
+            target_mtus = (mtu,)
+        for target_mtu in target_mtus:
+            mask[column_index, target_mtu] = True
+    return mask
 
 
 def _as_day(value: object) -> date:
@@ -119,11 +156,12 @@ def _daily_rows(frame: pd.DataFrame, label: str) -> dict[date, int]:
     return {day: position for position, day in enumerate(dates)}
 
 
-class _OneHiddenLayerMLP:
-    """Dense 32-unit ReLU branch plus a direct linear price-lag branch."""
+class _TwoHiddenLayerMLP:
+    """Two dense tanh layers plus a masked linear price-lag branch."""
 
-    def __init__(self, config: MLPConfig) -> None:
+    def __init__(self, config: MLPConfig, skip_mask: np.ndarray) -> None:
         self.config = config
+        self.skip_mask = np.asarray(skip_mask, dtype=bool)
         self.parameters: list[np.ndarray] = []
 
     @staticmethod
@@ -131,11 +169,25 @@ class _OneHiddenLayerMLP:
         hidden_inputs: np.ndarray,
         skip_inputs: np.ndarray,
         parameters: list[np.ndarray],
+        skip_mask: np.ndarray,
     ) -> tuple[np.ndarray, np.ndarray]:
-        weights_in, bias_hidden, weights_out, bias_out, weights_skip = parameters
-        hidden = np.maximum(0.0, hidden_inputs @ weights_in + bias_hidden)
-        output = hidden @ weights_out + bias_out + skip_inputs @ weights_skip
-        return output, hidden
+        (
+            weights_in,
+            bias_hidden,
+            weights_hidden,
+            bias_hidden_2,
+            weights_out,
+            bias_out,
+            weights_skip,
+        ) = parameters
+        hidden_1 = np.tanh(hidden_inputs @ weights_in + bias_hidden)
+        hidden_2 = np.tanh(hidden_1 @ weights_hidden + bias_hidden_2)
+        output = (
+            hidden_2 @ weights_out
+            + bias_out
+            + skip_inputs @ (weights_skip * skip_mask)
+        )
+        return output, np.stack((hidden_1, hidden_2))
 
     def _train(
         self,
@@ -144,6 +196,8 @@ class _OneHiddenLayerMLP:
         targets: np.ndarray,
         epochs: int,
         seed: int,
+        learning_rate: float,
+        initial_parameters: list[np.ndarray] | None = None,
         validation: tuple[np.ndarray, np.ndarray, np.ndarray] | None = None,
     ) -> tuple[list[np.ndarray], int]:
         rng = np.random.default_rng(seed)
@@ -151,13 +205,32 @@ class _OneHiddenLayerMLP:
         skip_count = skip_inputs.shape[1]
         hidden_count = self.config.hidden_units
         output_count = targets.shape[1]
-        parameters = [
-            rng.normal(0.0, math.sqrt(2.0 / input_count), (input_count, hidden_count)),
-            np.zeros(hidden_count),
-            rng.normal(0.0, math.sqrt(2.0 / hidden_count), (hidden_count, output_count)),
-            np.zeros(output_count),
-            np.zeros((skip_count, output_count)),
-        ]
+        if initial_parameters is None:
+            parameters = [
+                rng.normal(
+                    0.0,
+                    math.sqrt(2.0 / (input_count + hidden_count)),
+                    (input_count, hidden_count),
+                ),
+                np.zeros(hidden_count),
+                rng.normal(
+                    0.0,
+                    math.sqrt(1.0 / hidden_count),
+                    (hidden_count, hidden_count),
+                ),
+                np.zeros(hidden_count),
+                rng.normal(
+                    0.0,
+                    math.sqrt(2.0 / (hidden_count + output_count)),
+                    (hidden_count, output_count),
+                ),
+                np.zeros(output_count),
+                np.zeros((skip_count, output_count)),
+            ]
+        else:
+            if len(initial_parameters) != 7:
+                raise ValueError("Initial MLP parameters do not match the architecture.")
+            parameters = [value.copy() for value in initial_parameters]
         first_moments = [np.zeros_like(value) for value in parameters]
         second_moments = [np.zeros_like(value) for value in parameters]
         beta_1, beta_2 = 0.9, 0.999
@@ -167,21 +240,40 @@ class _OneHiddenLayerMLP:
         best_epoch = 0
         stale_epochs = 0
         for epoch in range(1, epochs + 1):
-            predictions, hidden = self._forward(
-                hidden_inputs, skip_inputs, parameters
+            predictions, hidden_layers = self._forward(
+                hidden_inputs, skip_inputs, parameters, self.skip_mask
             )
             residual = 2.0 * (predictions - targets) / targets.shape[0]
-            weights_in, _, weights_out, _, weights_skip = parameters
-            hidden_gradient = residual @ weights_out.T
-            hidden_gradient *= (hidden > 0.0)
+            (
+                weights_in,
+                _,
+                weights_hidden,
+                _,
+                weights_out,
+                _,
+                weights_skip,
+            ) = parameters
+            hidden_1, hidden_2 = hidden_layers
+            active_weights_skip = weights_skip * self.skip_mask
+            output_gradient = residual @ weights_out.T
+            hidden_2_gradient = output_gradient * (1.0 - hidden_2**2)
+            hidden_1_gradient = (
+                hidden_2_gradient @ weights_hidden.T
+            ) * (1.0 - hidden_1**2)
             gradients = [
-                hidden_inputs.T @ hidden_gradient
+                hidden_inputs.T @ hidden_1_gradient
                 + 2.0 * self.config.l2 * weights_in,
-                hidden_gradient.sum(axis=0),
-                hidden.T @ residual + 2.0 * self.config.l2 * weights_out,
+                hidden_1_gradient.sum(axis=0),
+                hidden_1.T @ hidden_2_gradient
+                + 2.0 * self.config.l2 * weights_hidden,
+                hidden_2_gradient.sum(axis=0),
+                hidden_2.T @ residual + 2.0 * self.config.l2 * weights_out,
                 residual.sum(axis=0),
-                skip_inputs.T @ residual
-                + 2.0 * self.config.l2 * weights_skip,
+                (
+                    skip_inputs.T @ residual
+                    + 2.0 * self.config.l2 * active_weights_skip
+                )
+                * self.skip_mask,
             ]
             for index, gradient in enumerate(gradients):
                 first_moments[index] = (
@@ -193,13 +285,16 @@ class _OneHiddenLayerMLP:
                 )
                 corrected_first = first_moments[index] / (1.0 - beta_1**epoch)
                 corrected_second = second_moments[index] / (1.0 - beta_2**epoch)
-                parameters[index] -= self.config.learning_rate * corrected_first / (
+                parameters[index] -= learning_rate * corrected_first / (
                     np.sqrt(corrected_second) + 1e-8
                 )
             if validation is not None:
                 validation_hidden, validation_skip, validation_targets = validation
                 validation_predictions, _ = self._forward(
-                    validation_hidden, validation_skip, parameters
+                    validation_hidden,
+                    validation_skip,
+                    parameters,
+                    self.skip_mask,
                 )
                 loss = float(
                     np.mean((validation_predictions - validation_targets) ** 2)
@@ -228,34 +323,82 @@ class _OneHiddenLayerMLP:
         hidden_inputs: np.ndarray,
         skip_inputs: np.ndarray,
         targets: np.ndarray,
-    ) -> "_OneHiddenLayerMLP":
-        validation_count = max(
-            1, int(math.ceil(len(targets) * self.config.validation_fraction))
+    ) -> "_TwoHiddenLayerMLP":
+        if self.skip_mask.shape != (skip_inputs.shape[1], targets.shape[1]):
+            raise ValueError("Skip-connection mask does not match model inputs.")
+        if not self.skip_mask.any(axis=0).all():
+            raise ValueError("Every output must have at least one price skip input.")
+        phase_2_count = max(
+            3, int(math.ceil(len(targets) * self.config.fine_tune_fraction))
         )
-        split_at = len(targets) - validation_count
-        if split_at < 2:
+        phase_1_count = len(targets) - phase_2_count
+        if phase_1_count < 3:
             raise ValueError(
-                "Not enough training days remain for a time-ordered validation split."
+                "Not enough training days for the two chronological MLP phases."
             )
-        validation = (
-            hidden_inputs[split_at:],
-            skip_inputs[split_at:],
-            targets[split_at:],
+
+        phase_1_inputs = hidden_inputs[:phase_1_count]
+        phase_1_skip = skip_inputs[:phase_1_count]
+        phase_1_targets = targets[:phase_1_count]
+        phase_1_split = len(phase_1_targets) - max(
+            1,
+            int(math.ceil(len(phase_1_targets) * self.config.validation_fraction)),
         )
-        _, best_epoch = self._train(
-            hidden_inputs[:split_at],
-            skip_inputs[:split_at],
-            targets[:split_at],
+        if phase_1_split < 2:
+            raise ValueError("Phase 1 is too short for a time-ordered validation split.")
+        _, phase_1_epochs = self._train(
+            phase_1_inputs[:phase_1_split],
+            phase_1_skip[:phase_1_split],
+            phase_1_targets[:phase_1_split],
             self.config.max_epochs,
             self.config.random_seed,
-            validation,
+            self.config.learning_rate,
+            validation=(
+                phase_1_inputs[phase_1_split:],
+                phase_1_skip[phase_1_split:],
+                phase_1_targets[phase_1_split:],
+            ),
+        )
+        phase_1_parameters, _ = self._train(
+            phase_1_inputs,
+            phase_1_skip,
+            phase_1_targets,
+            phase_1_epochs,
+            self.config.random_seed,
+            self.config.learning_rate,
+        )
+
+        phase_2_inputs = hidden_inputs[phase_1_count:]
+        phase_2_skip = skip_inputs[phase_1_count:]
+        phase_2_targets = targets[phase_1_count:]
+        phase_2_split = len(phase_2_targets) - max(
+            1,
+            int(math.ceil(len(phase_2_targets) * self.config.validation_fraction)),
+        )
+        if phase_2_split < 2:
+            raise ValueError("Phase 2 is too short for a time-ordered validation split.")
+        _, phase_2_epochs = self._train(
+            phase_2_inputs[:phase_2_split],
+            phase_2_skip[:phase_2_split],
+            phase_2_targets[:phase_2_split],
+            self.config.max_epochs,
+            self.config.random_seed,
+            self.config.fine_tune_learning_rate,
+            initial_parameters=phase_1_parameters,
+            validation=(
+                phase_2_inputs[phase_2_split:],
+                phase_2_skip[phase_2_split:],
+                phase_2_targets[phase_2_split:],
+            ),
         )
         self.parameters, _ = self._train(
-            hidden_inputs,
-            skip_inputs,
-            targets,
-            best_epoch,
+            phase_2_inputs,
+            phase_2_skip,
+            phase_2_targets,
+            phase_2_epochs,
             self.config.random_seed,
+            self.config.fine_tune_learning_rate,
+            initial_parameters=phase_1_parameters,
         )
         return self
 
@@ -265,7 +408,7 @@ class _OneHiddenLayerMLP:
         if not self.parameters:
             raise RuntimeError("MLP must be fitted before calling predict.")
         predictions, _ = self._forward(
-            hidden_inputs, skip_inputs, self.parameters
+            hidden_inputs, skip_inputs, self.parameters, self.skip_mask
         )
         if not np.isfinite(predictions).all():
             raise FloatingPointError("MLP produced non-finite predictions.")
@@ -281,8 +424,7 @@ def rolling_mlp_forecast(
     """Forecast each day from preprocessed C=5 LEAR features.
 
     ``X`` must be the daily feature matrix made by the existing LEAR pipeline;
-    ``Y`` must be its 96-MTU daily target matrix. The four final quarter-hours
-    of the previous day are interpreted as the previous-day-last-hour skip.
+    ``Y`` must be its 96-MTU daily target matrix.
     """
     if not isinstance(config, MLPConfig):
         raise TypeError("config must be an MLPConfig.")
@@ -295,6 +437,7 @@ def rolling_mlp_forecast(
         raise ValueError("X contains duplicate feature columns.")
 
     hidden_columns, skip_columns = _column_groups(X.columns.tolist())
+    skip_mask = _skip_connection_mask(skip_columns)
     x_rows = _daily_rows(X, "X")
     y_rows = _daily_rows(Y, "Y")
     days = [_as_day(value) for value in forecast_days]
@@ -364,7 +507,7 @@ def rolling_mlp_forecast(
         hidden_test_scaled = scaled_test[hidden_columns].to_numpy(dtype=float)
         skip_full_scaled = scaled_full_train[skip_columns].to_numpy(dtype=float)
         skip_test_scaled = scaled_test[skip_columns].to_numpy(dtype=float)
-        model = _OneHiddenLayerMLP(config)
+        model = _TwoHiddenLayerMLP(config, skip_mask)
         model.fit(hidden_full_scaled, skip_full_scaled, transformed_targets)
         transformed_prediction = model.predict(
             hidden_test_scaled, skip_test_scaled

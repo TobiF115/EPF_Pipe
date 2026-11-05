@@ -1,0 +1,30 @@
+{
+  "forecast_date": "2026-11-04",
+  "architecture": "one ReLU hidden layer with linear price skip connections",
+  "hidden_units": 128,
+  "train_window_calendar_days": 116,
+  "complete_training_days_used": 106,
+  "first_training_feature_day": "2026-07-11",
+  "last_possible_training_day": "2026-11-03",
+  "feature_count": 1473,
+  "feature_categories": {
+    "C5_DWD_weather": 1080,
+    "price_lags": 288,
+    "load": 96,
+    "calendar": 9
+  },
+  "skip_connection_description": "For each target MTU: previous-day prices in a cyclic +/-2-hour window and same-MTU prices from two and seven days earlier.",
+  "actual_target_values_available": 0,
+  "prediction_min": 67.50515505158646,
+  "prediction_mean": 242.18490507208097,
+  "prediction_max": 1169.9898036749746,
+  "training_seconds": 1.2154009000000001,
+  "config": {
+    "max_epochs": 400,
+    "patience": 40,
+    "learning_rate": 0.003,
+    "l2": 0.0001,
+    "validation_fraction": 0.2,
+    "random_seed": 42
+  }
+}

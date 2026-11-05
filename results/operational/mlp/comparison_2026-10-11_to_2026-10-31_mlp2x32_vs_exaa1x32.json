@@ -1,0 +1,126 @@
+{
+  "comparison": "same 14 backtest delivery days, same 116-calendar-day maximum train window, same C=5 DWD/load/EPEX/calendar features; EXAA variant additionally receives 96 target-day EXAA MTUs",
+  "evaluation_days": [
+    "2026-10-11",
+    "2026-10-12",
+    "2026-10-13",
+    "2026-10-14",
+    "2026-10-15",
+    "2026-10-16",
+    "2026-10-17",
+    "2026-10-18",
+    "2026-10-19",
+    "2026-10-20",
+    "2026-10-21",
+    "2026-10-22",
+    "2026-10-23",
+    "2026-10-31"
+  ],
+  "evaluation_mtu_count": 1344,
+  "training_days_by_configured_window": 116,
+  "actual_complete_training_days_by_first_evaluation_day": 99,
+  "architectures": {
+    "MLP_2x32_tanh": {
+      "hidden_layers": 2,
+      "hidden_units_per_layer": 32,
+      "extra_EXAA_inputs": 0,
+      "mae": 37.7709892753085,
+      "rmse": 49.24693574314749,
+      "bias": -20.00489499438069
+    },
+    "EXAA_MLP_1x32_tanh": {
+      "hidden_layers": 1,
+      "hidden_units": 32,
+      "extra_EXAA_inputs": 96,
+      "mae": 26.200817982707598,
+      "rmse": 36.949806958214964,
+      "bias": 7.372829872926934
+    }
+  },
+  "difference_exaa_minus_base": {
+    "mae_EUR_per_MWh": -11.570171292600904,
+    "rmse_EUR_per_MWh": -12.297128784932525,
+    "bias_EUR_per_MWh": 27.377724867307627
+  },
+  "daily_mae": [
+    {
+      "delivery_date": "2026-10-11",
+      "MLP_2x32_MAE_EUR_per_MWh": 22.358804791613707,
+      "EXAA_MLP_1x32_MAE_EUR_per_MWh": 18.66716423419651
+    },
+    {
+      "delivery_date": "2026-10-12",
+      "MLP_2x32_MAE_EUR_per_MWh": 26.78766163237825,
+      "EXAA_MLP_1x32_MAE_EUR_per_MWh": 25.4459301955449
+    },
+    {
+      "delivery_date": "2026-10-13",
+      "MLP_2x32_MAE_EUR_per_MWh": 34.805638615759555,
+      "EXAA_MLP_1x32_MAE_EUR_per_MWh": 20.21145300588762
+    },
+    {
+      "delivery_date": "2026-10-14",
+      "MLP_2x32_MAE_EUR_per_MWh": 20.968608753139957,
+      "EXAA_MLP_1x32_MAE_EUR_per_MWh": 18.90022974279404
+    },
+    {
+      "delivery_date": "2026-10-15",
+      "MLP_2x32_MAE_EUR_per_MWh": 36.19389806403588,
+      "EXAA_MLP_1x32_MAE_EUR_per_MWh": 14.728024792967034
+    },
+    {
+      "delivery_date": "2026-10-16",
+      "MLP_2x32_MAE_EUR_per_MWh": 29.57428412286575,
+      "EXAA_MLP_1x32_MAE_EUR_per_MWh": 19.94370340209794
+    },
+    {
+      "delivery_date": "2026-10-17",
+      "MLP_2x32_MAE_EUR_per_MWh": 52.995075165610025,
+      "EXAA_MLP_1x32_MAE_EUR_per_MWh": 17.07721179758817
+    },
+    {
+      "delivery_date": "2026-10-18",
+      "MLP_2x32_MAE_EUR_per_MWh": 61.59308443175032,
+      "EXAA_MLP_1x32_MAE_EUR_per_MWh": 25.936668432895374
+    },
+    {
+      "delivery_date": "2026-10-19",
+      "MLP_2x32_MAE_EUR_per_MWh": 46.70230739489957,
+      "EXAA_MLP_1x32_MAE_EUR_per_MWh": 23.839233448875973
+    },
+    {
+      "delivery_date": "2026-10-20",
+      "MLP_2x32_MAE_EUR_per_MWh": 22.548907799443544,
+      "EXAA_MLP_1x32_MAE_EUR_per_MWh": 31.754582340956194
+    },
+    {
+      "delivery_date": "2026-10-21",
+      "MLP_2x32_MAE_EUR_per_MWh": 38.40469550065774,
+      "EXAA_MLP_1x32_MAE_EUR_per_MWh": 25.840662038668768
+    },
+    {
+      "delivery_date": "2026-10-22",
+      "MLP_2x32_MAE_EUR_per_MWh": 32.76522875843248,
+      "EXAA_MLP_1x32_MAE_EUR_per_MWh": 32.969047544626385
+    },
+    {
+      "delivery_date": "2026-10-23",
+      "MLP_2x32_MAE_EUR_per_MWh": 49.51133495007651,
+      "EXAA_MLP_1x32_MAE_EUR_per_MWh": 30.566747714805484
+    },
+    {
+      "delivery_date": "2026-10-31",
+      "MLP_2x32_MAE_EUR_per_MWh": 53.58431987365578,
+      "EXAA_MLP_1x32_MAE_EUR_per_MWh": 60.930793066002025
+    }
+  ],
+  "feature_counts": {
+    "base": 1473,
+    "with_EXAA": 1569
+  },
+  "data_period": {
+    "DWD_C5_first": "2026-05-24",
+    "EPEX_price_start": "2025-10-01",
+    "EXAA_start": "2025-10-01"
+  }
+}
