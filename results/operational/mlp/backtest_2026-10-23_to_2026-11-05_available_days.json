@@ -1,0 +1,149 @@
+{
+  "period": {
+    "start": "2026-10-23",
+    "end": "2026-11-05",
+    "calendar_days": 14
+  },
+  "evaluated_days": [
+    "2026-10-23",
+    "2026-10-31",
+    "2026-11-04",
+    "2026-11-05"
+  ],
+  "complete_weather_days": [
+    "2026-10-23",
+    "2026-10-31",
+    "2026-11-04"
+  ],
+  "proxy_weather": {
+    "2026-11-05": "2026-11-04"
+  },
+  "aggregate_metrics": {
+    "all_evaluated_days_including_proxy": {
+      "MLP 2x32": {
+        "MAE_eur_MWh": 47.016262371562505,
+        "RMSE_eur_MWh": 63.88410152138294,
+        "Bias_eur_MWh": -8.8109751465625,
+        "observations": 384
+      },
+      "MLP EXAA-enriched 1x32": {
+        "MAE_eur_MWh": 27.47583493393229,
+        "RMSE_eur_MWh": 36.8530600503543,
+        "Bias_eur_MWh": 2.856106097213542,
+        "observations": 384
+      },
+      "LEAR D56 C5": {
+        "MAE_eur_MWh": 42.96299312636821,
+        "RMSE_eur_MWh": 89.29295503311187,
+        "Bias_eur_MWh": -38.15232989365239,
+        "observations": 384
+      }
+    },
+    "complete_weather_days_only": {
+      "MLP 2x32": {
+        "MAE_eur_MWh": 47.80957918333334,
+        "RMSE_eur_MWh": 62.290428751048964,
+        "Bias_eur_MWh": -20.935041092361114,
+        "observations": 288
+      },
+      "MLP EXAA-enriched 1x32": {
+        "MAE_eur_MWh": 26.359338047083334,
+        "RMSE_eur_MWh": 36.258459411981725,
+        "Bias_eur_MWh": 4.805685789444445,
+        "observations": 288
+      },
+      "LEAR D56 C5": {
+        "MAE_eur_MWh": 47.810303646720115,
+        "RMSE_eur_MWh": 100.84505715366673,
+        "Bias_eur_MWh": -42.332696022960135,
+        "observations": 288
+      }
+    }
+  },
+  "per_day_metrics": {
+    "2026-10-23": {
+      "MLP 2x32": {
+        "MAE_eur_MWh": 49.51133494989583,
+        "RMSE_eur_MWh": 57.284665772669214,
+        "Bias_eur_MWh": -33.02839450697917,
+        "observations": 96
+      },
+      "MLP EXAA-enriched 1x32": {
+        "MAE_eur_MWh": 23.574465263958334,
+        "RMSE_eur_MWh": 29.90922202948934,
+        "Bias_eur_MWh": 17.51305545979167,
+        "observations": 96
+      },
+      "LEAR D56 C5": {
+        "MAE_eur_MWh": 70.01733553838953,
+        "RMSE_eur_MWh": 162.4563622721786,
+        "Bias_eur_MWh": -63.18819346981792,
+        "observations": 96
+      }
+    },
+    "2026-10-31": {
+      "MLP 2x32": {
+        "MAE_eur_MWh": 53.58431987395833,
+        "RMSE_eur_MWh": 69.0300242634019,
+        "Bias_eur_MWh": -46.28300719791667,
+        "observations": 96
+      },
+      "MLP EXAA-enriched 1x32": {
+        "MAE_eur_MWh": 33.93483210302083,
+        "RMSE_eur_MWh": 45.50289028288364,
+        "Bias_eur_MWh": 2.579424649687502,
+        "observations": 96
+      },
+      "LEAR D56 C5": {
+        "MAE_eur_MWh": 39.12296328520833,
+        "RMSE_eur_MWh": 47.46988251441461,
+        "Bias_eur_MWh": -36.73908488333333,
+        "observations": 96
+      }
+    },
+    "2026-11-04": {
+      "MLP 2x32": {
+        "MAE_eur_MWh": 40.33308272614583,
+        "RMSE_eur_MWh": 59.946771051293894,
+        "Bias_eur_MWh": 16.5062784278125,
+        "observations": 96
+      },
+      "MLP EXAA-enriched 1x32": {
+        "MAE_eur_MWh": 21.568716774270836,
+        "RMSE_eur_MWh": 31.28822542563801,
+        "Bias_eur_MWh": -5.675422741145831,
+        "observations": 96
+      },
+      "LEAR D56 C5": {
+        "MAE_eur_MWh": 34.2906121165625,
+        "RMSE_eur_MWh": 43.170791842833516,
+        "Bias_eur_MWh": -27.07080971572917,
+        "observations": 96
+      }
+    },
+    "2026-11-05": {
+      "MLP 2x32": {
+        "MAE_eur_MWh": 44.63631193625,
+        "RMSE_eur_MWh": 68.44283137633133,
+        "Bias_eur_MWh": 27.561222690833333,
+        "observations": 96
+      },
+      "MLP EXAA-enriched 1x32": {
+        "MAE_eur_MWh": 30.825325594479164,
+        "RMSE_eur_MWh": 38.581919386016864,
+        "Bias_eur_MWh": -2.9926329794791684,
+        "observations": 96
+      },
+      "LEAR D56 C5": {
+        "MAE_eur_MWh": 28.421061565312502,
+        "RMSE_eur_MWh": 37.198798598912184,
+        "Bias_eur_MWh": -25.611231505729165,
+        "observations": 96
+      }
+    }
+  },
+  "observations": 384,
+  "submitted": false,
+  "forecast_csv": "results\\operational\\mlp\\backtest_2026-10-23_to_2026-11-05_available_days.csv",
+  "lear_2026-10-23_source": "Existing operational DWD D56 C5 forecast cache; newer test days freshly run with operational LassoCV configuration."
+}

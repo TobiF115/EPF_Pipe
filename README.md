@@ -341,6 +341,17 @@ empirical d-1 persistence residuals from the preceding 60 days; it is not an
 NN- or SQRA-trained quantile model. Use `--no-submit` to create the forecasts
 and payloads locally without sending them to Energy Arena.
 
+The NN uses an expanding training window: its feature history starts one week
+after the latest first-recorded date among the C=5 weather, EPEX, EXAA, and load
+data. It starts fitting once seven complete training days are available and
+adds each subsequent complete day without dropping earlier samples. Incomplete
+days are excluded.
+
+The EXAA NN sends each target-day EXAA price both through the hidden layer and
+through direct linear skip connections to the same MTU output and the two
+adjacent MTUs on either side (cyclically across midnight). The existing EPEX
+skip connections remain unchanged.
+
 The equivalent `.env` settings are:
 
 ```dotenv

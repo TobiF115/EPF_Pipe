@@ -25,6 +25,7 @@ from pipeline.mlp.mlp import (
 
 
 _EXAA_COLUMN = re.compile(r"^exaa_d0_mtu_(\d{2})$")
+_EXAA_SKIP_WINDOW = 2
 
 
 @dataclass(frozen=True)
@@ -32,8 +33,8 @@ class NNExaaEnrichedConfig:
     """Training settings for the one-hidden-layer EXAA-enriched network."""
 
     hidden_units: int = 32
-    train_days: int = 116
-    min_training_days: int = 14
+    train_days: int | None = None
+    min_training_days: int = 7
     max_epochs: int = 400
     patience: int = 40
     learning_rate: float = 0.003
@@ -46,8 +47,8 @@ class NNExaaEnrichedConfig:
     def __post_init__(self) -> None:
         if self.hidden_units < 1:
             raise ValueError("hidden_units must be positive.")
-        if self.train_days < 1:
-            raise ValueError("train_days must be positive.")
+        if self.train_days is not None and self.train_days < 1:
+            raise ValueError("train_days must be positive when provided.")
         if self.min_training_days < 6:
             raise ValueError("min_training_days must be at least 6 for two phases.")
         if self.max_epochs < 1 or self.patience < 1:
@@ -71,7 +72,7 @@ class NNExaaEnrichedConfig:
 def _column_groups_exaa(
     columns: Sequence[str],
 ) -> tuple[list[str], list[str]]:
-    """Put EXAA's 96 target-day prices in the hidden branch."""
+    """Provide EXAA's 96 target-day prices to hidden and skip branches."""
     exaa_by_mtu: dict[int, str] = {}
     non_exaa_columns: list[str] = []
     unsupported_exaa_columns: list[str] = []
@@ -101,12 +102,29 @@ def _column_groups_exaa(
         )
 
     hidden_columns, skip_columns = _column_groups(non_exaa_columns)
-    hidden_columns.extend(exaa_by_mtu[mtu] for mtu in range(MTUS_PER_DAY))
+    exaa_columns = [exaa_by_mtu[mtu] for mtu in range(MTUS_PER_DAY)]
+    hidden_columns.extend(exaa_columns)
+    skip_columns.extend(exaa_columns)
     return hidden_columns, skip_columns
 
 
+def _skip_connection_mask_exaa(skip_columns: Sequence[str]) -> np.ndarray:
+    """Add EXAA skip links for the target MTU and its two cyclic neighbors."""
+    mask = np.zeros((len(skip_columns), MTUS_PER_DAY), dtype=bool)
+    for column_index, column in enumerate(skip_columns):
+        match = _EXAA_COLUMN.fullmatch(column)
+        if match is None:
+            mask[column_index] = _skip_connection_mask([column])[0]
+            continue
+
+        mtu = int(match.group(1))
+        for offset in range(-_EXAA_SKIP_WINDOW, _EXAA_SKIP_WINDOW + 1):
+            mask[column_index, (mtu + offset) % MTUS_PER_DAY] = True
+    return mask
+
+
 class _OneHiddenLayerExaaNetwork:
-    """One tanh hidden layer with the same masked lag-price skip branch as MLP."""
+    """One tanh hidden layer with masked EPEX-lag and target-day EXAA skips."""
 
     def __init__(
         self, config: NNExaaEnrichedConfig, skip_mask: np.ndarray
@@ -354,7 +372,7 @@ def rolling_nn_exaa_enriched_forecast(
         raise ValueError("X contains duplicate feature columns.")
 
     hidden_columns, skip_columns = _column_groups_exaa(X.columns.tolist())
-    skip_mask = _skip_connection_mask(skip_columns)
+    skip_mask = _skip_connection_mask_exaa(skip_columns)
     x_rows = _daily_rows(X, "X")
     y_rows = _daily_rows(Y, "Y")
     days = [pd.Timestamp(value).date() for value in forecast_days]
@@ -376,11 +394,17 @@ def rolling_nn_exaa_enriched_forecast(
         if not np.isfinite(test_features).all():
             raise ValueError(f"Forecast features are incomplete for {day}.")
 
-        first_training_day = day - timedelta(days=config.train_days)
+        first_training_day = (
+            day - timedelta(days=config.train_days)
+            if config.train_days is not None
+            else None
+        )
         candidate_days = [
             sample_day
             for sample_day in sorted(x_rows)
-            if first_training_day <= sample_day < day and sample_day in y_rows
+            if (first_training_day is None or first_training_day <= sample_day)
+            and sample_day < day
+            and sample_day in y_rows
         ]
         training_positions = np.asarray([x_rows[value] for value in candidate_days])
         target_positions = np.asarray([y_rows[value] for value in candidate_days])

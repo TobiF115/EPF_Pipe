@@ -1613,6 +1613,38 @@ def execute_pipeline(
     }
 
 
+def _nn_exaa_enriched_feature_start(config: OperationalConfig) -> date:
+    """Return one week after the latest first-recorded NN input date."""
+    history_manifest = config.icon_cluster_dir(5) / "dwd_history.json"
+    try:
+        history = json.loads(history_manifest.read_text(encoding="utf-8"))
+        weather_start = date.fromisoformat(history["first_delivery_date"])
+    except (OSError, KeyError, TypeError, ValueError) as exc:
+        raise RuntimeError(
+            "Cannot determine the first recorded C5 weather date from "
+            f"{history_manifest}."
+        ) from exc
+
+    def first_cached_day(path: Path) -> date:
+        if not path.is_file():
+            return weather_start
+        timestamps = pd.read_csv(path, usecols=[0]).iloc[:, 0]
+        if timestamps.empty:
+            raise ValueError(f"Market-data cache is empty: {path}")
+        local_timestamps = pd.to_datetime(
+            timestamps, utc=True, errors="raise"
+        ).dt.tz_convert(config.timezone)
+        return local_timestamps.min().date()
+
+    recording_start = max(
+        weather_start,
+        first_cached_day(config.entsoe_price_cache_dir / "prices_da.csv"),
+        first_cached_day(config.exaa_price_cache_dir / "prices_exaa.csv"),
+        first_cached_day(config.entsoe_load_cache_dir / "load_forecast.csv"),
+    )
+    return recording_start + timedelta(days=7)
+
+
 def execute_nn_exaa_enriched_pipeline(
     config: OperationalConfig,
     targets: ArenaTargets,
@@ -1624,8 +1656,6 @@ def execute_nn_exaa_enriched_pipeline(
     """Run the C5 EXAA-enriched NN and submit its point and calibrated quantiles."""
     target_date = targets.target_date
     model_config = NNExaaEnrichedConfig()
-    feature_start = target_date - timedelta(days=model_config.train_days)
-    market_start = feature_start - timedelta(days=7)
 
     prepare_target_dwd(
         config,
@@ -1634,6 +1664,9 @@ def execute_nn_exaa_enriched_pipeline(
         delete_raw=config.delete_dwd_raw_after_preprocess,
         clusters=(5,),
     )
+    feature_start = _nn_exaa_enriched_feature_start(config)
+    market_start = feature_start - timedelta(days=7)
+
     prices, exaa, load = load_market_data(
         config,
         start_date=market_start,
@@ -1660,10 +1693,7 @@ def execute_nn_exaa_enriched_pipeline(
     forecast_day = pd.DatetimeIndex(
         [_timestamp(target_date, config.timezone)]
     )
-    training_start = forecast_day[0] - pd.DateOffset(
-        days=model_config.train_days
-    )
-    training_mask = (X.index >= training_start) & (X.index < forecast_day[0])
+    training_mask = X.index < forecast_day[0]
     training_X = X.loc[training_mask]
     training_Y = Y.reindex(training_X.index)
     complete_training_days = int(
@@ -1716,7 +1746,10 @@ def execute_nn_exaa_enriched_pipeline(
             "hidden_layers": 1,
             "hidden_units": model_config.hidden_units,
             "activation": "tanh",
-            "training_window_calendar_days": model_config.train_days,
+            "training_window_calendar_days": (target_date - feature_start).days,
+            "training_window_start": feature_start.isoformat(),
+            "training_window_type": "expanding",
+            "minimum_training_days": model_config.min_training_days,
             "complete_training_days": complete_training_days,
             "forecast_mtu_count": len(forecast),
             "actual_target_prices_available": int(

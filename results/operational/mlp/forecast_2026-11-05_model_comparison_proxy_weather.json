@@ -1,0 +1,44 @@
+{
+  "target_date": "2026-11-05",
+  "weather_proxy": {
+    "method": "previous_day_c5_weather_carried_forward",
+    "source_date": "2026-11-04"
+  },
+  "models": {
+    "MLP 2x32": {
+      "mae_eur_mwh": 44.63631193607634,
+      "rmse_eur_mwh": 68.44283137623391,
+      "bias_eur_mwh": 27.56122269092728,
+      "forecast_mean_eur_mwh": 284.9379935242606,
+      "forecast_min_eur_mwh": 184.8136734104599,
+      "forecast_max_eur_mwh": 461.1174215308497
+    },
+    "MLP EXAA-enriched 1x32": {
+      "mae_eur_mwh": 30.825325593972774,
+      "rmse_eur_mwh": 38.581919385690405,
+      "bias_eur_mwh": -2.9926329795129027,
+      "forecast_mean_eur_mwh": 254.38413785382042,
+      "forecast_min_eur_mwh": 180.15023537645476,
+      "forecast_max_eur_mwh": 361.45209437160133
+    },
+    "LEAR D56 C5": {
+      "mae_eur_mwh": 28.30312371530505,
+      "rmse_eur_mwh": 37.14753045242299,
+      "bias_eur_mwh": -25.862506251854352,
+      "forecast_mean_eur_mwh": 231.51426458147898,
+      "forecast_min_eur_mwh": 180.93475609483554,
+      "forecast_max_eur_mwh": 299.84379016847174
+    }
+  },
+  "actual_observations": 96,
+  "actual_mean_eur_mwh": 257.3767708333333,
+  "training": {
+    "mlp_train_days": 116,
+    "mlp_exaa_feature_start": "2026-07-13",
+    "mlp_exaa_min_complete_days": 7,
+    "lear_train_days": 56,
+    "lear_configuration": "dwd_d56_c5_fundamental"
+  },
+  "submitted": false,
+  "forecast_csv": "results\\operational\\mlp\\forecast_2026-11-05_model_comparison_proxy_weather.csv"
+}

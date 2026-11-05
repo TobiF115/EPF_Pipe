@@ -37,6 +37,7 @@ from pipeline.operational.runner import (
     _exception_summary,
     _fetch_retry,
     _load_entsoe_prices,
+    _nn_exaa_enriched_feature_start,
     _payload_path,
     _submit_arena_payloads,
     _apply_cli,
@@ -176,6 +177,32 @@ class OperationalModelPlanTests(unittest.TestCase):
         self.assertEqual(config.sqra_variant, "fundamental_c5")
         self.assertTrue(config.needs_exaa)
         self.assertEqual(config.required_dwd_clusters, (5,))
+
+    def test_nn_exaa_enriched_starts_one_week_after_latest_input_history(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            config = _config(root)
+            weather_dir = config.icon_cluster_dir(5)
+            weather_dir.mkdir(parents=True)
+            (weather_dir / "dwd_history.json").write_text(
+                json.dumps({"first_delivery_date": "2026-05-23"}),
+                encoding="utf-8",
+            )
+            histories = (
+                (config.entsoe_price_cache_dir / "prices_da.csv", "2025-10-01"),
+                (config.exaa_price_cache_dir / "prices_exaa.csv", "2026-07-06"),
+                (config.entsoe_load_cache_dir / "load_forecast.csv", "2026-07-04"),
+            )
+            for path, first_day in histories:
+                path.parent.mkdir(parents=True, exist_ok=True)
+                pd.DataFrame(
+                    {"value": [1.0]},
+                    index=[pd.Timestamp(first_day, tz="Europe/Berlin")],
+                ).to_csv(path)
+
+            feature_start = _nn_exaa_enriched_feature_start(config)
+
+        self.assertEqual(feature_start, date(2026, 7, 13))
 
     def test_operational_dwd_root_is_separate_from_historical_archive(self):
         with tempfile.TemporaryDirectory() as temporary_directory:
