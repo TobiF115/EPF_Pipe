@@ -328,6 +328,19 @@ directly. Weather-based SQRA likewise combines all three cluster resolutions.
 `--cluster 1|5|25` and `POINT_WEATHER_CLUSTERS` retain the reference LEAR run
 reported in logs and metadata; they do not change the submitted SQRA median.
 
+For a direct one-layer neural-network point forecast with C=5 weather and all
+96 target-day EXAA prices, use:
+
+```powershell
+python run_pipeline.py --nn-exaa-enriched
+```
+
+This mode prepares only the C=5 DWD history and submits the NN point forecast
+directly. The quantile payload is centered on that NN forecast and uses pooled
+empirical d-1 persistence residuals from the preceding 60 days; it is not an
+NN- or SQRA-trained quantile model. Use `--no-submit` to create the forecasts
+and payloads locally without sending them to Energy Arena.
+
 The equivalent `.env` settings are:
 
 ```dotenv

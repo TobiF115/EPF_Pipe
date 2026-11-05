@@ -49,6 +49,10 @@ from pipeline.operational.config import (
     OperationalConfig,
     load_operational_config,
 )
+from pipeline.mlp.NN_exaa_enriched import (
+    NNExaaEnrichedConfig,
+    rolling_nn_exaa_enriched_forecast,
+)
 from pipeline.dwd_history import consolidated_delivery_available
 from pipeline.operational.prepare_dwd import prepare_target_dwd
 from pipeline.operational.locking import interprocess_lock
@@ -1609,6 +1613,170 @@ def execute_pipeline(
     }
 
 
+def execute_nn_exaa_enriched_pipeline(
+    config: OperationalConfig,
+    targets: ArenaTargets,
+    *,
+    submit: bool,
+    force_download: bool = False,
+    force_submit: bool = False,
+) -> dict[str, object]:
+    """Run the C5 EXAA-enriched NN and submit its point and calibrated quantiles."""
+    target_date = targets.target_date
+    model_config = NNExaaEnrichedConfig()
+    feature_start = target_date - timedelta(days=model_config.train_days)
+    market_start = feature_start - timedelta(days=7)
+
+    prepare_target_dwd(
+        config,
+        target_date,
+        force_download=force_download,
+        delete_raw=config.delete_dwd_raw_after_preprocess,
+        clusters=(5,),
+    )
+    prices, exaa, load = load_market_data(
+        config,
+        start_date=market_start,
+        target_date=target_date,
+    )
+    if exaa is None or load is None:
+        raise RuntimeError(
+            "The EXAA-enriched NN requires EXAA prices and load features."
+        )
+    weather = {
+        5: _load_weather_features(config, 5, feature_start, target_date)
+    }
+    run = get_lear_run("dwd_d56_c5_exaa")
+    X, Y = _assemble_matrices(
+        config,
+        run,
+        prices=prices,
+        exaa=exaa,
+        load=load,
+        weather=weather,
+        first_feature_date=feature_start,
+        target_date=target_date,
+    )
+    forecast_day = pd.DatetimeIndex(
+        [_timestamp(target_date, config.timezone)]
+    )
+    training_start = forecast_day[0] - pd.DateOffset(
+        days=model_config.train_days
+    )
+    training_mask = (X.index >= training_start) & (X.index < forecast_day[0])
+    training_X = X.loc[training_mask]
+    training_Y = Y.reindex(training_X.index)
+    complete_training_days = int(
+        (
+            np.isfinite(training_X.to_numpy(dtype=float)).all(axis=1)
+            & np.isfinite(training_Y.to_numpy(dtype=float)).all(axis=1)
+        ).sum()
+    )
+    print(
+        f"NN_EXAA_ENRICHED training days: {complete_training_days}; "
+        f"features: {X.shape[1]}",
+        flush=True,
+    )
+    forecast = rolling_nn_exaa_enriched_forecast(
+        X,
+        Y,
+        forecast_day,
+        model_config,
+    )
+    validate_delivery_index(forecast.index, require_complete_days=True)
+
+    quantile_forecast, quantile_metadata = (
+        build_operational_persistence_quantile_fallback(
+            prices,
+            target_date,
+            lag=1,
+            point_forecast=forecast,
+            quantiles=targets.quantile.quantiles,
+        )
+    )
+    point_payload = build_point_payload(forecast, targets.point)
+    quantile_payload = build_quantile_payload(
+        quantile_forecast,
+        targets.quantile,
+    )
+
+    output_dir = config.repo_root / "results" / "operational" / "mlp"
+    stem = f"forecast_{target_date.isoformat()}_nn_exaa_enriched"
+    _atomic_frame(output_dir / f"{stem}.csv", forecast, index=True)
+    _atomic_frame(
+        output_dir / f"{stem}_quantiles.csv",
+        quantile_forecast,
+        index=True,
+    )
+    atomic_write_json(
+        output_dir / f"{stem}.json",
+        {
+            "target_date": target_date.isoformat(),
+            "model": "NN_exaa_enriched",
+            "hidden_layers": 1,
+            "hidden_units": model_config.hidden_units,
+            "activation": "tanh",
+            "training_window_calendar_days": model_config.train_days,
+            "complete_training_days": complete_training_days,
+            "forecast_mtu_count": len(forecast),
+            "actual_target_prices_available": int(
+                np.isfinite(forecast["y_true"].to_numpy(dtype=float)).sum()
+            ),
+            "quantile_method": quantile_metadata,
+            "submission_requested": submit,
+            "forecast_summary_eur_per_mwh": {
+                "min": float(forecast["y_pred"].min()),
+                "mean": float(forecast["y_pred"].mean()),
+                "max": float(forecast["y_pred"].max()),
+            },
+        },
+    )
+
+    submission_stream = "nn_exaa_enriched"
+    atomic_write_json(
+        _payload_path(
+            config,
+            submission_stream,
+            targets.point.challenge_id,
+            targets.point.target_start,
+        ),
+        point_payload,
+    )
+    atomic_write_json(
+        _payload_path(
+            config,
+            submission_stream,
+            targets.quantile.challenge_id,
+            targets.quantile.target_start,
+        ),
+        quantile_payload,
+    )
+    submissions: dict[str, object] = {}
+    if submit:
+        submissions = _submit_arena_payloads(
+            config,
+            submission_stream,
+            (
+                ("point", targets.point, point_payload),
+                ("quantile", targets.quantile, quantile_payload),
+            ),
+            force_submit=force_submit,
+            context="NN EXAA-enriched",
+        )
+    else:
+        print("Submission disabled; NN payloads were saved locally.", flush=True)
+
+    return {
+        "target_start": targets.target_start.isoformat(),
+        "point_model": "NN_exaa_enriched",
+        "quantile_model": "pooled_residual_persistence_d1",
+        "quantile_calibration": quantile_metadata,
+        "forecast": str(output_dir / f"{stem}.csv"),
+        "quantile_forecast": str(output_dir / f"{stem}_quantiles.csv"),
+        "submissions": submissions,
+    }
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     variants = parser.add_mutually_exclusive_group()
@@ -1616,6 +1784,12 @@ def build_parser() -> argparse.ArgumentParser:
     variants.add_argument("--exaa-only", "--exaa_only", action="store_true")
     variants.add_argument("--exaa-enriched", "--exaa_enriched", action="store_true")
     variants.add_argument("--fundamental", action="store_true")
+    variants.add_argument(
+        "--nn-exaa-enriched",
+        "--nn_exaa_enriched",
+        action="store_true",
+        help="Use the one-layer EXAA-enriched NN instead of LEAR.",
+    )
     parser.add_argument(
         "--cluster",
         type=int,
@@ -1646,6 +1820,12 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def _apply_cli(config: OperationalConfig, args: argparse.Namespace) -> OperationalConfig:
+    if args.nn_exaa_enriched:
+        return replace(
+            config,
+            point_variant="exaa_enriched",
+            sqra_variant="fundamental_c5",
+        )
     variant = args.model
     if args.exaa_only:
         variant = "exaa_only"
@@ -1719,11 +1899,23 @@ def main(argv: Optional[Sequence[str]] = None, repo_root: Optional[Path] = None)
     if args.check_setup:
         print("Setup passed.")
         print(f"Next target: {targets.target_start.isoformat()}")
-        print(f"Point submission: SQRA {sqra_name}, q=0.500")
-        print(f"Reference LEAR point run: {point_run.name}")
-        print(f"SQRA model: {sqra_name}")
+        if args.nn_exaa_enriched:
+            print("Point model: one-layer NN EXAA-enriched C5")
+            print("Quantile model: pooled empirical D-1 persistence residuals")
+        else:
+            print(f"Point submission: SQRA {sqra_name}, q=0.500")
+            print(f"Reference LEAR point run: {point_run.name}")
+            print(f"SQRA model: {sqra_name}")
         return 0
     if args.dry_run:
+        if args.nn_exaa_enriched:
+            print(f"Target: {targets.target_start.isoformat()}")
+            print("Point model: one-layer NN EXAA-enriched C5")
+            print(
+                "Quantile model: pooled empirical D-1 persistence residuals"
+            )
+            print(f"Submit: {submission_requested}")
+            return 0
         print(f"Target: {targets.target_start.isoformat()}")
         print(f"Point submission: SQRA {sqra_name}, q=0.500")
         print(f"Reference LEAR point run: {point_run.name}")
@@ -1757,14 +1949,23 @@ def main(argv: Optional[Sequence[str]] = None, repo_root: Optional[Path] = None)
             try:
                 print(f"started_at={datetime.now().astimezone().isoformat()}")
                 print(f"command={_redacted_command(list(argv or sys.argv[1:]))}")
-                summary = execute_pipeline(
-                    config,
-                    targets,
-                    submit=submission_requested,
-                    force_download=args.force_download,
-                    force_forecast=args.force_forecast,
-                    force_submit=args.force_submit,
-                )
+                if args.nn_exaa_enriched:
+                    summary = execute_nn_exaa_enriched_pipeline(
+                        config,
+                        targets,
+                        submit=submission_requested,
+                        force_download=args.force_download,
+                        force_submit=args.force_submit,
+                    )
+                else:
+                    summary = execute_pipeline(
+                        config,
+                        targets,
+                        submit=submission_requested,
+                        force_download=args.force_download,
+                        force_forecast=args.force_forecast,
+                        force_submit=args.force_submit,
+                    )
                 print(json.dumps(summary, indent=2))
                 print(f"completed_at={datetime.now().astimezone().isoformat()}")
                 print("status=success")

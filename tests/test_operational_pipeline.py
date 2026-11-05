@@ -39,6 +39,7 @@ from pipeline.operational.runner import (
     _load_entsoe_prices,
     _payload_path,
     _submit_arena_payloads,
+    _apply_cli,
     _submission_stream,
     arena_lock_path,
     build_operational_persistence_fallback,
@@ -165,6 +166,16 @@ class OperationalModelPlanTests(unittest.TestCase):
                 / "forecast.csv"
             ),
         )
+
+    def test_nn_exaa_enriched_cli_selects_nn_inputs_and_only_c5(self):
+        args = build_parser().parse_args(["--nn-exaa-enriched", "--no-submit"])
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            config = _apply_cli(_config(Path(temporary_directory)), args)
+
+        self.assertEqual(config.point_variant, "exaa_enriched")
+        self.assertEqual(config.sqra_variant, "fundamental_c5")
+        self.assertTrue(config.needs_exaa)
+        self.assertEqual(config.required_dwd_clusters, (5,))
 
     def test_operational_dwd_root_is_separate_from_historical_archive(self):
         with tempfile.TemporaryDirectory() as temporary_directory:

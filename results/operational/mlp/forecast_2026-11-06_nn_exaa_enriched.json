@@ -1,0 +1,36 @@
+{
+  "target_date": "2026-11-06",
+  "model": "NN_exaa_enriched",
+  "hidden_layers": 1,
+  "hidden_units": 32,
+  "activation": "tanh",
+  "training_window_calendar_days": 116,
+  "complete_training_days": 105,
+  "forecast_mtu_count": 96,
+  "actual_target_prices_available": 0,
+  "quantile_method": {
+    "method": "pooled_empirical_persistence_residuals",
+    "lag_days": 1,
+    "calibration_window_days": 60,
+    "minimum_complete_days": 14,
+    "complete_calibration_days": 60,
+    "calibration_observations": 5760,
+    "calibration_start": "2026-09-07",
+    "calibration_end": "2026-11-05",
+    "target_excluded_from_calibration": true,
+    "median_centered": true,
+    "quantiles": [
+      0.025,
+      0.25,
+      0.5,
+      0.75,
+      0.975
+    ]
+  },
+  "submission_requested": true,
+  "forecast_summary_eur_per_mwh": {
+    "min": 182.58362993639133,
+    "mean": 248.33269504250964,
+    "max": 374.6292475684709
+  }
+}
