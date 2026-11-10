@@ -463,7 +463,7 @@ python .\run_full_experiment.py --era5 --d 364
 
 `pipeline/mlp/mlp.py` contains a daily multi-output point model that consumes
 the existing LEAR C=5 feature matrix and 96-value target matrix. It has a
-32-neuron ReLU hidden layer for non-price inputs and a direct linear skip branch
+32-neuron tanh hidden layer for non-price inputs and a direct linear skip branch
 for the previous-day final hour and the same-time prices from one, two, and
 seven days earlier. It uses the LEAR fold-wise feature and target transforms
 and returns the canonical `y_pred`/`y_true` delivery-date/MTU index.

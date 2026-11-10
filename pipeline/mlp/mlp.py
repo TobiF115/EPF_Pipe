@@ -26,10 +26,10 @@ _PREVIOUS_DAY_WINDOW = 8
 
 @dataclass(frozen=True)
 class MLPConfig:
-    """Training settings for the two-hidden-layer daily MLP."""
+    """Training settings for the one-hidden-layer daily MLP."""
 
     hidden_units: int = 32
-    hidden_layers: int = 2
+    hidden_layers: int = 1
     activation: str = "tanh"
     train_days: int = 116
     min_training_days: int = 14
@@ -45,8 +45,8 @@ class MLPConfig:
     def __post_init__(self) -> None:
         if self.hidden_units < 1:
             raise ValueError("hidden_units must be positive.")
-        if self.hidden_layers != 2:
-            raise ValueError("The MLP architecture requires exactly two hidden layers.")
+        if self.hidden_layers != 1:
+            raise ValueError("The MLP architecture requires exactly one hidden layer.")
         if self.activation != "tanh":
             raise ValueError("The MLP activation must be 'tanh'.")
         if self.train_days < 1:
@@ -156,8 +156,8 @@ def _daily_rows(frame: pd.DataFrame, label: str) -> dict[date, int]:
     return {day: position for position, day in enumerate(dates)}
 
 
-class _TwoHiddenLayerMLP:
-    """Two dense tanh layers plus a masked linear price-lag branch."""
+class _OneHiddenLayerMLP:
+    """One dense tanh layer plus a masked linear price-lag branch."""
 
     def __init__(self, config: MLPConfig, skip_mask: np.ndarray) -> None:
         self.config = config
@@ -171,23 +171,14 @@ class _TwoHiddenLayerMLP:
         parameters: list[np.ndarray],
         skip_mask: np.ndarray,
     ) -> tuple[np.ndarray, np.ndarray]:
-        (
-            weights_in,
-            bias_hidden,
-            weights_hidden,
-            bias_hidden_2,
-            weights_out,
-            bias_out,
-            weights_skip,
-        ) = parameters
-        hidden_1 = np.tanh(hidden_inputs @ weights_in + bias_hidden)
-        hidden_2 = np.tanh(hidden_1 @ weights_hidden + bias_hidden_2)
+        weights_in, bias_hidden, weights_out, bias_out, weights_skip = parameters
+        hidden = np.tanh(hidden_inputs @ weights_in + bias_hidden)
         output = (
-            hidden_2 @ weights_out
+            hidden @ weights_out
             + bias_out
             + skip_inputs @ (weights_skip * skip_mask)
         )
-        return output, np.stack((hidden_1, hidden_2))
+        return output, hidden
 
     def _train(
         self,
@@ -215,12 +206,6 @@ class _TwoHiddenLayerMLP:
                 np.zeros(hidden_count),
                 rng.normal(
                     0.0,
-                    math.sqrt(1.0 / hidden_count),
-                    (hidden_count, hidden_count),
-                ),
-                np.zeros(hidden_count),
-                rng.normal(
-                    0.0,
                     math.sqrt(2.0 / (hidden_count + output_count)),
                     (hidden_count, output_count),
                 ),
@@ -228,7 +213,7 @@ class _TwoHiddenLayerMLP:
                 np.zeros((skip_count, output_count)),
             ]
         else:
-            if len(initial_parameters) != 7:
+            if len(initial_parameters) != 5:
                 raise ValueError("Initial MLP parameters do not match the architecture.")
             parameters = [value.copy() for value in initial_parameters]
         first_moments = [np.zeros_like(value) for value in parameters]
@@ -240,34 +225,18 @@ class _TwoHiddenLayerMLP:
         best_epoch = 0
         stale_epochs = 0
         for epoch in range(1, epochs + 1):
-            predictions, hidden_layers = self._forward(
+            predictions, hidden = self._forward(
                 hidden_inputs, skip_inputs, parameters, self.skip_mask
             )
             residual = 2.0 * (predictions - targets) / targets.shape[0]
-            (
-                weights_in,
-                _,
-                weights_hidden,
-                _,
-                weights_out,
-                _,
-                weights_skip,
-            ) = parameters
-            hidden_1, hidden_2 = hidden_layers
+            weights_in, _, weights_out, _, weights_skip = parameters
             active_weights_skip = weights_skip * self.skip_mask
-            output_gradient = residual @ weights_out.T
-            hidden_2_gradient = output_gradient * (1.0 - hidden_2**2)
-            hidden_1_gradient = (
-                hidden_2_gradient @ weights_hidden.T
-            ) * (1.0 - hidden_1**2)
+            hidden_gradient = (residual @ weights_out.T) * (1.0 - hidden**2)
             gradients = [
-                hidden_inputs.T @ hidden_1_gradient
+                hidden_inputs.T @ hidden_gradient
                 + 2.0 * self.config.l2 * weights_in,
-                hidden_1_gradient.sum(axis=0),
-                hidden_1.T @ hidden_2_gradient
-                + 2.0 * self.config.l2 * weights_hidden,
-                hidden_2_gradient.sum(axis=0),
-                hidden_2.T @ residual + 2.0 * self.config.l2 * weights_out,
+                hidden_gradient.sum(axis=0),
+                hidden.T @ residual + 2.0 * self.config.l2 * weights_out,
                 residual.sum(axis=0),
                 (
                     skip_inputs.T @ residual
@@ -323,7 +292,7 @@ class _TwoHiddenLayerMLP:
         hidden_inputs: np.ndarray,
         skip_inputs: np.ndarray,
         targets: np.ndarray,
-    ) -> "_TwoHiddenLayerMLP":
+    ) -> "_OneHiddenLayerMLP":
         if self.skip_mask.shape != (skip_inputs.shape[1], targets.shape[1]):
             raise ValueError("Skip-connection mask does not match model inputs.")
         if not self.skip_mask.any(axis=0).all():
@@ -507,7 +476,7 @@ def rolling_mlp_forecast(
         hidden_test_scaled = scaled_test[hidden_columns].to_numpy(dtype=float)
         skip_full_scaled = scaled_full_train[skip_columns].to_numpy(dtype=float)
         skip_test_scaled = scaled_test[skip_columns].to_numpy(dtype=float)
-        model = _TwoHiddenLayerMLP(config, skip_mask)
+        model = _OneHiddenLayerMLP(config, skip_mask)
         model.fit(hidden_full_scaled, skip_full_scaled, transformed_targets)
         transformed_prediction = model.predict(
             hidden_test_scaled, skip_test_scaled

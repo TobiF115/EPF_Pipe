@@ -13,11 +13,11 @@ from pipeline.mlp.mlp import (
 
 
 class MLPForecastTests(unittest.TestCase):
-    def test_default_config_uses_two_tanh_layers_and_two_training_phases(self):
+    def test_default_config_uses_one_tanh_layer_and_two_training_phases(self):
         config = MLPConfig()
 
         self.assertEqual(config.hidden_units, 32)
-        self.assertEqual(config.hidden_layers, 2)
+        self.assertEqual(config.hidden_layers, 1)
         self.assertEqual(config.activation, "tanh")
         self.assertEqual(config.train_days, 116)
         self.assertEqual(config.fine_tune_fraction, 0.3)
@@ -25,6 +25,10 @@ class MLPForecastTests(unittest.TestCase):
             config.fine_tune_learning_rate,
             config.learning_rate,
         )
+
+    def test_config_rejects_two_hidden_layers(self):
+        with self.assertRaisesRegex(ValueError, "exactly one hidden layer"):
+            MLPConfig(hidden_layers=2)
 
     @staticmethod
     def _feature_matrices(day_count=16):
