@@ -178,6 +178,29 @@ class OperationalModelPlanTests(unittest.TestCase):
         self.assertTrue(config.needs_exaa)
         self.assertEqual(config.required_dwd_clusters, (5,))
 
+    def test_lstm_exaa_enriched_cli_selects_nn_inputs_and_only_c5(self):
+        args = build_parser().parse_args(
+            ["--lstm-exaa-enriched", "--no-submit"]
+        )
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            config = _apply_cli(_config(Path(temporary_directory)), args)
+
+        self.assertEqual(config.point_variant, "exaa_enriched")
+        self.assertEqual(config.sqra_variant, "fundamental_c5")
+        self.assertTrue(config.needs_exaa)
+        self.assertEqual(config.required_dwd_clusters, (5,))
+
+    def test_lstm_fundamental_cli_disables_exaa_and_selects_only_c5(self):
+        args = build_parser().parse_args(["--lstm-fundamental", "--no-submit"])
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            config = _apply_cli(_config(Path(temporary_directory)), args)
+
+        self.assertEqual(config.point_variant, "fundamental")
+        self.assertEqual(config.sqra_variant, "fundamental_c5")
+        self.assertFalse(config.needs_exaa)
+        self.assertEqual(config.download_exaa, "false")
+        self.assertEqual(config.required_dwd_clusters, (5,))
+
     def test_nn_exaa_enriched_starts_one_week_after_latest_input_history(self):
         with tempfile.TemporaryDirectory() as temporary_directory:
             root = Path(temporary_directory)
@@ -201,8 +224,61 @@ class OperationalModelPlanTests(unittest.TestCase):
                 ).to_csv(path)
 
             feature_start = _nn_exaa_enriched_feature_start(config)
+            fundamental_feature_start = _nn_exaa_enriched_feature_start(
+                config,
+                include_exaa=False,
+            )
 
         self.assertEqual(feature_start, date(2026, 7, 13))
+        self.assertEqual(fundamental_feature_start, date(2026, 7, 11))
+
+    def test_nn_exaa_enriched_accepts_requested_start_with_available_history(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            config = _config(root)
+            weather_dir = config.icon_cluster_dir(5)
+            weather_dir.mkdir(parents=True)
+            (weather_dir / "dwd_history.json").write_text(
+                json.dumps({"first_delivery_date": "2026-05-23"}),
+                encoding="utf-8",
+            )
+            histories = (
+                (config.entsoe_price_cache_dir / "prices_da.csv", "2025-10-01"),
+                (config.exaa_price_cache_dir / "prices_exaa.csv", "2026-07-06"),
+                (config.entsoe_load_cache_dir / "load_forecast.csv", "2026-07-04"),
+            )
+            for path, first_day in histories:
+                path.parent.mkdir(parents=True, exist_ok=True)
+                pd.DataFrame(
+                    {"value": [1.0]},
+                    index=[pd.Timestamp(first_day, tz="Europe/Berlin")],
+                ).to_csv(path)
+
+            feature_start = _nn_exaa_enriched_feature_start(
+                config,
+                requested_start_date=date(2026, 9, 1),
+            )
+            with self.assertRaisesRegex(ValueError, "earliest supported date"):
+                _nn_exaa_enriched_feature_start(
+                    config,
+                    requested_start_date=date(2026, 7, 1),
+                )
+
+        self.assertEqual(feature_start, date(2026, 9, 1))
+
+    def test_lstm_exaa_enriched_start_date_cli_is_parsed(self):
+        args = build_parser().parse_args(
+            [
+                "--lstm-exaa-enriched",
+                "--lstm-exaa-enriched-start-date",
+                "2026-09-01",
+            ]
+        )
+
+        self.assertEqual(
+            args.lstm_exaa_enriched_start_date,
+            date(2026, 9, 1),
+        )
 
     def test_operational_dwd_root_is_separate_from_historical_archive(self):
         with tempfile.TemporaryDirectory() as temporary_directory:

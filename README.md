@@ -341,6 +341,36 @@ empirical d-1 persistence residuals from the preceding 60 days; it is not an
 NN- or SQRA-trained quantile model. Use `--no-submit` to create the forecasts
 and payloads locally without sending them to Energy Arena.
 
+To run the recurrent LSTM variant over the 96 quarter-hour MTUs of the target
+delivery day, use:
+
+```powershell
+python run_pipeline.py --lstm-exaa-enriched
+```
+
+Use `--lstm-exaa-enriched-start-date YYYY-MM-DD` to set the first training
+feature date explicitly; the pipeline still loads the preceding seven days for
+price-lag features and checks that all inputs cover the requested date.
+
+The LSTM uses the same C=5 weather, EPEX price lags, load forecast, and target-
+day EXAA features as the EXAA-enriched NN. It also uses the mean EPEX price
+from the seven preceding complete delivery days in both the LSTM inputs and a
+linear skip connection to every MTU output. It submits a point forecast and
+pooled empirical D-1 persistence-residual quantiles. Add `--no-submit` to
+generate and validate the forecasts locally only.
+
+To train the same recurrent architecture without any EXAA input features, use:
+
+```powershell
+python run_pipeline.py --lstm-fundamental --no-submit
+```
+
+This mode uses C=5 weather, EPEX price lags, load forecast, temporal features,
+and the mean EPEX price from the seven preceding complete delivery days. The
+weekly mean is also connected to all 96 outputs. It does not request or use
+EXAA prices. `--no-submit` keeps the generated point and quantile forecasts
+local.
+
 The NN uses an expanding training window: its feature history starts one week
 after the latest first-recorded date among the C=5 weather, EPEX, EXAA, and load
 data. It starts fitting once seven complete training days are available and

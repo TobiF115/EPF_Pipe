@@ -1,0 +1,43 @@
+{
+  "target_date": "2026-11-14",
+  "model": "LSTM_fundamental",
+  "exaa_features_used": false,
+  "recurrent_layers": 1,
+  "hidden_units": 32,
+  "sequence_steps": 96,
+  "sequence_step": "delivery-day MTU",
+  "seven_day_average_price_feature": "average_da_price_last_7d",
+  "seven_day_average_price_skip_outputs": 96,
+  "training_window_calendar_days": 126,
+  "training_window_start": "2026-07-11",
+  "training_window_type": "expanding",
+  "minimum_training_days": 7,
+  "complete_training_days": 112,
+  "forecast_mtu_count": 96,
+  "actual_target_prices_available": 0,
+  "quantile_method": {
+    "method": "pooled_empirical_persistence_residuals",
+    "lag_days": 1,
+    "calibration_window_days": 60,
+    "minimum_complete_days": 14,
+    "complete_calibration_days": 60,
+    "calibration_observations": 5760,
+    "calibration_start": "2026-09-15",
+    "calibration_end": "2026-11-13",
+    "target_excluded_from_calibration": true,
+    "median_centered": true,
+    "quantiles": [
+      0.025,
+      0.25,
+      0.5,
+      0.75,
+      0.975
+    ]
+  },
+  "submission_requested": true,
+  "forecast_summary_eur_per_mwh": {
+    "min": 95.41229026358252,
+    "mean": 167.54929244338487,
+    "max": 254.41787482969897
+  }
+}
