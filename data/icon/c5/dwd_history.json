@@ -12,23 +12,23 @@
   "files": {
     "u10": {
       "filename": "u10.parquet",
-      "rows": 3960,
-      "size": 160074
+      "rows": 4345,
+      "size": 177240
     },
     "v10": {
       "filename": "v10.parquet",
-      "rows": 3960,
-      "size": 160763
+      "rows": 4345,
+      "size": 177809
     },
     "ASWDIR_S": {
       "filename": "ASWDIR_S.parquet",
-      "rows": 15840,
-      "size": 486863
+      "rows": 17380,
+      "size": 530287
     },
     "ASWDIFD_S": {
       "filename": "ASWDIFD_S.parquet",
-      "rows": 15840,
-      "size": 475160
+      "rows": 17380,
+      "size": 516025
     }
   },
   "timezone": "Europe/Berlin"

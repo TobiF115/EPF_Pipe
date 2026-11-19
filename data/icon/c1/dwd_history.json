@@ -8,27 +8,27 @@
     "ASWDIFD_S"
   ],
   "first_delivery_date": "2026-05-23",
-  "last_delivery_date": "2026-11-04",
+  "last_delivery_date": "2026-11-20",
   "files": {
     "u10": {
       "filename": "u10.parquet",
-      "rows": 3720,
-      "size": 57493
+      "rows": 4345,
+      "size": 67346
     },
     "v10": {
       "filename": "v10.parquet",
-      "rows": 3720,
-      "size": 57678
+      "rows": 4345,
+      "size": 67502
     },
     "ASWDIR_S": {
       "filename": "ASWDIR_S.parquet",
-      "rows": 14880,
-      "size": 197323
+      "rows": 17380,
+      "size": 229858
     },
     "ASWDIFD_S": {
       "filename": "ASWDIFD_S.parquet",
-      "rows": 14880,
-      "size": 196045
+      "rows": 17380,
+      "size": 228045
     }
   },
   "timezone": "Europe/Berlin"
