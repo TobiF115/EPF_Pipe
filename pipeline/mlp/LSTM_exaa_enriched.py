@@ -514,6 +514,7 @@ def _rolling_lstm_forecast(
     hidden_columns: Sequence[str],
     skip_columns: Sequence[str],
     skip_mask: np.ndarray,
+    require_seven_day_average: bool = True,
 ) -> pd.DataFrame:
     """Train and forecast from caller-selected sequence and skip features."""
     if not isinstance(config, LSTMConfig):
@@ -525,7 +526,10 @@ def _rolling_lstm_forecast(
     if X.columns.has_duplicates:
         raise ValueError("X contains duplicate feature columns.")
 
-    if SEVEN_DAY_AVERAGE_PRICE_COLUMN not in hidden_columns:
+    if (
+        require_seven_day_average
+        and SEVEN_DAY_AVERAGE_PRICE_COLUMN not in hidden_columns
+    ):
         raise ValueError("LSTM features must include the seven-day average DA price.")
     hidden_columns = list(hidden_columns)
     skip_columns = list(skip_columns)

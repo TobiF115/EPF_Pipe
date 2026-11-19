@@ -32,10 +32,12 @@ from pipeline.operational.energy_arena import (
     submission_record_path,
 )
 from pipeline.operational.runner import (
+    LSTM_PRICE_LOAD_START_DATE,
     _assemble_matrices,
     _display_path,
     _exception_summary,
     _fetch_retry,
+    _load_lstm_price_load_market_data,
     _load_entsoe_prices,
     _nn_exaa_enriched_feature_start,
     _payload_path,
@@ -189,6 +191,99 @@ class OperationalModelPlanTests(unittest.TestCase):
         self.assertEqual(config.sqra_variant, "fundamental_c5")
         self.assertTrue(config.needs_exaa)
         self.assertEqual(config.required_dwd_clusters, (5,))
+
+    def test_price_load_lstm_cli_does_not_require_weather(self):
+        args = build_parser().parse_args(
+            ["--lstm-exaa-enriched-price-load", "--no-submit"]
+        )
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            config = _apply_cli(_config(Path(temporary_directory)), args)
+
+        self.assertEqual(config.point_variant, "exaa_only")
+        self.assertEqual(config.sqra_variant, "exaa_only")
+        self.assertFalse(config.needs_dwd)
+        self.assertTrue(config.needs_exaa)
+
+    def test_price_load_lstm_downloads_epex_exaa_and_load_in_90_day_chunks(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            config = _config(Path(temporary_directory))
+            target_date = date(2026, 11, 19)
+            exaa_index = pd.date_range(
+                target_date,
+                target_date + pd.Timedelta(days=1),
+                freq="15min",
+                inclusive="left",
+                tz=config.timezone,
+            )
+            exaa_frame = pd.DataFrame(
+                {"price_exaa": np.ones(len(exaa_index))},
+                index=exaa_index,
+            )
+            epex_calls = []
+            load_calls = []
+
+            def fake_fetch_prices(start, end, **kwargs):
+                epex_calls.append((start.date(), end.date(), kwargs))
+                return pd.DataFrame(
+                    {"price_da": [1.0]},
+                    index=pd.DatetimeIndex([start]),
+                )
+
+            def fake_fetch_load(start, end, **kwargs):
+                load_calls.append((start.date(), end.date(), kwargs))
+                index = pd.date_range(
+                    start,
+                    end + pd.Timedelta(days=1),
+                    freq="15min",
+                    inclusive="left",
+                )
+                return pd.DataFrame({"load_fc": np.ones(len(index))}, index=index)
+
+            def fake_cache_loader(path, start, end, fetcher, *, timezone):
+                return fetcher(start, end)
+
+            with (
+                patch(
+                    "pipeline.operational.runner.load_or_fetch_frame",
+                    side_effect=fake_cache_loader,
+                ),
+                patch(
+                    "pipeline.operational.runner.fetch_prices",
+                    side_effect=fake_fetch_prices,
+                ),
+                patch(
+                    "pipeline.operational.runner.fetch_prices_exaa",
+                    return_value=exaa_frame,
+                ) as fetch_exaa,
+                patch(
+                    "pipeline.operational.runner.fetch_load_forecast",
+                    side_effect=fake_fetch_load,
+                ),
+            ):
+                prices, exaa, load = _load_lstm_price_load_market_data(
+                    config,
+                    target_date=target_date,
+                )
+
+        self.assertEqual(len(epex_calls), 5)
+        self.assertEqual(
+            epex_calls[0][0],
+            LSTM_PRICE_LOAD_START_DATE - pd.Timedelta(days=7),
+        )
+        self.assertEqual(
+            epex_calls[-1][1],
+            target_date - pd.Timedelta(days=1),
+        )
+        self.assertTrue(
+            all(call[2]["api_key"] == config.entsoe_api_key for call in epex_calls)
+        )
+        self.assertEqual(len(load_calls), 5)
+        self.assertEqual(load_calls[0][0], LSTM_PRICE_LOAD_START_DATE)
+        self.assertEqual(load_calls[-1][1], target_date)
+        fetch_exaa.assert_called_once()
+        self.assertEqual(len(exaa), 96)
+        self.assertEqual(len(load), 96)
+        self.assertGreater(len(prices), 0)
 
     def test_lstm_fundamental_cli_disables_exaa_and_selects_only_c5(self):
         args = build_parser().parse_args(["--lstm-fundamental", "--no-submit"])

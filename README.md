@@ -1,22 +1,10 @@
 # An Open, Operational Probabilistic Forecasting Pipeline for Day-Ahead Electricity Prices
 
 
-This repository is the code base for the paper *An Open, Operational
-Probabilistic Forecasting Pipeline for Day-Ahead Electricity Prices*. It
-produces 15-minute point and probabilistic day-ahead electricity-price
-forecasts for the EPEX DE-LU bidding zone using LEAR point models and SQRA
-probabilistic post-processing.
-
-The repository supports two separate workflows:
-
-- `run_pipeline.py` is the fully open, automated, operational pipeline. It
-  maintains the required market and ICON-D2 inputs, estimates the point and
-  probabilistic models, generates the next day-ahead forecasts, and can submit
-  both forecasts to Energy Arena.
-- `run_full_experiment.py` and `run_full_evaluation.py` reproduce the paper's
-  experimental analysis. The first script generates the historical point and
-  SQRA forecasts; the second evaluates the completed forecasts and creates the
-  paper's tables and figures.
+This repository implements an open, automated pipeline for 15-minute point
+and probabilistic day-ahead electricity-price forecasts for the EPEX DE-LU
+bidding zone. The daily workflow maintains market and ICON-D2 inputs, runs the
+selected forecasting models, and can submit forecasts to Energy Arena.
 
 All automated computation is implemented in ordinary Python modules. The
 notebooks are optional interfaces for interactive inspection and do not contain
@@ -28,37 +16,25 @@ an alternative pipeline implementation.
 DA_Price_Forecasting_Pipeline_DE_LU/
 ├── run_pipeline.py                 # daily operational entry point
 ├── prepare_dwd_data.py             # daily ICON-D2 preparation
-├── run_full_experiment.py          # paper point and SQRA experiments
-├── run_full_evaluation.py          # paper evaluation, tables, and figures
 ├── pipeline/
 │   ├── operational/                # downloads, validation, submission, locking
 │   ├── lear/
-│   │   ├── lear_model.py           # reusable LEAR and feature functions
-│   │   ├── run_lear.py             # LEAR/ANC command-line entry point
-│   │   └── lear_pipeline.ipynb     # optional interactive interface
+│   │   └── lear_model.py           # LEAR and feature functions
 │   ├── mlp/
-│   │   └── mlp.py                  # experimental C=5 neural point model
+│   │   └── ...                     # operational neural point models
 │   ├── sqra/
-│   │   ├── sqra_model.py           # reusable SQRA functions
-│   │   ├── run_sqra.py             # SQRA command-line entry point
-│   │   └── sqra_pipeline.ipynb     # optional interactive interface
+│   │   └── sqra_model.py           # probabilistic post-processing
 │   ├── delivery_index.py           # canonical delivery-day/MTU indexing
 │   └── dwd_history.py              # appendable ICON-D2 history format
-├── evaluation/
-│   ├── evaluation_core.py          # metrics and statistical tests
-│   ├── run_evaluation.py           # evaluation command-line entry point
-│   ├── evaluation.ipynb            # optional interactive interface
-│   └── ...                         # coverage checks and Excel exports
-├── preprocessing/                  # historical ERA5 and ICON-D2 preprocessing
-├── visualization/                  # publication figures and tables
 ├── data/
 │   ├── clustering/                 # spatial ICON-D2 cluster definitions
 │   ├── icon/                       # consolidated operational weather histories
-│   └── shapefile/                  # map assets
-├── experiment_config.py            # shared paper-experiment configuration
-├── experiment_manifest.py          # canonical LEAR and SQRA configurations
+│   └── shapefile/                  # geographic boundary assets
+├── experiment_config.py            # shared pipeline configuration
+├── experiment_manifest.py          # canonical model configurations
+├── market_cache.py                 # persistent market-data caches
 ├── .env.example                    # configuration template
-└── requirements.txt                # one environment for the complete repository
+└── requirements.txt                # pipeline dependencies
 ```
 
 ## Setup
@@ -74,9 +50,8 @@ python -m pip install --upgrade pip
 python -m pip install -r .\requirements.txt
 ```
 
-The single `requirements.txt` covers the operational pipeline, paper
-experiments, evaluation, visualizations, and optional notebooks. Registering a
-Jupyter kernel is optional:
+The `requirements.txt` installs the operational pipeline dependencies.
+Registering a Jupyter kernel is optional:
 
 ```powershell
 python -m ipykernel install --user --name forecast --display-name "forecast (Python 3.9)"
@@ -357,7 +332,11 @@ day EXAA features as the EXAA-enriched NN. It also uses the mean EPEX price
 from the seven preceding complete delivery days in both the LSTM inputs and a
 linear skip connection to every MTU output. It submits a point forecast and
 pooled empirical D-1 persistence-residual quantiles. Add `--no-submit` to
-generate and validate the forecasts locally only.
+generate and validate the forecasts locally only. The latest point forecast,
+quantile forecast, and run metadata overwrite the fixed files
+`results/operational/mlp/forecast_lstm_exaa_enriched.csv`,
+`results/operational/mlp/forecast_lstm_exaa_enriched_quantiles.csv`, and
+`results/operational/mlp/forecast_lstm_exaa_enriched.json`.
 
 To train the same recurrent architecture without any EXAA input features, use:
 
@@ -370,6 +349,23 @@ and the mean EPEX price from the seven preceding complete delivery days. The
 weekly mean is also connected to all 96 outputs. It does not request or use
 EXAA prices. `--no-submit` keeps the generated point and quantile forecasts
 local.
+
+For an EXAA-enriched LSTM without weather inputs, but with ENTSO-E load,
+use:
+
+```powershell
+python run_pipeline.py --lstm-exaa-enriched-price-load
+```
+
+This model uses only the EPEX D-1, D-2, and D-7 price vectors and the target-
+day EXAA prices plus the target-day ENTSO-E load forecast. Its expanding
+training history starts on 2025-10-01; it fetches the preceding seven days of
+EPEX data for the lag features. Historical EPEX and load requests are split
+into 90-day intervals and returned on the 15-minute grid. EXAA history is
+requested through the target day. Historical training days without an
+available load forecast are omitted rather than imputed. Use `--no-submit` to
+save forecasts without sending them to Energy Arena. The former
+`--lstm-exaa-enriched-price-only` option remains an alias.
 
 The NN uses an expanding training window: its feature history starts one week
 after the latest first-recorded date among the C=5 weather, EPEX, EXAA, and load
@@ -401,176 +397,6 @@ A practical local-time schedule is:
 - approximately 10:00: `prepare_dwd_data.py`;
 - approximately 10:30: Fundamental `run_pipeline.py`;
 - approximately 11:15: `run_pipeline.py --exaa-only`.
-
-## Paper experimental analysis
-
-The historical paper workflow is intentionally separate from the daily
-operational pipeline. `run_full_experiment.py` performs the expensive point and
-SQRA backtests. `run_full_evaluation.py` reads those completed forecasts and
-runs the cheaper evaluation, table, and figure stages.
-
-### Experimental data
-
-The paper analysis uses:
-
-- ENTSO-E DE-LU day-ahead prices and load forecasts;
-- EXAA prices from ENTSO-E sequence 2;
-- historical DWD ICON-D2 forecasts;
-- ERA5 reanalysis fields; and
-- the spatial cluster and map files under `data/`.
-
-Market inputs are downloaded into the configured paper caches when required
-coverage is missing. ERA5 and historical ICON-D2 inputs cannot be reconstructed
-by the experiment runner and must be supplied or preprocessed first.
-
-Expected paths are configured in `.env`:
-
-```dotenv
-ERA5_RAW_ARCHIVE=/path/to/raw/ERA5
-ERA5_DATA_ROOT=data/era5
-DWD_RAW_ARCHIVE=/path/to/raw/ICON-D2
-ICON_DATA_ROOT=data/icon
-
-MARKET_DATA_CACHE_DIR=data/cache/entsoe
-ENTSOE_DE_LU_CACHE_DIR=data/cache/entsoe
-EXAA_CACHE_DIR=data/cache/entsoe
-ENTSOE_LOAD_FORECAST_CACHE_DIR=data/cache/entsoe
-
-RESULTS_ROOT=results_extended_2025-12-01_2026-07-31
-OUTPUT_ROOT=output_extended_2025-12-01_2026-07-31
-```
-
-### Historical weather preprocessing
-
-```powershell
-python .\preprocessing\preprocess_historic.py --icon
-python .\preprocessing\preprocess_historic.py --era5 --clusters 1,5,25
-```
-
-### Experiment configuration
-
-The evaluation horizon and rolling calibration share one configuration:
-
-```dotenv
-EVALUATION_START_DATE=
-EVALUATION_END_DATE=
-EVALUATION_SKIP_DATES=
-FORECAST_SKIP_DATES=
-SQRA_TRAIN_DAYS=60
-SQRA_MTU_SPECIFIC=false
-LEAR_USE_VST=true
-MAX_LEAR_TRAIN_DAYS=364
-```
-
-### Point-forecast experiments
-
-With no selector, the runner creates all 28 point forecasts: 27 fitted LEAR
-configurations and the EXAA-naive benchmark. It does not continue into SQRA or
-evaluation automatically:
-
-```powershell
-python .\run_full_experiment.py
-```
-
-The expensive runs can be split into independent batches:
-
-```powershell
-python .\run_full_experiment.py --dwd
-python .\run_full_experiment.py --exaa
-python .\run_full_experiment.py --era5 --d 56
-python .\run_full_experiment.py --era5 --d 112
-python .\run_full_experiment.py --era5 --d 364
-```
-
-- `--dwd` selects the six ICON-D2 point models.
-- `--exaa` selects the three EXAA-Only LEAR models and EXAA-naive.
-- `--era5` selects the 18 ERA5 models.
-- `--d 56|112|364` restricts the LEAR calibration window.
-- `--force` recomputes only the selected batch; otherwise complete outputs are
-  resumed.
-
-### Experimental C=5 MLP
-
-`pipeline/mlp/mlp.py` contains a daily multi-output point model that consumes
-the existing LEAR C=5 feature matrix and 96-value target matrix. It has a
-32-neuron tanh hidden layer for non-price inputs and a direct linear skip branch
-for the previous-day final hour and the same-time prices from one, two, and
-seven days earlier. It uses the LEAR fold-wise feature and target transforms
-and returns the canonical `y_pred`/`y_true` delivery-date/MTU index.
-
-The reusable entry point is `rolling_mlp_forecast(X, Y, forecast_days,
-MLPConfig(...))`. This module is experimental and is not yet selected by
-`run_pipeline.py`; it does not submit forecasts to Energy Arena.
-
-### SQRA experiments
-
-After the required point forecasts exist:
-
-```powershell
-python .\evaluation\check_point_forecast_coverage.py --show-ok
-python .\run_full_experiment.py --sqra
-```
-
-`--sqra` by itself runs no point models. The coverage checker reports missing
-files, missing delivery days, partial 96-MTU days, extra dates, and whether a
-gap affects the evaluation period.
-
-The six SQRA configurations use:
-
-- ERA5 Fundamental: `D_LEAR=364`, `C={1,5,25}`;
-- ICON-D2 Fundamental: `D_LEAR=56`, `C={1,5,25}`;
-- ERA5 EXAA-Enriched: `D_LEAR=364`, `C={1,5,25}`;
-- ICON-D2 EXAA-Enriched: `D_LEAR=56`, `C={1,5,25}`;
-- EXAA-Only: `D_LEAR={56,112,364}`; and
-- EXAA-Naive: the raw EXAA point forecast.
-
-
-### Evaluation, tables, and figures
-
-Once all point and SQRA forecasts exist, run the independent post-processing
-pipeline:
-
-```powershell
-python .\run_full_evaluation.py
-```
-
-The evaluation stage calculates point and probabilistic metrics, Kupiec tests,
-and Giacomini-White tests. It also appends or refreshes the
-`period=evaluation` row in every point model's `metrics.csv` without refitting a
-model. The plotting stage generates the configured manuscript tables and
-figures using the completed result files.
-
-Absolute Normalized Contribution calculations are optional because they are
-memory-intensive:
-
-```powershell
-python .\run_full_evaluation.py --anc
-```
-
-### Additional analyses and direct entry points
-
-Computational stages and supplemental analyses can also be run directly:
-
-```powershell
-python -m pipeline.lear.run_lear exaa-naive
-python -m pipeline.lear.run_lear operational --config era5_d56_c1_fundamental
-python -m pipeline.lear.run_lear anc --variant fundamental
-python -m pipeline.sqra.run_sqra --config era5_fundamental
-python -m evaluation.run_evaluation
-python -m evaluation.run_benchmarks
-python .\evaluation\export_sqra_evaluation_metrics.py
-python .\evaluation\export_sqra_kupiec_excel.py
-python .\evaluation\plot_monthly_point_mae.py
-python .\visualization\plot_exaa_epex_correlation.py
-python .\visualization\plot_cluster_heatmap.py
-```
-
-The benchmark runner creates persistence `d-1` and `d-7` point forecasts and
-their SQRA post-processed variants below `RESULTS_ROOT/benchmarks`. The two
-Excel exporters provide the SQRA evaluation metrics and raw Kupiec MTU counts.
-The monthly script creates the point-model monthly MAE and monthly negative
-EPEX-price figures. The correlation script reports Pearson and Spearman EXAA–
-EPEX correlations for the configured delivery-day groups.
 
 ## Tests
 

@@ -61,6 +61,10 @@ from pipeline.mlp.LSTM_exaa_enriched import (
     rolling_lstm_exaa_enriched_forecast,
 )
 from pipeline.mlp.LSTM_fundamental import rolling_lstm_fundamental_forecast
+from pipeline.mlp.LSTM_exaa_enriched_price_load import (
+    build_price_load_inputs,
+    rolling_lstm_exaa_enriched_price_load_forecast,
+)
 from pipeline.dwd_history import consolidated_delivery_available
 from pipeline.operational.prepare_dwd import prepare_target_dwd
 from pipeline.operational.locking import interprocess_lock
@@ -82,6 +86,7 @@ from pipeline.sqra.sqra_model import build_sqra_panel, generate_sqra_forecast
 PERSISTENCE_FALLBACK_LAGS = (1, 7)
 PERSISTENCE_FALLBACK_CALIBRATION_DAYS = 60
 PERSISTENCE_FALLBACK_MIN_COMPLETE_DAYS = 14
+LSTM_PRICE_LOAD_START_DATE = date(2025, 10, 1)
 
 
 class InsufficientPersistenceCalibrationError(RuntimeError):
@@ -589,6 +594,116 @@ def load_market_data(
                 f"feature. Last error: {exc}",
                 flush=True,
             )
+    return prices, exaa, load
+
+
+def _load_lstm_price_load_market_data(
+    config: OperationalConfig,
+    *,
+    target_date: date,
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    """Fetch EPEX, EXAA, and load history without weather inputs."""
+    epex_start = LSTM_PRICE_LOAD_START_DATE - timedelta(days=7)
+    epex_end = target_date - timedelta(days=1)
+    epex_start_ts = _timestamp(epex_start, config.timezone)
+    epex_end_ts = _timestamp(epex_end, config.timezone)
+
+    def fetch_epex_in_chunks(start: pd.Timestamp, end: pd.Timestamp) -> pd.DataFrame:
+        frames: list[pd.DataFrame] = []
+        current_day = start.date()
+        while current_day <= end.date():
+            chunk_end = min(current_day + timedelta(days=89), end.date())
+            frames.append(
+                fetch_prices(
+                    _timestamp(current_day, config.timezone),
+                    _timestamp(chunk_end, config.timezone),
+                    api_key=config.entsoe_api_key,
+                    target_tz=config.timezone,
+                )
+            )
+            current_day = chunk_end + timedelta(days=1)
+        if not frames:
+            raise ValueError("No EPEX history chunks were requested.")
+        return pd.concat(frames).sort_index()
+
+    prices = _fetch_retry(
+        "ENTSO-E 15-minute prices",
+        lambda: load_or_fetch_frame(
+            config.entsoe_price_cache_dir / "prices_da.csv",
+            epex_start_ts,
+            epex_end_ts,
+            fetch_epex_in_chunks,
+            timezone=config.timezone,
+        ),
+        retry_seconds=config.market_data_retry_seconds,
+    )
+    exaa_start_ts = _timestamp(LSTM_PRICE_LOAD_START_DATE, config.timezone)
+    target_ts = _timestamp(target_date, config.timezone)
+    exaa = _fetch_retry(
+        "ENTSO-E EXAA prices",
+        lambda: load_or_fetch_frame(
+            config.exaa_price_cache_dir / "prices_exaa.csv",
+            exaa_start_ts,
+            target_ts,
+            partial(
+                fetch_prices_exaa,
+                api_key=config.entsoe_api_key,
+                target_tz=config.timezone,
+            ),
+            timezone=config.timezone,
+        ),
+        retry_seconds=config.market_data_retry_seconds,
+    )
+    exaa = _require_complete_delivery_day(
+        exaa,
+        target_date,
+        config.timezone,
+        "EXAA prices",
+    )
+
+    load_start_ts = _timestamp(LSTM_PRICE_LOAD_START_DATE, config.timezone)
+    load_end_ts = _timestamp(target_date, config.timezone)
+
+    def fetch_load_in_chunks(
+        start: pd.Timestamp,
+        end: pd.Timestamp,
+    ) -> pd.DataFrame:
+        frames: list[pd.DataFrame] = []
+        current_day = start.date()
+        while current_day <= end.date():
+            chunk_end = min(current_day + timedelta(days=89), end.date())
+            frames.append(
+                fetch_load_forecast(
+                    _timestamp(current_day, config.timezone),
+                    _timestamp(chunk_end, config.timezone),
+                    api_key=config.entsoe_api_key,
+                    target_tz=config.timezone,
+                )
+            )
+            current_day = chunk_end + timedelta(days=1)
+        if not frames:
+            raise ValueError("No ENTSO-E load forecast chunks were requested.")
+        return pd.concat(frames).sort_index()
+
+    load = _fetch_retry(
+        "ENTSO-E load forecast",
+        lambda: load_or_fetch_frame(
+            config.entsoe_load_cache_dir / "load_forecast.csv",
+            load_start_ts,
+            load_end_ts,
+            fetch_load_in_chunks,
+            timezone=config.timezone,
+            allow_incomplete=True,
+        ),
+        attempts=config.fundamental_load_download_attempts,
+        retry_seconds=config.market_data_retry_seconds,
+    )
+    load = _require_complete_delivery_day(
+        load,
+        target_date,
+        config.timezone,
+        "ENTSO-E load forecast",
+    )
     return prices, exaa, load
 
 
@@ -1930,7 +2045,7 @@ def execute_lstm_exaa_enriched_pipeline(
     )
 
     output_dir = config.repo_root / "results" / "operational" / "mlp"
-    stem = f"forecast_{target_date.isoformat()}_lstm_exaa_enriched"
+    stem = "forecast_lstm_exaa_enriched"
     _atomic_frame(output_dir / f"{stem}.csv", forecast, index=True)
     _atomic_frame(
         output_dir / f"{stem}_quantiles.csv",
@@ -2004,6 +2119,161 @@ def execute_lstm_exaa_enriched_pipeline(
     return {
         "target_start": targets.target_start.isoformat(),
         "point_model": "LSTM_exaa_enriched",
+        "quantile_model": "pooled_residual_persistence_d1",
+        "quantile_calibration": quantile_metadata,
+        "forecast": str(output_dir / f"{stem}.csv"),
+        "quantile_forecast": str(output_dir / f"{stem}_quantiles.csv"),
+        "submissions": submissions,
+    }
+
+
+def execute_lstm_exaa_enriched_price_load_pipeline(
+    config: OperationalConfig,
+    targets: ArenaTargets,
+    *,
+    submit: bool,
+    force_submit: bool = False,
+) -> dict[str, object]:
+    """Train the EXAA and load LSTM using market history from October 2025."""
+    target_date = targets.target_date
+    prices, exaa, load = _load_lstm_price_load_market_data(
+        config,
+        target_date=target_date,
+    )
+    features, target = build_price_load_inputs(
+        prices,
+        exaa,
+        load,
+        feature_start_date=LSTM_PRICE_LOAD_START_DATE,
+        target_date=target_date,
+        timezone=config.timezone,
+    )
+
+    forecast_day = pd.DatetimeIndex(
+        [_timestamp(target_date, config.timezone)]
+    )
+    training_mask = features.index < forecast_day[0]
+    training_features = features.loc[training_mask]
+    training_target = target.reindex(training_features.index)
+    complete_training_days = int(
+        (
+            np.isfinite(training_features.to_numpy(dtype=float)).all(axis=1)
+            & np.isfinite(training_target.to_numpy(dtype=float)).all(axis=1)
+        ).sum()
+    )
+    model_config = LSTMExaaEnrichedConfig()
+    print(
+        "LSTM_EXAA_ENRICHED_PRICE_LOAD training days: "
+        f"{complete_training_days}; features: {features.shape[1]}; "
+        f"start: {LSTM_PRICE_LOAD_START_DATE}",
+        flush=True,
+    )
+    forecast = rolling_lstm_exaa_enriched_price_load_forecast(
+        features,
+        target,
+        forecast_day,
+        model_config,
+    )
+    validate_delivery_index(forecast.index, require_complete_days=True)
+
+    quantile_forecast, quantile_metadata = (
+        build_operational_persistence_quantile_fallback(
+            prices,
+            target_date,
+            lag=1,
+            point_forecast=forecast,
+            quantiles=targets.quantile.quantiles,
+        )
+    )
+    point_payload = build_point_payload(forecast, targets.point)
+    quantile_payload = build_quantile_payload(
+        quantile_forecast,
+        targets.quantile,
+    )
+
+    output_dir = config.repo_root / "results" / "operational" / "mlp"
+    stem = f"forecast_{target_date.isoformat()}_lstm_exaa_enriched_price_load"
+    _atomic_frame(output_dir / f"{stem}.csv", forecast, index=True)
+    _atomic_frame(
+        output_dir / f"{stem}_quantiles.csv",
+        quantile_forecast,
+        index=True,
+    )
+    atomic_write_json(
+        output_dir / f"{stem}.json",
+        {
+            "target_date": target_date.isoformat(),
+            "model": "LSTM_exaa_enriched_price_load",
+            "input_features": [
+                "EPEX price lags: D-1, D-2, D-7",
+                "Target-day EXAA prices",
+                "Target-day ENTSO-E load forecast",
+            ],
+            "weather_features_used": False,
+            "load_features_used": True,
+            "training_window_start": LSTM_PRICE_LOAD_START_DATE.isoformat(),
+            "training_window_calendar_days": (
+                target_date - LSTM_PRICE_LOAD_START_DATE
+            ).days,
+            "training_window_type": "expanding",
+            "complete_training_days": complete_training_days,
+            "recurrent_layers": 1,
+            "hidden_units": model_config.hidden_units,
+            "sequence_steps": 96,
+            "forecast_mtu_count": len(forecast),
+            "actual_target_prices_available": int(
+                np.isfinite(forecast["y_true"].to_numpy(dtype=float)).sum()
+            ),
+            "quantile_method": quantile_metadata,
+            "submission_requested": submit,
+            "forecast_summary_eur_per_mwh": {
+                "min": float(forecast["y_pred"].min()),
+                "mean": float(forecast["y_pred"].mean()),
+                "max": float(forecast["y_pred"].max()),
+            },
+        },
+    )
+
+    submission_stream = "lstm_exaa_enriched_price_load"
+    atomic_write_json(
+        _payload_path(
+            config,
+            submission_stream,
+            targets.point.challenge_id,
+            targets.point.target_start,
+        ),
+        point_payload,
+    )
+    atomic_write_json(
+        _payload_path(
+            config,
+            submission_stream,
+            targets.quantile.challenge_id,
+            targets.quantile.target_start,
+        ),
+        quantile_payload,
+    )
+    submissions: dict[str, object] = {}
+    if submit:
+        submissions = _submit_arena_payloads(
+            config,
+            submission_stream,
+            (
+                ("point", targets.point, point_payload),
+                ("quantile", targets.quantile, quantile_payload),
+            ),
+            force_submit=force_submit,
+            context="LSTM EXAA-enriched price/load",
+        )
+    else:
+        print(
+            "Submission disabled; price/load LSTM payloads were saved locally.",
+            flush=True,
+        )
+
+    return {
+        "target_start": targets.target_start.isoformat(),
+        "point_model": "LSTM_exaa_enriched_price_load",
         "quantile_model": "pooled_residual_persistence_d1",
         "quantile_calibration": quantile_metadata,
         "forecast": str(output_dir / f"{stem}.csv"),
@@ -2206,6 +2476,18 @@ def build_parser() -> argparse.ArgumentParser:
         help="Use the one-layer EXAA-enriched LSTM instead of LEAR.",
     )
     variants.add_argument(
+        "--lstm-exaa-enriched-price-load",
+        "--lstm_exaa_enriched_price_load",
+        "--lstm-exaa-enriched-price-only",
+        "--lstm_exaa_enriched_price_only",
+        action="store_true",
+        help=(
+            "Use the one-layer EXAA-enriched LSTM with EPEX, EXAA, and load "
+            "inputs but no weather, starting on 2025-10-01."
+        ),
+        dest="lstm_exaa_enriched_price_load",
+    )
+    variants.add_argument(
         "--lstm-fundamental",
         action="store_true",
         help="Use the one-layer fundamental LSTM without EXAA prices.",
@@ -2248,6 +2530,12 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def _apply_cli(config: OperationalConfig, args: argparse.Namespace) -> OperationalConfig:
+    if args.lstm_exaa_enriched_price_load:
+        return replace(
+            config,
+            point_variant="exaa_only",
+            sqra_variant="exaa_only",
+        )
     if args.lstm_fundamental:
         return replace(
             config,
@@ -2345,6 +2633,12 @@ def main(argv: Optional[Sequence[str]] = None, repo_root: Optional[Path] = None)
             print("Point model: one-layer LSTM EXAA-enriched C5")
             print("Sequence: 96 delivery-day MTUs")
             print("Quantile model: pooled empirical D-1 persistence residuals")
+        elif args.lstm_exaa_enriched_price_load:
+            print("Point model: one-layer EXAA-enriched price/load LSTM")
+            print(f"Training start: {LSTM_PRICE_LOAD_START_DATE}")
+            print("Inputs: EPEX D-1/D-2/D-7, target-day EXAA, and load")
+            print("Weather features: none")
+            print("Quantile model: pooled empirical D-1 persistence residuals")
         elif args.lstm_fundamental:
             print("Point model: one-layer fundamental LSTM C5 (no EXAA)")
             print("Sequence: 96 delivery-day MTUs")
@@ -2367,6 +2661,17 @@ def main(argv: Optional[Sequence[str]] = None, repo_root: Optional[Path] = None)
             print(f"Target: {targets.target_start.isoformat()}")
             print("Point model: one-layer LSTM EXAA-enriched C5")
             print("Sequence: 96 delivery-day MTUs")
+            print(
+                "Quantile model: pooled empirical D-1 persistence residuals"
+            )
+            print(f"Submit: {submission_requested}")
+            return 0
+        if args.lstm_exaa_enriched_price_load:
+            print(f"Target: {targets.target_start.isoformat()}")
+            print("Point model: one-layer EXAA-enriched price/load LSTM")
+            print(f"Training start: {LSTM_PRICE_LOAD_START_DATE}")
+            print("Inputs: EPEX D-1/D-2/D-7, target-day EXAA, and load")
+            print("Weather features: none")
             print(
                 "Quantile model: pooled empirical D-1 persistence residuals"
             )
@@ -2409,6 +2714,8 @@ def main(argv: Optional[Sequence[str]] = None, repo_root: Optional[Path] = None)
             (
                 "lstm_fundamental"
                 if args.lstm_fundamental
+                else "lstm_exaa_enriched_price_load"
+                if args.lstm_exaa_enriched_price_load
                 else "lstm_exaa_enriched"
                 if args.lstm_exaa_enriched
                 else None
@@ -2429,6 +2736,13 @@ def main(argv: Optional[Sequence[str]] = None, repo_root: Optional[Path] = None)
                         targets,
                         submit=submission_requested,
                         force_download=args.force_download,
+                        force_submit=args.force_submit,
+                    )
+                elif args.lstm_exaa_enriched_price_load:
+                    summary = execute_lstm_exaa_enriched_price_load_pipeline(
+                        config,
+                        targets,
+                        submit=submission_requested,
                         force_submit=args.force_submit,
                     )
                 elif args.lstm_exaa_enriched:
