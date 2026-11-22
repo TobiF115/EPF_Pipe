@@ -1,0 +1,30 @@
+{
+  "format_version": 1,
+  "covers_through": "2026-11-14",
+  "metadata": {
+    "kind": "finetuned",
+    "window_first_day": "2026-11-08",
+    "window_last_day": "2026-11-14",
+    "window_complete_days": 7,
+    "window_days_used": [
+      "2026-11-08",
+      "2026-11-09",
+      "2026-11-10",
+      "2026-11-11",
+      "2026-11-12",
+      "2026-11-13",
+      "2026-11-14"
+    ],
+    "weather_sources": {
+      "2026-11-08": "ICON-D2",
+      "2026-11-09": "ICON-D2",
+      "2026-11-10": "ICON-D2",
+      "2026-11-11": "ICON-D2",
+      "2026-11-12": "ICON-D2",
+      "2026-11-13": "ICON-D2",
+      "2026-11-14": "ICON-D2"
+    },
+    "window_mse_before": 0.03252516440212836,
+    "window_mse_after": 0.030313612433305687
+  }
+}

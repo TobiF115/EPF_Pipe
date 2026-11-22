@@ -61,6 +61,14 @@ from pipeline.mlp.LSTM_exaa_enriched import (
     rolling_lstm_exaa_enriched_forecast,
 )
 from pipeline.mlp.LSTM_fundamental import rolling_lstm_fundamental_forecast
+from pipeline.mlp.LSTM_era5_online import (
+    OnlineLSTMConfig,
+    OnlineLSTMStore,
+    advance_state,
+    first_required_feature_day,
+    forecast_state,
+    pretrain_state,
+)
 from pipeline.mlp.LSTM_exaa_enriched_price_load import (
     build_price_load_inputs,
     rolling_lstm_exaa_enriched_price_load_forecast,
@@ -87,6 +95,7 @@ PERSISTENCE_FALLBACK_LAGS = (1, 7)
 PERSISTENCE_FALLBACK_CALIBRATION_DAYS = 60
 PERSISTENCE_FALLBACK_MIN_COMPLETE_DAYS = 14
 LSTM_PRICE_LOAD_START_DATE = date(2025, 10, 1)
+LSTM_ERA5_PRETRAIN_START_DATE = date(2025, 1, 1)
 
 
 class InsufficientPersistenceCalibrationError(RuntimeError):
@@ -2456,6 +2465,383 @@ def execute_lstm_fundamental_pipeline(
     }
 
 
+def _lstm_era5_model_dir(config: OperationalConfig) -> Path:
+    configured = os.getenv("LSTM_ERA5_ONLINE_DIR")
+    path = Path(configured) if configured else Path("results/operational/mlp/lstm_era5_online")
+    return path if path.is_absolute() else config.repo_root / path
+
+
+def _lstm_era5_weather_root(config: OperationalConfig) -> Path:
+    configured = os.getenv("LSTM_ERA5_WEATHER_ROOT", "data/era5_icon")
+    path = Path(configured)
+    return path if path.is_absolute() else config.repo_root / path
+
+
+def _history_date_range(cluster_dir: Path) -> tuple[date, date]:
+    manifest_path = cluster_dir / "dwd_history.json"
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        return (
+            date.fromisoformat(manifest["first_delivery_date"]),
+            date.fromisoformat(manifest["last_delivery_date"]),
+        )
+    except (OSError, KeyError, TypeError, ValueError) as exc:
+        raise RuntimeError(
+            f"No ERA5 weather history found in {cluster_dir}. Run "
+            "`python preprocessing/prepare_era5.py` first."
+        ) from exc
+
+
+def _chunked_fetch(fetcher, config: OperationalConfig):
+    """Wrap an ENTSO-E fetcher so long histories are requested in 90-day chunks."""
+
+    def fetch(start: pd.Timestamp, end: pd.Timestamp) -> pd.DataFrame:
+        frames: list[pd.DataFrame] = []
+        current_day = start.date()
+        while current_day <= end.date():
+            chunk_end = min(current_day + timedelta(days=89), end.date())
+            frames.append(
+                fetcher(
+                    _timestamp(current_day, config.timezone),
+                    _timestamp(chunk_end, config.timezone),
+                    api_key=config.entsoe_api_key,
+                    target_tz=config.timezone,
+                )
+            )
+            current_day = chunk_end + timedelta(days=1)
+        if not frames:
+            raise ValueError("No ENTSO-E history chunks were requested.")
+        return pd.concat(frames).sort_index()
+
+    return fetch
+
+
+def _load_history_market_data(
+    config: OperationalConfig,
+    *,
+    start_date: date,
+    end_date: date,
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    """EPEX prices, EXAA prices and load forecasts for a long history (cached, chunked)."""
+    start_ts = _timestamp(start_date, config.timezone)
+    end_ts = _timestamp(end_date, config.timezone)
+    prices = _fetch_retry(
+        "ENTSO-E 15-minute prices",
+        lambda: load_or_fetch_frame(
+            config.entsoe_price_cache_dir / "prices_da.csv",
+            start_ts,
+            end_ts,
+            _chunked_fetch(fetch_prices, config),
+            timezone=config.timezone,
+        ),
+        retry_seconds=config.market_data_retry_seconds,
+    )
+    load = _fetch_retry(
+        "ENTSO-E load forecast",
+        lambda: load_or_fetch_frame(
+            config.entsoe_load_cache_dir / "load_forecast.csv",
+            start_ts,
+            end_ts,
+            _chunked_fetch(fetch_load_forecast, config),
+            timezone=config.timezone,
+            allow_incomplete=True,
+        ),
+        attempts=config.fundamental_load_download_attempts,
+        retry_seconds=config.market_data_retry_seconds,
+    )
+    exaa = _fetch_retry(
+        "ENTSO-E EXAA prices",
+        lambda: load_or_fetch_frame(
+            config.exaa_price_cache_dir / "prices_exaa.csv",
+            start_ts,
+            end_ts,
+            _chunked_fetch(fetch_prices_exaa, config),
+            timezone=config.timezone,
+            allow_incomplete=True,
+        ),
+        retry_seconds=config.market_data_retry_seconds,
+    )
+    return prices, exaa, load
+
+
+def _online_lstm_weather(
+    config: OperationalConfig,
+    first_day: date,
+    target_date: date,
+) -> tuple[pd.DataFrame, dict[date, str]]:
+    """C5 weather features: ICON-D2 per day, ERA5 only where ICON-D2 is missing."""
+
+    def load(cfg: OperationalConfig) -> pd.DataFrame:
+        try:
+            return _load_weather_features(cfg, 5, first_day, target_date)
+        except (ValueError, FileNotFoundError):
+            return pd.DataFrame()
+
+    icon = load(config)
+    era5_root = _lstm_era5_weather_root(config)
+    era5 = (
+        load(replace(config, icon_data_root=era5_root))
+        if (era5_root / "c5" / "dwd_history.json").is_file()
+        else pd.DataFrame()
+    )
+    columns = icon.columns if not icon.empty else era5.columns
+    if len(columns) == 0:
+        raise ValueError("Neither ICON-D2 nor ERA5 C5 weather features are available.")
+
+    def complete(frame: pd.DataFrame) -> set:
+        if frame.empty:
+            return set()
+        values = frame.reindex(columns=columns).to_numpy(dtype=float)
+        return set(frame.index[np.isfinite(values).all(axis=1)])
+
+    icon_days, era5_days = complete(icon), complete(era5)
+    rows, sources = [], {}
+    for day in sorted(icon_days | era5_days):
+        if day in icon_days:
+            rows.append(icon.loc[[day], columns])
+            sources[day.date()] = "ICON-D2"
+        else:
+            rows.append(era5.loc[[day]].reindex(columns=columns))
+            sources[day.date()] = "ERA5"
+    combined = pd.concat(rows).sort_index() if rows else pd.DataFrame(columns=columns)
+    return combined, sources
+
+
+def _online_lstm_matrices(
+    config: OperationalConfig,
+    *,
+    prices: pd.DataFrame,
+    exaa: pd.DataFrame,
+    load: pd.DataFrame,
+    weather: pd.DataFrame,
+    first_feature_date: date,
+    target_date: date,
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Same feature set as the EXAA-enriched LSTM (C5 weather, load, EPEX lags, EXAA)."""
+    X, Y = _assemble_matrices(
+        config,
+        get_lear_run("dwd_d56_c5_exaa"),
+        prices=prices,
+        exaa=exaa,
+        load=load,
+        weather={5: weather},
+        first_feature_date=first_feature_date,
+        target_date=target_date,
+    )
+    return add_seven_day_average_price_feature(X, prices), Y
+
+
+def execute_lstm_era5_pretrain(
+    config: OperationalConfig,
+    *,
+    start_date: date = LSTM_ERA5_PRETRAIN_START_DATE,
+) -> dict[str, object]:
+    """Pretrain the online LSTM once on ERA5 weather (no submission)."""
+    era5_dir = _lstm_era5_weather_root(config) / "c5"
+    era5_first, era5_last = _history_date_range(era5_dir)
+    first_day = max(start_date, era5_first)
+    print(
+        f"LSTM_ERA5 pretraining on ERA5 {first_day} .. {era5_last} ({era5_dir})",
+        flush=True,
+    )
+    prices, exaa, load = _load_history_market_data(
+        config,
+        start_date=first_day - timedelta(days=7),
+        end_date=era5_last,
+    )
+    weather = _load_weather_features(
+        replace(config, icon_data_root=era5_dir.parent), 5, first_day, era5_last
+    )
+    X, Y = _online_lstm_matrices(
+        config,
+        prices=prices,
+        exaa=exaa,
+        load=load,
+        weather=weather,
+        first_feature_date=first_day,
+        target_date=era5_last,
+    )
+    online_config = OnlineLSTMConfig.from_env()
+    state = pretrain_state(
+        X,
+        Y,
+        online_config,
+        metadata={"weather_source": "ERA5", "weather_root": str(era5_dir)},
+    )
+    store = OnlineLSTMStore(_lstm_era5_model_dir(config))
+    store.save_pretrained(state)
+    print(
+        f"LSTM_ERA5 pretrained on {state.metadata['pretrain_days']} days "
+        f"({state.metadata['pretrain_first_day']} .. {state.covers_through}); "
+        f"saved to {_display_path(config, store.root)}",
+        flush=True,
+    )
+    return {
+        "model": "LSTM_era5_online",
+        "action": "pretrain",
+        "model_dir": str(store.root),
+        **state.metadata,
+    }
+
+
+def _print_lstm_era5_online_plan(config: OperationalConfig, target_date: date) -> None:
+    online_config = OnlineLSTMConfig.from_env()
+    store = OnlineLSTMStore(_lstm_era5_model_dir(config))
+    print("Point model: ERA5-pretrained EXAA-enriched LSTM C5, daily fine-tuning")
+    print(f"Fine-tuning window: last {online_config.finetune_window_days} delivery days")
+    print("Quantile model: pooled empirical D-1 persistence residuals")
+    if not store.has_pretrained():
+        print(f"Pretrained model: MISSING in {store.root} (run --lstm-era5-pretrain)")
+        return
+    state = store.load_latest(not_after=target_date - timedelta(days=1))
+    pending = (target_date - timedelta(days=1) - state.covers_through).days
+    print(f"Model state covers: {state.covers_through} ({pending} update(s) pending)")
+
+
+def execute_lstm_era5_online_pipeline(
+    config: OperationalConfig,
+    targets: ArenaTargets,
+    *,
+    submit: bool,
+    force_download: bool = False,
+    force_submit: bool = False,
+) -> dict[str, object]:
+    """Fine-tune the ERA5-pretrained LSTM on the last week, forecast, submit."""
+    target_date = targets.target_date
+    online_config = OnlineLSTMConfig.from_env()
+    store = OnlineLSTMStore(_lstm_era5_model_dir(config))
+
+    prepare_target_dwd(
+        config,
+        target_date,
+        force_download=force_download,
+        delete_raw=config.delete_dwd_raw_after_preprocess,
+        clusters=(5,),
+    )
+    first_day = first_required_feature_day(store, target_date, online_config)
+    prices, exaa, load = load_market_data(
+        config,
+        start_date=first_day - timedelta(days=7),
+        target_date=target_date,
+    )
+    if exaa is None or load is None:
+        raise RuntimeError("The online LSTM requires EXAA prices and the ENTSO-E load forecast.")
+    weather, sources = _online_lstm_weather(config, first_day, target_date)
+    if sources.get(target_date) != "ICON-D2":
+        raise RuntimeError(f"Target-day ICON-D2 weather is missing for {target_date}.")
+    X, Y = _online_lstm_matrices(
+        config,
+        prices=prices,
+        exaa=exaa,
+        load=load,
+        weather=weather,
+        first_feature_date=first_day,
+        target_date=target_date,
+    )
+    def window_sources(last_day: date) -> dict[str, str]:
+        days = (
+            last_day - timedelta(days=k)
+            for k in range(online_config.finetune_window_days - 1, -1, -1)
+        )
+        return {d.isoformat(): sources.get(d, "missing") for d in days}
+
+    update_days = [first_day + timedelta(days=k) for k in range((target_date - first_day).days)]
+    state, updates = advance_state(
+        store,
+        X,
+        Y,
+        target_date,
+        online_config,
+        day_metadata={day: {"weather_sources": window_sources(day)} for day in update_days},
+    )
+    for update in updates:
+        print(
+            f"LSTM_ERA5 update covers {update['covers_through']}: {update['kind']}, "
+            f"days={update.get('window_complete_days')}, "
+            f"mse {update.get('window_mse_before', float('nan')):.4f} -> "
+            f"{update.get('window_mse_after', float('nan')):.4f}",
+            flush=True,
+        )
+    forecast, forecast_info = forecast_state(state, X, Y, target_date, online_config)
+    validate_delivery_index(forecast.index, require_complete_days=True)
+
+    quantile_forecast, quantile_metadata = (
+        build_operational_persistence_quantile_fallback(
+            prices,
+            target_date,
+            lag=1,
+            point_forecast=forecast,
+            quantiles=targets.quantile.quantiles,
+        )
+    )
+    point_payload = build_point_payload(forecast, targets.point)
+    quantile_payload = build_quantile_payload(quantile_forecast, targets.quantile)
+
+    output_dir = config.repo_root / "results" / "operational" / "mlp"
+    stem = f"forecast_{target_date.isoformat()}_lstm_era5_online"
+    _atomic_frame(output_dir / f"{stem}.csv", forecast, index=True)
+    _atomic_frame(output_dir / f"{stem}_quantiles.csv", quantile_forecast, index=True)
+    pretrained = store.load_pretrained()
+    atomic_write_json(
+        output_dir / f"{stem}.json",
+        {
+            "target_date": target_date.isoformat(),
+            "model": "LSTM_era5_online",
+            "pretrained_on": {
+                k: pretrained.metadata.get(k)
+                for k in ("weather_source", "pretrain_first_day", "pretrain_last_day", "pretrain_days")
+            },
+            "state_covers_through": state.covers_through.isoformat(),
+            "updates_this_run": updates,
+            "finetune_window_days": online_config.finetune_window_days,
+            "finetune_epochs": online_config.finetune_epochs,
+            "finetune_learning_rate": online_config.finetune_learning_rate,
+            "target_day_weather": sources.get(target_date),
+            **forecast_info,
+            "quantile_method": quantile_metadata,
+            "submission_requested": submit,
+            "forecast_summary_eur_per_mwh": {
+                "min": float(forecast["y_pred"].min()),
+                "mean": float(forecast["y_pred"].mean()),
+                "max": float(forecast["y_pred"].max()),
+            },
+        },
+    )
+
+    submission_stream = "lstm_era5_online"
+    for target, payload in ((targets.point, point_payload), (targets.quantile, quantile_payload)):
+        atomic_write_json(
+            _payload_path(config, submission_stream, target.challenge_id, target.target_start),
+            payload,
+        )
+    submissions: dict[str, object] = {}
+    if submit:
+        submissions = _submit_arena_payloads(
+            config,
+            submission_stream,
+            (
+                ("point", targets.point, point_payload),
+                ("quantile", targets.quantile, quantile_payload),
+            ),
+            force_submit=force_submit,
+            context="ERA5 online LSTM",
+        )
+    else:
+        print("Submission disabled; ERA5 online LSTM payloads were saved locally.", flush=True)
+
+    return {
+        "target_start": targets.target_start.isoformat(),
+        "point_model": "LSTM_era5_online",
+        "quantile_model": "pooled_residual_persistence_d1",
+        "quantile_calibration": quantile_metadata,
+        "state_covers_through": state.covers_through.isoformat(),
+        "updates_this_run": len(updates),
+        "forecast": str(output_dir / f"{stem}.csv"),
+        "quantile_forecast": str(output_dir / f"{stem}_quantiles.csv"),
+        "submissions": submissions,
+    }
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     variants = parser.add_mutually_exclusive_group()
@@ -2492,6 +2878,22 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Use the one-layer fundamental LSTM without EXAA prices.",
     )
+    variants.add_argument(
+        "--lstm-era5-online",
+        action="store_true",
+        help=(
+            "Use the ERA5-pretrained fundamental LSTM: fine-tune it on the last "
+            "seven delivery days, then forecast and submit."
+        ),
+    )
+    variants.add_argument(
+        "--lstm-era5-pretrain",
+        action="store_true",
+        help=(
+            "Pretrain the ERA5 online LSTM once on all ERA5 days "
+            "(no forecast, no submission)."
+        ),
+    )
     parser.add_argument(
         "--cluster",
         type=int,
@@ -2526,6 +2928,12 @@ def build_parser() -> argparse.ArgumentParser:
             "(the preceding seven days are loaded for lag features)."
         ),
     )
+    parser.add_argument(
+        "--lstm-era5-pretrain-start",
+        type=date.fromisoformat,
+        default=LSTM_ERA5_PRETRAIN_START_DATE,
+        help="First ERA5 delivery day for --lstm-era5-pretrain (default 2025-01-01).",
+    )
     return parser
 
 
@@ -2535,6 +2943,13 @@ def _apply_cli(config: OperationalConfig, args: argparse.Namespace) -> Operation
             config,
             point_variant="exaa_only",
             sqra_variant="exaa_only",
+        )
+    if args.lstm_era5_online or args.lstm_era5_pretrain:
+        # EXAA-enriched: target-day EXAA prices are loaded and required.
+        return replace(
+            config,
+            point_variant="exaa_enriched",
+            sqra_variant="fundamental_c5",
         )
     if args.lstm_fundamental:
         return replace(
@@ -2614,6 +3029,38 @@ def main(argv: Optional[Sequence[str]] = None, repo_root: Optional[Path] = None)
             print(f"  - {error}", file=sys.stderr)
         return 2
 
+    if args.lstm_era5_pretrain:
+        # One-off training step: needs neither Energy Arena targets nor a submission.
+        if args.check_setup or args.dry_run:
+            era5_dir = _lstm_era5_weather_root(config) / "c5"
+            first, last = _history_date_range(era5_dir)
+            print(f"ERA5 weather: {first} .. {last} ({era5_dir})")
+            print(f"Pretraining start: {max(first, args.lstm_era5_pretrain_start)}")
+            print(f"Model directory: {_lstm_era5_model_dir(config)}")
+            return 0
+        config.output_root.mkdir(parents=True, exist_ok=True)
+        log_path = pipeline_log_path(config, "lstm_era5_pretrain")
+        log_path.parent.mkdir(parents=True, exist_ok=True)
+        print(f"Pipeline log: {_display_path(config, log_path)}")
+        with log_path.open("w", encoding="utf-8") as log:
+            original_stdout, original_stderr = sys.stdout, sys.stderr
+            sys.stdout = _Tee(original_stdout, log)
+            sys.stderr = _Tee(original_stderr, log)
+            try:
+                print(f"started_at={datetime.now().astimezone().isoformat()}")
+                summary = execute_lstm_era5_pretrain(
+                    config, start_date=args.lstm_era5_pretrain_start
+                )
+                print(json.dumps(summary, indent=2))
+                print("status=success")
+            except BaseException:
+                print("status=failed")
+                traceback.print_exc()
+                raise
+            finally:
+                sys.stdout, sys.stderr = original_stdout, original_stderr
+        return 0
+
     targets = resolve_targets(
         api_base=config.arena_api_base_url,
         point_challenge_id=config.arena_point_challenge_id,
@@ -2643,6 +3090,8 @@ def main(argv: Optional[Sequence[str]] = None, repo_root: Optional[Path] = None)
             print("Point model: one-layer fundamental LSTM C5 (no EXAA)")
             print("Sequence: 96 delivery-day MTUs")
             print("Quantile model: pooled empirical D-1 persistence residuals")
+        elif args.lstm_era5_online:
+            _print_lstm_era5_online_plan(config, targets.target_date)
         else:
             print(f"Point submission: SQRA {sqra_name}, q=0.500")
             print(f"Reference LEAR point run: {point_run.name}")
@@ -2686,6 +3135,11 @@ def main(argv: Optional[Sequence[str]] = None, repo_root: Optional[Path] = None)
             )
             print(f"Submit: {submission_requested}")
             return 0
+        if args.lstm_era5_online:
+            print(f"Target: {targets.target_start.isoformat()}")
+            _print_lstm_era5_online_plan(config, targets.target_date)
+            print(f"Submit: {submission_requested}")
+            return 0
         print(f"Target: {targets.target_start.isoformat()}")
         print(f"Point submission: SQRA {sqra_name}, q=0.500")
         print(f"Reference LEAR point run: {point_run.name}")
@@ -2714,6 +3168,8 @@ def main(argv: Optional[Sequence[str]] = None, repo_root: Optional[Path] = None)
             (
                 "lstm_fundamental"
                 if args.lstm_fundamental
+                else "lstm_era5_online"
+                if args.lstm_era5_online
                 else "lstm_exaa_enriched_price_load"
                 if args.lstm_exaa_enriched_price_load
                 else "lstm_exaa_enriched"
@@ -2756,6 +3212,14 @@ def main(argv: Optional[Sequence[str]] = None, repo_root: Optional[Path] = None)
                     )
                 elif args.lstm_fundamental:
                     summary = execute_lstm_fundamental_pipeline(
+                        config,
+                        targets,
+                        submit=submission_requested,
+                        force_download=args.force_download,
+                        force_submit=args.force_submit,
+                    )
+                elif args.lstm_era5_online:
+                    summary = execute_lstm_era5_online_pipeline(
                         config,
                         targets,
                         submit=submission_requested,

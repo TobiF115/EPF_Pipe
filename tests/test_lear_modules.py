@@ -1,5 +1,6 @@
 import json
 import tempfile
+import os
 import unittest
 from datetime import date
 from pathlib import Path
@@ -13,6 +14,19 @@ from experiment_manifest import get_lear_run
 from pipeline.delivery_index import make_delivery_index
 from pipeline.lear import lear_model
 from pipeline.lear import run_lear
+
+
+# Tests patch the Lasso classes in-process; joblib worker processes would not
+# see the patch, so the per-MTU LEAR fits run serially here.
+_SERIAL_LEAR_FITS = patch.dict(os.environ, {"LEAR_N_JOBS": "1"})
+
+
+def setUpModule():
+    _SERIAL_LEAR_FITS.start()
+
+
+def tearDownModule():
+    _SERIAL_LEAR_FITS.stop()
 
 
 class RecordingLasso:

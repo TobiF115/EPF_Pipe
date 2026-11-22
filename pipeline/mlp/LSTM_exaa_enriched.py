@@ -92,6 +92,13 @@ class LSTMConfig:
     l2: float = 1e-4
     validation_fraction: float = 0.2
     random_seed: int = 42
+    # Optimisation options. The defaults reproduce the original full-batch,
+    # constant-rate training exactly; the ERA5 online LSTM enables them.
+    batch_size: int | None = None  # days per Adam step; None = full batch
+    lr_decay_step_epochs: int | None = None  # multiply the rate every N epochs
+    lr_decay_factor: float = 1.0
+    forget_gate_bias: float = 0.0
+    gradient_clip_norm: float | None = None  # global L2 norm cap per step
 
     def __post_init__(self) -> None:
         if self.hidden_units < 1:
@@ -116,6 +123,20 @@ class LSTMConfig:
             raise ValueError("fine_tune_fraction must be between 0 and 1.")
         if not 0 < self.validation_fraction < 1:
             raise ValueError("validation_fraction must be between 0 and 1.")
+        if self.batch_size is not None and self.batch_size < 1:
+            raise ValueError("batch_size must be positive when provided.")
+        if self.lr_decay_step_epochs is not None and self.lr_decay_step_epochs < 1:
+            raise ValueError("lr_decay_step_epochs must be positive when provided.")
+        if not 0 < self.lr_decay_factor <= 1:
+            raise ValueError("lr_decay_factor must be in (0, 1].")
+        if self.gradient_clip_norm is not None and self.gradient_clip_norm <= 0:
+            raise ValueError("gradient_clip_norm must be positive when provided.")
+
+    def learning_rate_at(self, base_rate: float, epoch: int) -> float:
+        """Stepwise decay: ``base * factor ** floor((epoch - 1) / step)``."""
+        if self.lr_decay_step_epochs is None:
+            return base_rate
+        return base_rate * self.lr_decay_factor ** ((epoch - 1) // self.lr_decay_step_epochs)
 
 
 LSTMExaaEnrichedConfig = LSTMConfig
@@ -250,6 +271,116 @@ class _OneLayerLSTMNetwork:
             )
         return outputs, cache
 
+    def _gradients(
+        self,
+        sequence_inputs: np.ndarray,
+        skip_inputs: np.ndarray,
+        targets: np.ndarray,
+        parameters: list[np.ndarray],
+    ) -> list[np.ndarray]:
+        """Backpropagation through time for the mean squared error plus L2."""
+        input_count = sequence_inputs.shape[2]
+        hidden_count = self.config.hidden_units
+        predictions, cache = self._forward(sequence_inputs, skip_inputs, parameters)
+        residual = 2.0 * (predictions - targets) / targets.size
+        weights_recurrent, _, weights_out, _, weights_skip = parameters
+        grad_recurrent = np.zeros_like(weights_recurrent)
+        grad_bias_recurrent = np.zeros_like(parameters[1])
+        grad_out = np.zeros_like(weights_out)
+        grad_bias_out = np.asarray([residual.sum()])
+        grad_skip = (
+            skip_inputs.T @ residual + 2.0 * self.config.l2 * weights_skip
+        ) * self.skip_mask
+        hidden_gradient_next = np.zeros((sequence_inputs.shape[0], hidden_count))
+        cell_gradient_next = np.zeros_like(hidden_gradient_next)
+
+        for step in range(sequence_inputs.shape[1] - 1, -1, -1):
+            (
+                recurrent_input,
+                previous_cell,
+                input_gate,
+                forget_gate,
+                output_gate,
+                candidate,
+                cell_tanh,
+            ) = cache[step]
+            step_residual = residual[:, step : step + 1]
+            hidden = output_gate * cell_tanh
+            grad_out += hidden.T @ step_residual
+            hidden_gradient = hidden_gradient_next + step_residual @ weights_out.T
+            output_gate_gradient = hidden_gradient * cell_tanh
+            cell_gradient = (
+                cell_gradient_next
+                + hidden_gradient * output_gate * (1.0 - cell_tanh**2)
+            )
+            forget_gate_gradient = cell_gradient * previous_cell
+            input_gate_gradient = cell_gradient * candidate
+            candidate_gradient = cell_gradient * input_gate
+            cell_gradient_next = cell_gradient * forget_gate
+
+            gate_gradients = np.concatenate(
+                (
+                    input_gate_gradient * input_gate * (1.0 - input_gate),
+                    forget_gate_gradient * forget_gate * (1.0 - forget_gate),
+                    output_gate_gradient * output_gate * (1.0 - output_gate),
+                    candidate_gradient * (1.0 - candidate**2),
+                ),
+                axis=1,
+            )
+            grad_recurrent += recurrent_input.T @ gate_gradients
+            grad_bias_recurrent += gate_gradients.sum(axis=0)
+            hidden_gradient_next = gate_gradients @ weights_recurrent[input_count:, :].T
+
+        grad_recurrent += 2.0 * self.config.l2 * weights_recurrent
+        grad_out += 2.0 * self.config.l2 * weights_out
+        return [grad_recurrent, grad_bias_recurrent, grad_out, grad_bias_out, grad_skip]
+
+    def _initial_parameters(
+        self,
+        rng: np.random.Generator,
+        input_count: int,
+        skip_count: int,
+        output_count: int,
+    ) -> list[np.ndarray]:
+        hidden_count = self.config.hidden_units
+        bias_recurrent = np.zeros(4 * hidden_count)
+        # Gate order in _forward: input, forget, output, candidate.
+        bias_recurrent[hidden_count : 2 * hidden_count] = self.config.forget_gate_bias
+        return [
+            rng.normal(
+                0.0,
+                math.sqrt(1.0 / (input_count + hidden_count)),
+                (input_count + hidden_count, 4 * hidden_count),
+            ),
+            bias_recurrent,
+            rng.normal(0.0, math.sqrt(2.0 / (hidden_count + 1)), (hidden_count, 1)),
+            np.zeros(1),
+            np.zeros((skip_count, output_count)),
+        ]
+
+    @staticmethod
+    def _clip_gradients(
+        gradients: list[np.ndarray], clip_norm: float | None
+    ) -> list[np.ndarray]:
+        """Rescale all gradients together when their global L2 norm exceeds the cap."""
+        if clip_norm is None:
+            return gradients
+        norm = math.sqrt(sum(float(np.sum(g * g)) for g in gradients))
+        if norm <= clip_norm:
+            return gradients
+        return [g * (clip_norm / norm) for g in gradients]
+
+    def _batches(self, sample_count: int, rng: np.random.Generator) -> list:
+        """Shuffled day mini-batches; one full batch when batch_size is unset."""
+        batch_size = self.config.batch_size
+        if batch_size is None or batch_size >= sample_count:
+            return [slice(None)]
+        order = rng.permutation(sample_count)
+        return [
+            order[start : start + batch_size]
+            for start in range(0, sample_count, batch_size)
+        ]
+
     def _train(
         self,
         sequence_inputs: np.ndarray,
@@ -263,26 +394,10 @@ class _OneLayerLSTMNetwork:
         validation: tuple[np.ndarray, np.ndarray, np.ndarray] | None = None,
     ) -> tuple[list[np.ndarray], int]:
         rng = np.random.default_rng(seed)
-        input_count = sequence_inputs.shape[2]
-        hidden_count = self.config.hidden_units
-        skip_count = skip_inputs.shape[1]
-        output_count = targets.shape[1]
         if initial_parameters is None:
-            parameters = [
-                rng.normal(
-                    0.0,
-                    math.sqrt(1.0 / (input_count + hidden_count)),
-                    (input_count + hidden_count, 4 * hidden_count),
-                ),
-                np.zeros(4 * hidden_count),
-                rng.normal(
-                    0.0,
-                    math.sqrt(2.0 / (hidden_count + 1)),
-                    (hidden_count, 1),
-                ),
-                np.zeros(1),
-                np.zeros((skip_count, output_count)),
-            ]
+            parameters = self._initial_parameters(
+                rng, sequence_inputs.shape[2], skip_inputs.shape[1], targets.shape[1]
+            )
         else:
             if len(initial_parameters) != 5:
                 raise ValueError("Initial parameters do not match the LSTM model.")
@@ -291,95 +406,34 @@ class _OneLayerLSTMNetwork:
         first_moments = [np.zeros_like(value) for value in parameters]
         second_moments = [np.zeros_like(value) for value in parameters]
         beta_1, beta_2 = 0.9, 0.999
+        clip_norm = self.config.gradient_clip_norm
+        adam_step = 0
         best_parameters: list[np.ndarray] | None = None
         best_loss = float("inf")
         best_epoch = 0
         stale_epochs = 0
 
         for epoch in range(1, epochs + 1):
-            predictions, cache = self._forward(
-                sequence_inputs, skip_inputs, parameters
-            )
-            residual = 2.0 * (predictions - targets) / targets.size
-            weights_recurrent, _, weights_out, _, weights_skip = parameters
-            grad_recurrent = np.zeros_like(weights_recurrent)
-            grad_bias_recurrent = np.zeros_like(parameters[1])
-            grad_out = np.zeros_like(weights_out)
-            grad_bias_out = np.asarray([residual.sum()])
-            grad_skip = (
-                skip_inputs.T @ residual + 2.0 * self.config.l2 * weights_skip
-            ) * self.skip_mask
-            hidden_gradient_next = np.zeros(
-                (sequence_inputs.shape[0], hidden_count)
-            )
-            cell_gradient_next = np.zeros_like(hidden_gradient_next)
-
-            for step in range(sequence_inputs.shape[1] - 1, -1, -1):
-                (
-                    recurrent_input,
-                    previous_cell,
-                    input_gate,
-                    forget_gate,
-                    output_gate,
-                    candidate,
-                    cell_tanh,
-                ) = cache[step]
-                step_residual = residual[:, step : step + 1]
-                hidden = output_gate * cell_tanh
-                grad_out += hidden.T @ step_residual
-                hidden_gradient = (
-                    hidden_gradient_next
-                    + step_residual @ weights_out.T
+            epoch_rate = self.config.learning_rate_at(learning_rate, epoch)
+            for batch in self._batches(len(targets), rng):
+                gradients = self._gradients(
+                    sequence_inputs[batch], skip_inputs[batch], targets[batch], parameters
                 )
-                output_gate_gradient = hidden_gradient * cell_tanh
-                cell_gradient = (
-                    cell_gradient_next
-                    + hidden_gradient
-                    * output_gate
-                    * (1.0 - cell_tanh**2)
-                )
-                forget_gate_gradient = cell_gradient * previous_cell
-                input_gate_gradient = cell_gradient * candidate
-                candidate_gradient = cell_gradient * input_gate
-                cell_gradient_next = cell_gradient * forget_gate
-
-                gate_gradients = np.concatenate(
-                    (
-                        input_gate_gradient * input_gate * (1.0 - input_gate),
-                        forget_gate_gradient * forget_gate * (1.0 - forget_gate),
-                        output_gate_gradient * output_gate * (1.0 - output_gate),
-                        candidate_gradient * (1.0 - candidate**2),
-                    ),
-                    axis=1,
-                )
-                grad_recurrent += recurrent_input.T @ gate_gradients
-                grad_bias_recurrent += gate_gradients.sum(axis=0)
-                hidden_gradient_next = (
-                    gate_gradients @ weights_recurrent[input_count:, :].T
-                )
-
-            grad_recurrent += 2.0 * self.config.l2 * weights_recurrent
-            grad_out += 2.0 * self.config.l2 * weights_out
-            gradients = [
-                grad_recurrent,
-                grad_bias_recurrent,
-                grad_out,
-                grad_bias_out,
-                grad_skip,
-            ]
-            for index, gradient in enumerate(gradients):
-                first_moments[index] = (
-                    beta_1 * first_moments[index] + (1.0 - beta_1) * gradient
-                )
-                second_moments[index] = (
-                    beta_2 * second_moments[index]
-                    + (1.0 - beta_2) * gradient * gradient
-                )
-                corrected_first = first_moments[index] / (1.0 - beta_1**epoch)
-                corrected_second = second_moments[index] / (1.0 - beta_2**epoch)
-                parameters[index] -= learning_rate * corrected_first / (
-                    np.sqrt(corrected_second) + 1e-8
-                )
+                gradients = self._clip_gradients(gradients, clip_norm)
+                adam_step += 1
+                for index, gradient in enumerate(gradients):
+                    first_moments[index] = (
+                        beta_1 * first_moments[index] + (1.0 - beta_1) * gradient
+                    )
+                    second_moments[index] = (
+                        beta_2 * second_moments[index]
+                        + (1.0 - beta_2) * gradient * gradient
+                    )
+                    corrected_first = first_moments[index] / (1.0 - beta_1**adam_step)
+                    corrected_second = second_moments[index] / (1.0 - beta_2**adam_step)
+                    parameters[index] -= epoch_rate * corrected_first / (
+                        np.sqrt(corrected_second) + 1e-8
+                    )
 
             if validation is not None:
                 validation_sequence, validation_skip, validation_targets = validation

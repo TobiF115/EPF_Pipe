@@ -1,0 +1,178 @@
+{
+  "target_date": "2026-11-19",
+  "model": "LSTM_era5_online",
+  "pretrained_on": {
+    "weather_source": "ERA5",
+    "pretrain_first_day": "2025-01-02",
+    "pretrain_last_day": "2026-11-13",
+    "pretrain_days": 681
+  },
+  "state_covers_through": "2026-11-18",
+  "updates_this_run": [
+    {
+      "covers_through": "2026-11-14",
+      "kind": "finetuned",
+      "window_first_day": "2026-11-08",
+      "window_last_day": "2026-11-14",
+      "window_complete_days": 7,
+      "window_days_used": [
+        "2026-11-08",
+        "2026-11-09",
+        "2026-11-10",
+        "2026-11-11",
+        "2026-11-12",
+        "2026-11-13",
+        "2026-11-14"
+      ],
+      "weather_sources": {
+        "2026-11-08": "ICON-D2",
+        "2026-11-09": "ICON-D2",
+        "2026-11-10": "ICON-D2",
+        "2026-11-11": "ICON-D2",
+        "2026-11-12": "ICON-D2",
+        "2026-11-13": "ICON-D2",
+        "2026-11-14": "ICON-D2"
+      },
+      "window_mse_before": 0.04035799262547176,
+      "window_mse_after": 0.03739773865577453
+    },
+    {
+      "covers_through": "2026-11-15",
+      "kind": "finetuned",
+      "window_first_day": "2026-11-09",
+      "window_last_day": "2026-11-15",
+      "window_complete_days": 7,
+      "window_days_used": [
+        "2026-11-09",
+        "2026-11-10",
+        "2026-11-11",
+        "2026-11-12",
+        "2026-11-13",
+        "2026-11-14",
+        "2026-11-15"
+      ],
+      "weather_sources": {
+        "2026-11-09": "ICON-D2",
+        "2026-11-10": "ICON-D2",
+        "2026-11-11": "ICON-D2",
+        "2026-11-12": "ICON-D2",
+        "2026-11-13": "ICON-D2",
+        "2026-11-14": "ICON-D2",
+        "2026-11-15": "ICON-D2"
+      },
+      "window_mse_before": 0.1118980333268295,
+      "window_mse_after": 0.10941320175718702
+    },
+    {
+      "covers_through": "2026-11-16",
+      "kind": "finetuned",
+      "window_first_day": "2026-11-10",
+      "window_last_day": "2026-11-16",
+      "window_complete_days": 7,
+      "window_days_used": [
+        "2026-11-10",
+        "2026-11-11",
+        "2026-11-12",
+        "2026-11-13",
+        "2026-11-14",
+        "2026-11-15",
+        "2026-11-16"
+      ],
+      "weather_sources": {
+        "2026-11-10": "ICON-D2",
+        "2026-11-11": "ICON-D2",
+        "2026-11-12": "ICON-D2",
+        "2026-11-13": "ICON-D2",
+        "2026-11-14": "ICON-D2",
+        "2026-11-15": "ICON-D2",
+        "2026-11-16": "ICON-D2"
+      },
+      "window_mse_before": 0.33149823994153954,
+      "window_mse_after": 0.327970828295538
+    },
+    {
+      "covers_through": "2026-11-17",
+      "kind": "finetuned",
+      "window_first_day": "2026-11-11",
+      "window_last_day": "2026-11-17",
+      "window_complete_days": 7,
+      "window_days_used": [
+        "2026-11-11",
+        "2026-11-12",
+        "2026-11-13",
+        "2026-11-14",
+        "2026-11-15",
+        "2026-11-16",
+        "2026-11-17"
+      ],
+      "weather_sources": {
+        "2026-11-11": "ICON-D2",
+        "2026-11-12": "ICON-D2",
+        "2026-11-13": "ICON-D2",
+        "2026-11-14": "ICON-D2",
+        "2026-11-15": "ICON-D2",
+        "2026-11-16": "ICON-D2",
+        "2026-11-17": "ICON-D2"
+      },
+      "window_mse_before": 0.3252572412797526,
+      "window_mse_after": 0.32189141472362265
+    },
+    {
+      "covers_through": "2026-11-18",
+      "kind": "finetuned",
+      "window_first_day": "2026-11-12",
+      "window_last_day": "2026-11-18",
+      "window_complete_days": 7,
+      "window_days_used": [
+        "2026-11-12",
+        "2026-11-13",
+        "2026-11-14",
+        "2026-11-15",
+        "2026-11-16",
+        "2026-11-17",
+        "2026-11-18"
+      ],
+      "weather_sources": {
+        "2026-11-12": "ICON-D2",
+        "2026-11-13": "ICON-D2",
+        "2026-11-14": "ICON-D2",
+        "2026-11-15": "ICON-D2",
+        "2026-11-16": "ICON-D2",
+        "2026-11-17": "ICON-D2",
+        "2026-11-18": "ICON-D2"
+      },
+      "window_mse_before": 0.32240662434428075,
+      "window_mse_after": 0.3192143450786999
+    }
+  ],
+  "finetune_window_days": 7,
+  "finetune_epochs": 10,
+  "finetune_learning_rate": 1e-05,
+  "target_day_weather": "ICON-D2",
+  "bias_correction_days": 28,
+  "quantile_method": {
+    "method": "pooled_empirical_persistence_residuals",
+    "lag_days": 1,
+    "calibration_window_days": 60,
+    "minimum_complete_days": 14,
+    "complete_calibration_days": 34,
+    "calibration_observations": 3264,
+    "calibration_start": "2026-09-20",
+    "calibration_end": "2026-11-18",
+    "target_excluded_from_calibration": true,
+    "median_centered": true,
+    "quantiles": [
+      0.025,
+      0.25,
+      0.5,
+      0.75,
+      0.975
+    ]
+  },
+  "submission_requested": false,
+  "forecast_summary_eur_per_mwh": {
+    "min": 163.7001534999531,
+    "mean": 233.82198595027202,
+    "max": 327.0087295931063
+  }
+}

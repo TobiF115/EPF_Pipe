@@ -22,6 +22,7 @@ import pandas as pd
 from bs4 import BeautifulSoup
 from entsoe import EntsoePandasClient, EntsoeRawClient
 from entsoe.parsers import parse_prices
+from joblib import Parallel, delayed
 from scipy.stats import norm
 from sklearn.linear_model import LassoCV, LassoLarsCV
 from sklearn.metrics import mean_absolute_error
@@ -123,12 +124,33 @@ def _parse_day_ahead_price_sequence(xml: str, *, sequence: int) -> pd.Series:
         )
 
     parsed = parse_prices(str(soup))
-    series = parsed.get("15T")
-    if not isinstance(series, pd.Series) or series.empty:
+    return _prefer_quarter_hourly(parsed, sequence=sequence)
+
+
+def _prefer_quarter_hourly(parsed: dict, *, sequence: int) -> pd.Series:
+    """Use 15-minute prices; fall back to hourly prices for days without them.
+
+    Before the SDAC 15-minute MTU go-live (2025-10-01) ENTSO-E publishes only
+    hourly DE-LU prices. Callers forward-fill hourly values onto the
+    15-minute grid.
+    """
+    quarter = parsed.get("15T")
+    hourly = parsed.get("60T")
+    quarter = quarter if isinstance(quarter, pd.Series) else pd.Series(dtype=float)
+    hourly = hourly if isinstance(hourly, pd.Series) else pd.Series(dtype=float)
+    quarter, hourly = quarter.dropna(), hourly.dropna()
+    if quarter.empty and hourly.empty:
         raise ValueError(
-            f"ENTSO-E response contains no 15-minute prices for sequence {sequence}."
+            f"ENTSO-E response contains no 15-minute or hourly prices for sequence {sequence}."
         )
-    return series
+    if hourly.empty:
+        return quarter
+    if not quarter.empty:
+        # Timestamps are UTC; compare intervals, not calendar dates.
+        first, last = quarter.index.min(), quarter.index.max()
+        hourly = hourly[(hourly.index + pd.Timedelta(hours=1) <= first) | (hourly.index > last)]
+    combined = pd.concat([quarter, hourly]).sort_index()
+    return combined[~combined.index.duplicated(keep="first")]
 
 
 def fetch_prices_exaa(
@@ -956,6 +978,69 @@ def scale_fold_point(
     )
 
 
+def lear_n_jobs() -> int:
+    """Return the worker count for the per-MTU fits (``LEAR_N_JOBS``, default all cores)."""
+    configured = os.getenv("LEAR_N_JOBS", "").strip()
+    if not configured:
+        return -1
+    value = int(configured)
+    if value == 0:
+        raise ValueError("LEAR_N_JOBS must be a non-zero integer (use 1 for serial).")
+    return value
+
+
+def _fit_point_mtu(
+    X_tr: pd.DataFrame,
+    y_tr: pd.Series,
+    X_te: pd.DataFrame,
+    *,
+    use_lars: bool,
+    use_vst: bool,
+) -> dict:
+    """Fit one MTU-specific LEAR model and return its forecast and diagnostics.
+
+    Module-level so joblib can dispatch it to worker processes. The fit is
+    deterministic (unshuffled K-fold); serial and parallel runs agree up to
+    BLAS floating-point rounding (workers use single-threaded BLAS).
+    """
+    X_tr_s, X_te_s, y_tr_s, _, y_params = scale_fold_point(
+        X_tr=X_tr,
+        X_va=X_te,
+        y_tr=y_tr,
+        y_va=None,
+        use_vst=use_vst,
+    )
+
+    if use_lars:
+        model = LassoLarsCV(cv=5, max_iter=1000, n_jobs=1)
+    else:
+        model = LassoCV(cv=5, tol=1e-3, max_iter=10_000, n_jobs=1)
+    model.fit(X_tr_s.values, y_tr_s)
+    y_pred_s = model.predict(X_te_s.values)
+
+    if use_vst:
+        y_fit_s = model.predict(X_tr_s.values)
+        residuals_s = y_tr_s - y_fit_s
+        y_pred = inverse_vst_bias_corrected(
+            y_hat_trans=y_pred_s,
+            residuals_trans=residuals_s,
+            center=y_params["y_center"],
+            scale=y_params["y_scale"],
+        )
+    else:
+        y_pred = y_params["y_center"] + y_params["y_scale"] * y_pred_s
+
+    nonzero_mask = model.coef_ != 0
+    return {
+        "y_pred": float(np.asarray(y_pred).ravel()[0]),
+        "alpha": model.alpha_,
+        "nonzero_cols": X_tr.columns[nonzero_mask].tolist(),
+        "nonzero_vals": model.coef_[nonzero_mask].tolist(),
+        "intercept": float(model.intercept_),
+        "degenerate_ssrd_cols": y_params["degenerate_ssrd_cols"],
+    }
+
+
 def rolling_point_forecast(
     X: pd.DataFrame,
     Y: pd.DataFrame,
@@ -972,6 +1057,9 @@ def rolling_point_forecast(
     coef_records: List[dict] = []
     intercept_records: List[dict] = []
     degenerate_ssrd_records: List[dict] = []
+    n_jobs = lear_n_jobs()
+    # One pool for all days; the 96 MTU fits of a day are independent.
+    executor = Parallel(n_jobs=n_jobs) if n_jobs != 1 else None
 
     for day in forecast_days:
         day_start = time.perf_counter()
@@ -1024,10 +1112,12 @@ def rolling_point_forecast(
                 )
 
         delivery_date = day.tz_localize(None).normalize()
+        X_tr_day = X.loc[train_mask, active_columns]
+        X_te = X.loc[test_mask, active_columns]
+        tasks = []
         for mtu in range(MTUS_PER_DAY):
-            X_tr = X.loc[train_mask, active_columns]
+            X_tr = X_tr_day
             y_tr = Y.loc[train_mask, mtu]
-            X_te = X.loc[test_mask, active_columns]
             if allow_incomplete_prices:
                 valid_training = np.isfinite(
                     X_tr.to_numpy(dtype=float)
@@ -1039,53 +1129,34 @@ def rolling_point_forecast(
                         f"Fewer than five complete training observations remain "
                         f"for {day.date()}, MTU {mtu + 1}."
                     )
-            X_tr_s, X_te_s, y_tr_s, _, y_params = scale_fold_point(
-                X_tr=X_tr,
-                X_va=X_te,
-                y_tr=y_tr,
-                y_va=None,
-                use_vst=use_vst,
+            tasks.append(
+                delayed(_fit_point_mtu)(
+                    X_tr, y_tr, X_te, use_lars=use_lars, use_vst=use_vst
+                )
             )
 
-            if use_lars:
-                model = LassoLarsCV(cv=5, max_iter=1000, n_jobs=1)
-            else:
-                model = LassoCV(cv=5, tol=1e-3, max_iter=10_000, n_jobs=1)
-            model.fit(X_tr_s.values, y_tr_s)
-            y_pred_s = model.predict(X_te_s.values)
+        if executor is None:
+            results = [func(*args, **kwargs) for func, args, kwargs in tasks]
+        else:
+            results = executor(tasks)
 
-            if use_vst:
-                y_fit_s = model.predict(X_tr_s.values)
-                residuals_s = y_tr_s - y_fit_s
-                y_pred = inverse_vst_bias_corrected(
-                    y_hat_trans=y_pred_s,
-                    residuals_trans=residuals_s,
-                    center=y_params["y_center"],
-                    scale=y_params["y_scale"],
-                )
-            else:
-                y_pred = (
-                    y_params["y_center"] + y_params["y_scale"] * y_pred_s
-                )
-
+        for mtu, result in enumerate(results):
             forecast_records.append(
                 {
                     "delivery_date": delivery_date,
                     "mtu": mtu + 1,
-                    "y_pred": float(np.asarray(y_pred).ravel()[0]),
+                    "y_pred": result["y_pred"],
                     "y_true": float(Y.loc[day, mtu]),
                 }
             )
-
-            nonzero_mask = model.coef_ != 0
             coef_records.append(
                 {
                     "forecast_day": day.date(),
                     "mtu": mtu + 1,
-                    "alpha": model.alpha_,
-                    "n_nonzero": int(nonzero_mask.sum()),
-                    "nonzero_cols": X_tr.columns[nonzero_mask].tolist(),
-                    "nonzero_vals": model.coef_[nonzero_mask].tolist(),
+                    "alpha": result["alpha"],
+                    "n_nonzero": len(result["nonzero_cols"]),
+                    "nonzero_cols": result["nonzero_cols"],
+                    "nonzero_vals": result["nonzero_vals"],
                     "use_lars": use_lars,
                 }
             )
@@ -1093,15 +1164,15 @@ def rolling_point_forecast(
                 {
                     "forecast_day": day.date(),
                     "mtu": mtu + 1,
-                    "intercept": float(model.intercept_),
+                    "intercept": result["intercept"],
                 }
             )
             degenerate_ssrd_records.append(
                 {
                     "forecast_day": day.date(),
                     "mtu": mtu + 1,
-                    "n_degenerate": len(y_params["degenerate_ssrd_cols"]),
-                    "degenerate_cols": y_params["degenerate_ssrd_cols"],
+                    "n_degenerate": len(result["degenerate_ssrd_cols"]),
+                    "degenerate_cols": result["degenerate_ssrd_cols"],
                 }
             )
 

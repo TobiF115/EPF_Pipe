@@ -1,0 +1,286 @@
+{
+  "pretrain_weather_root": "C:\\Users\\tobia\\OneDrive\\Desktop\\EPF_Pipe\\data\\era5_icon",
+  "train_start": "2025-01-02",
+  "pretrain_end": "2026-09-30",
+  "evaluation_days": [
+    "2026-10-01",
+    "2026-10-02",
+    "2026-10-03",
+    "2026-10-04",
+    "2026-10-05",
+    "2026-10-06",
+    "2026-10-07",
+    "2026-10-08",
+    "2026-10-09",
+    "2026-10-10",
+    "2026-10-11",
+    "2026-10-12",
+    "2026-10-13",
+    "2026-10-14",
+    "2026-10-15",
+    "2026-10-16",
+    "2026-10-17",
+    "2026-10-18",
+    "2026-10-19",
+    "2026-10-20",
+    "2026-10-21",
+    "2026-10-22",
+    "2026-10-23",
+    "2026-10-24",
+    "2026-10-25",
+    "2026-10-26",
+    "2026-10-27",
+    "2026-10-28",
+    "2026-10-29",
+    "2026-10-30",
+    "2026-10-31",
+    "2026-11-01",
+    "2026-11-02",
+    "2026-11-03",
+    "2026-11-04",
+    "2026-11-05",
+    "2026-11-06",
+    "2026-11-07",
+    "2026-11-08",
+    "2026-11-09",
+    "2026-11-10",
+    "2026-11-11",
+    "2026-11-12",
+    "2026-11-13",
+    "2026-11-14",
+    "2026-11-15",
+    "2026-11-16",
+    "2026-11-17",
+    "2026-11-18"
+  ],
+  "online_config": {
+    "pretrain": {
+      "hidden_units": 32,
+      "train_days": null,
+      "min_training_days": 7,
+      "max_epochs": 400,
+      "patience": 40,
+      "learning_rate": 0.003,
+      "fine_tune_fraction": 0.3,
+      "fine_tune_learning_rate": 0.0005,
+      "l2": 0.0001,
+      "validation_fraction": 0.2,
+      "random_seed": 42,
+      "batch_size": 32,
+      "lr_decay_step_epochs": 10,
+      "lr_decay_factor": 0.5,
+      "forget_gate_bias": 1.0,
+      "gradient_clip_norm": 5.0
+    },
+    "finetune_window_days": 7,
+    "min_finetune_days": 5,
+    "finetune_epochs": 10,
+    "finetune_learning_rate": 1e-05,
+    "bias_window_days": 28,
+    "max_catch_up_days": 120
+  },
+  "pretrain_configs": {
+    "era5": {
+      "hidden_units": 32,
+      "train_days": null,
+      "min_training_days": 7,
+      "max_epochs": 400,
+      "patience": 40,
+      "learning_rate": 0.003,
+      "fine_tune_fraction": 0.3,
+      "fine_tune_learning_rate": 0.0005,
+      "l2": 0.0001,
+      "validation_fraction": 0.2,
+      "random_seed": 42,
+      "batch_size": 32,
+      "lr_decay_step_epochs": 10,
+      "lr_decay_factor": 0.5,
+      "forget_gate_bias": 1.0,
+      "gradient_clip_norm": 5.0
+    },
+    "legacy": {
+      "hidden_units": 32,
+      "train_days": null,
+      "min_training_days": 7,
+      "max_epochs": 400,
+      "patience": 40,
+      "learning_rate": 0.003,
+      "fine_tune_fraction": 0.3,
+      "fine_tune_learning_rate": 0.0005,
+      "l2": 0.0001,
+      "validation_fraction": 0.2,
+      "random_seed": 42,
+      "batch_size": null,
+      "lr_decay_step_epochs": null,
+      "lr_decay_factor": 1.0,
+      "forget_gate_bias": 0.0,
+      "gradient_clip_norm": null
+    }
+  },
+  "runs": {
+    "era5_s42": {
+      "config": "era5",
+      "seed": 42,
+      "pretrain_seconds": 82.6,
+      "finetune_and_forecast_seconds": 26.1
+    },
+    "era5_s43": {
+      "config": "era5",
+      "seed": 43,
+      "pretrain_seconds": 103.9,
+      "finetune_and_forecast_seconds": 28.5
+    },
+    "era5_s44": {
+      "config": "era5",
+      "seed": 44,
+      "pretrain_seconds": 64.1,
+      "finetune_and_forecast_seconds": 29.9
+    },
+    "legacy_s42": {
+      "config": "legacy",
+      "seed": 42,
+      "pretrain_seconds": 144.3,
+      "finetune_and_forecast_seconds": 28.4
+    },
+    "legacy_s43": {
+      "config": "legacy",
+      "seed": 43,
+      "pretrain_seconds": 194.0,
+      "finetune_and_forecast_seconds": 30.2
+    },
+    "legacy_s44": {
+      "config": "legacy",
+      "seed": 44,
+      "pretrain_seconds": 170.9,
+      "finetune_and_forecast_seconds": 31.2
+    }
+  },
+  "metrics_eur_per_mwh": {
+    "online_era5_s42": {
+      "MAE": 17.56126141438557,
+      "RMSE": 24.928202739561794,
+      "Bias": -0.28596061179288074,
+      "observations": 4704
+    },
+    "online_pretrained_only_era5_s42": {
+      "MAE": 18.575830178457103,
+      "RMSE": 26.86176984259978,
+      "Bias": 1.2277834188764905,
+      "observations": 4704
+    },
+    "online_era5_s43": {
+      "MAE": 18.037480376258028,
+      "RMSE": 25.698080551619068,
+      "Bias": -0.9461083053259024,
+      "observations": 4704
+    },
+    "online_pretrained_only_era5_s43": {
+      "MAE": 18.301689164228947,
+      "RMSE": 26.21509464648277,
+      "Bias": -0.6249859623491354,
+      "observations": 4704
+    },
+    "online_era5_s44": {
+      "MAE": 17.681191363218304,
+      "RMSE": 25.041876101405627,
+      "Bias": -0.802521414763799,
+      "observations": 4704
+    },
+    "online_pretrained_only_era5_s44": {
+      "MAE": 18.32998509805427,
+      "RMSE": 26.172976438965307,
+      "Bias": 0.2516970857974441,
+      "observations": 4704
+    },
+    "online_legacy_s42": {
+      "MAE": 17.54646819392207,
+      "RMSE": 24.945531204333598,
+      "Bias": -0.3195163682340603,
+      "observations": 4704
+    },
+    "online_pretrained_only_legacy_s42": {
+      "MAE": 17.94327941982052,
+      "RMSE": 25.872149495160816,
+      "Bias": 0.5690092357714618,
+      "observations": 4704
+    },
+    "online_legacy_s43": {
+      "MAE": 18.915364140976386,
+      "RMSE": 27.470013341075287,
+      "Bias": -2.828050190631757,
+      "observations": 4704
+    },
+    "online_pretrained_only_legacy_s43": {
+      "MAE": 19.47904670773263,
+      "RMSE": 28.639491502746573,
+      "Bias": -1.7064672672932184,
+      "observations": 4704
+    },
+    "online_legacy_s44": {
+      "MAE": 18.891891522165512,
+      "RMSE": 26.699706757247043,
+      "Bias": 2.5804601311911726,
+      "observations": 4704
+    },
+    "online_pretrained_only_legacy_s44": {
+      "MAE": 21.698276483069886,
+      "RMSE": 30.61371722549748,
+      "Bias": 5.314021998499784,
+      "observations": 4704
+    },
+    "lear_d56_c5": {
+      "MAE": 31.75290434730263,
+      "RMSE": 48.06835141498591,
+      "Bias": -9.106508261779904,
+      "observations": 4704
+    }
+  },
+  "metrics_by_config_seed_averaged": {
+    "online_era5": {
+      "MAE_mean": 17.75997771795397,
+      "MAE_std": 0.20224010842085838,
+      "RMSE_mean": 25.22271979752883,
+      "seeds": [
+        42,
+        43,
+        44
+      ]
+    },
+    "online_pretrained_only_era5": {
+      "MAE_mean": 18.402501480246773,
+      "MAE_std": 0.12310508569301687,
+      "RMSE_mean": 26.41661364268262,
+      "seeds": [
+        42,
+        43,
+        44
+      ]
+    },
+    "online_legacy": {
+      "MAE_mean": 18.45124128568799,
+      "MAE_std": 0.6398429503381828,
+      "RMSE_mean": 26.371750434218644,
+      "seeds": [
+        42,
+        43,
+        44
+      ]
+    },
+    "online_pretrained_only_legacy": {
+      "MAE_mean": 19.706867536874345,
+      "MAE_std": 1.5414122277738156,
+      "RMSE_mean": 28.375119407801623,
+      "seeds": [
+        42,
+        43,
+        44
+      ]
+    }
+  },
+  "models": {
+    "online_<config>_s<seed>": "pretrained once, then fine-tuned daily on the last week",
+    "online_pretrained_only_<config>_s<seed>": "same pretrained model without any update",
+    "rolling_lstm_exaa": "existing LSTM_exaa_enriched, refitted daily (expanding window)",
+    "lear_d56_c5": "LEAR D56 C5 fundamental from C:\\Users\\tobia\\OneDrive\\Desktop\\EPF_Pipe\\data\\operational\\results\\lear_op_results\\dwd\\d56\\c5\\fundamental\\forecast.csv"
+  }
+}

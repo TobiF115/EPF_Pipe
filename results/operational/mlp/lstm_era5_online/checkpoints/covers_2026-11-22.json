@@ -1,0 +1,26 @@
+{
+  "format_version": 1,
+  "covers_through": "2026-11-22",
+  "metadata": {
+    "kind": "skipped",
+    "window_first_day": "2026-11-16",
+    "window_last_day": "2026-11-22",
+    "window_complete_days": 4,
+    "window_days_used": [
+      "2026-11-16",
+      "2026-11-17",
+      "2026-11-18",
+      "2026-11-19"
+    ],
+    "weather_sources": {
+      "2026-11-16": "ICON-D2",
+      "2026-11-17": "ICON-D2",
+      "2026-11-18": "ICON-D2",
+      "2026-11-19": "ICON-D2",
+      "2026-11-20": "ICON-D2",
+      "2026-11-21": "missing",
+      "2026-11-22": "missing"
+    },
+    "reason": "only 4 complete days in window (< 5)"
+  }
+}

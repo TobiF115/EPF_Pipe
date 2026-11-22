@@ -1,0 +1,8740 @@
+{
+  "format_version": 1,
+  "covers_through": "2026-11-13",
+  "metadata": {
+    "kind": "pretrained",
+    "pretrain_first_day": "2025-01-02",
+    "pretrain_last_day": "2026-11-13",
+    "pretrain_days": 681,
+    "exaa_features": true,
+    "config": {
+      "pretrain": {
+        "hidden_units": 32,
+        "train_days": null,
+        "min_training_days": 7,
+        "max_epochs": 400,
+        "patience": 40,
+        "learning_rate": 0.003,
+        "fine_tune_fraction": 0.3,
+        "fine_tune_learning_rate": 0.0005,
+        "l2": 0.0001,
+        "validation_fraction": 0.2,
+        "random_seed": 42
+      },
+      "finetune_window_days": 7,
+      "min_finetune_days": 5,
+      "finetune_epochs": 10,
+      "finetune_learning_rate": 1e-05,
+      "bias_window_days": 28,
+      "max_catch_up_days": 120
+    },
+    "weather_source": "ERA5",
+    "weather_root": "C:\\Users\\tobia\\OneDrive\\Desktop\\EPF_Pipe\\data\\era5_icon\\c5"
+  },
+  "hidden_units": 32,
+  "hidden_columns": [
+    "wind_speed_cluster_0_h00",
+    "wind_speed_cluster_0_h01",
+    "wind_speed_cluster_0_h02",
+    "wind_speed_cluster_0_h03",
+    "wind_speed_cluster_0_h04",
+    "wind_speed_cluster_0_h05",
+    "wind_speed_cluster_0_h06",
+    "wind_speed_cluster_0_h07",
+    "wind_speed_cluster_0_h08",
+    "wind_speed_cluster_0_h09",
+    "wind_speed_cluster_0_h10",
+    "wind_speed_cluster_0_h11",
+    "wind_speed_cluster_0_h12",
+    "wind_speed_cluster_0_h13",
+    "wind_speed_cluster_0_h14",
+    "wind_speed_cluster_0_h15",
+    "wind_speed_cluster_0_h16",
+    "wind_speed_cluster_0_h17",
+    "wind_speed_cluster_0_h18",
+    "wind_speed_cluster_0_h19",
+    "wind_speed_cluster_0_h20",
+    "wind_speed_cluster_0_h21",
+    "wind_speed_cluster_0_h22",
+    "wind_speed_cluster_0_h23",
+    "wind_speed_cluster_1_h00",
+    "wind_speed_cluster_1_h01",
+    "wind_speed_cluster_1_h02",
+    "wind_speed_cluster_1_h03",
+    "wind_speed_cluster_1_h04",
+    "wind_speed_cluster_1_h05",
+    "wind_speed_cluster_1_h06",
+    "wind_speed_cluster_1_h07",
+    "wind_speed_cluster_1_h08",
+    "wind_speed_cluster_1_h09",
+    "wind_speed_cluster_1_h10",
+    "wind_speed_cluster_1_h11",
+    "wind_speed_cluster_1_h12",
+    "wind_speed_cluster_1_h13",
+    "wind_speed_cluster_1_h14",
+    "wind_speed_cluster_1_h15",
+    "wind_speed_cluster_1_h16",
+    "wind_speed_cluster_1_h17",
+    "wind_speed_cluster_1_h18",
+    "wind_speed_cluster_1_h19",
+    "wind_speed_cluster_1_h20",
+    "wind_speed_cluster_1_h21",
+    "wind_speed_cluster_1_h22",
+    "wind_speed_cluster_1_h23",
+    "wind_speed_cluster_2_h00",
+    "wind_speed_cluster_2_h01",
+    "wind_speed_cluster_2_h02",
+    "wind_speed_cluster_2_h03",
+    "wind_speed_cluster_2_h04",
+    "wind_speed_cluster_2_h05",
+    "wind_speed_cluster_2_h06",
+    "wind_speed_cluster_2_h07",
+    "wind_speed_cluster_2_h08",
+    "wind_speed_cluster_2_h09",
+    "wind_speed_cluster_2_h10",
+    "wind_speed_cluster_2_h11",
+    "wind_speed_cluster_2_h12",
+    "wind_speed_cluster_2_h13",
+    "wind_speed_cluster_2_h14",
+    "wind_speed_cluster_2_h15",
+    "wind_speed_cluster_2_h16",
+    "wind_speed_cluster_2_h17",
+    "wind_speed_cluster_2_h18",
+    "wind_speed_cluster_2_h19",
+    "wind_speed_cluster_2_h20",
+    "wind_speed_cluster_2_h21",
+    "wind_speed_cluster_2_h22",
+    "wind_speed_cluster_2_h23",
+    "wind_speed_cluster_3_h00",
+    "wind_speed_cluster_3_h01",
+    "wind_speed_cluster_3_h02",
+    "wind_speed_cluster_3_h03",
+    "wind_speed_cluster_3_h04",
+    "wind_speed_cluster_3_h05",
+    "wind_speed_cluster_3_h06",
+    "wind_speed_cluster_3_h07",
+    "wind_speed_cluster_3_h08",
+    "wind_speed_cluster_3_h09",
+    "wind_speed_cluster_3_h10",
+    "wind_speed_cluster_3_h11",
+    "wind_speed_cluster_3_h12",
+    "wind_speed_cluster_3_h13",
+    "wind_speed_cluster_3_h14",
+    "wind_speed_cluster_3_h15",
+    "wind_speed_cluster_3_h16",
+    "wind_speed_cluster_3_h17",
+    "wind_speed_cluster_3_h18",
+    "wind_speed_cluster_3_h19",
+    "wind_speed_cluster_3_h20",
+    "wind_speed_cluster_3_h21",
+    "wind_speed_cluster_3_h22",
+    "wind_speed_cluster_3_h23",
+    "wind_speed_cluster_4_h00",
+    "wind_speed_cluster_4_h01",
+    "wind_speed_cluster_4_h02",
+    "wind_speed_cluster_4_h03",
+    "wind_speed_cluster_4_h04",
+    "wind_speed_cluster_4_h05",
+    "wind_speed_cluster_4_h06",
+    "wind_speed_cluster_4_h07",
+    "wind_speed_cluster_4_h08",
+    "wind_speed_cluster_4_h09",
+    "wind_speed_cluster_4_h10",
+    "wind_speed_cluster_4_h11",
+    "wind_speed_cluster_4_h12",
+    "wind_speed_cluster_4_h13",
+    "wind_speed_cluster_4_h14",
+    "wind_speed_cluster_4_h15",
+    "wind_speed_cluster_4_h16",
+    "wind_speed_cluster_4_h17",
+    "wind_speed_cluster_4_h18",
+    "wind_speed_cluster_4_h19",
+    "wind_speed_cluster_4_h20",
+    "wind_speed_cluster_4_h21",
+    "wind_speed_cluster_4_h22",
+    "wind_speed_cluster_4_h23",
+    "sw_dif_cluster_0_mtu00",
+    "sw_dif_cluster_0_mtu01",
+    "sw_dif_cluster_0_mtu02",
+    "sw_dif_cluster_0_mtu03",
+    "sw_dif_cluster_0_mtu04",
+    "sw_dif_cluster_0_mtu05",
+    "sw_dif_cluster_0_mtu06",
+    "sw_dif_cluster_0_mtu07",
+    "sw_dif_cluster_0_mtu08",
+    "sw_dif_cluster_0_mtu09",
+    "sw_dif_cluster_0_mtu10",
+    "sw_dif_cluster_0_mtu11",
+    "sw_dif_cluster_0_mtu12",
+    "sw_dif_cluster_0_mtu13",
+    "sw_dif_cluster_0_mtu14",
+    "sw_dif_cluster_0_mtu15",
+    "sw_dif_cluster_0_mtu16",
+    "sw_dif_cluster_0_mtu17",
+    "sw_dif_cluster_0_mtu18",
+    "sw_dif_cluster_0_mtu19",
+    "sw_dif_cluster_0_mtu20",
+    "sw_dif_cluster_0_mtu21",
+    "sw_dif_cluster_0_mtu22",
+    "sw_dif_cluster_0_mtu23",
+    "sw_dif_cluster_0_mtu24",
+    "sw_dif_cluster_0_mtu25",
+    "sw_dif_cluster_0_mtu26",
+    "sw_dif_cluster_0_mtu27",
+    "sw_dif_cluster_0_mtu28",
+    "sw_dif_cluster_0_mtu29",
+    "sw_dif_cluster_0_mtu30",
+    "sw_dif_cluster_0_mtu31",
+    "sw_dif_cluster_0_mtu32",
+    "sw_dif_cluster_0_mtu33",
+    "sw_dif_cluster_0_mtu34",
+    "sw_dif_cluster_0_mtu35",
+    "sw_dif_cluster_0_mtu36",
+    "sw_dif_cluster_0_mtu37",
+    "sw_dif_cluster_0_mtu38",
+    "sw_dif_cluster_0_mtu39",
+    "sw_dif_cluster_0_mtu40",
+    "sw_dif_cluster_0_mtu41",
+    "sw_dif_cluster_0_mtu42",
+    "sw_dif_cluster_0_mtu43",
+    "sw_dif_cluster_0_mtu44",
+    "sw_dif_cluster_0_mtu45",
+    "sw_dif_cluster_0_mtu46",
+    "sw_dif_cluster_0_mtu47",
+    "sw_dif_cluster_0_mtu48",
+    "sw_dif_cluster_0_mtu49",
+    "sw_dif_cluster_0_mtu50",
+    "sw_dif_cluster_0_mtu51",
+    "sw_dif_cluster_0_mtu52",
+    "sw_dif_cluster_0_mtu53",
+    "sw_dif_cluster_0_mtu54",
+    "sw_dif_cluster_0_mtu55",
+    "sw_dif_cluster_0_mtu56",
+    "sw_dif_cluster_0_mtu57",
+    "sw_dif_cluster_0_mtu58",
+    "sw_dif_cluster_0_mtu59",
+    "sw_dif_cluster_0_mtu60",
+    "sw_dif_cluster_0_mtu61",
+    "sw_dif_cluster_0_mtu62",
+    "sw_dif_cluster_0_mtu63",
+    "sw_dif_cluster_0_mtu64",
+    "sw_dif_cluster_0_mtu65",
+    "sw_dif_cluster_0_mtu66",
+    "sw_dif_cluster_0_mtu67",
+    "sw_dif_cluster_0_mtu68",
+    "sw_dif_cluster_0_mtu69",
+    "sw_dif_cluster_0_mtu70",
+    "sw_dif_cluster_0_mtu71",
+    "sw_dif_cluster_0_mtu72",
+    "sw_dif_cluster_0_mtu73",
+    "sw_dif_cluster_0_mtu74",
+    "sw_dif_cluster_0_mtu75",
+    "sw_dif_cluster_0_mtu76",
+    "sw_dif_cluster_0_mtu77",
+    "sw_dif_cluster_0_mtu78",
+    "sw_dif_cluster_0_mtu79",
+    "sw_dif_cluster_0_mtu80",
+    "sw_dif_cluster_0_mtu81",
+    "sw_dif_cluster_0_mtu82",
+    "sw_dif_cluster_0_mtu83",
+    "sw_dif_cluster_0_mtu84",
+    "sw_dif_cluster_0_mtu85",
+    "sw_dif_cluster_0_mtu86",
+    "sw_dif_cluster_0_mtu87",
+    "sw_dif_cluster_0_mtu88",
+    "sw_dif_cluster_0_mtu89",
+    "sw_dif_cluster_0_mtu90",
+    "sw_dif_cluster_0_mtu91",
+    "sw_dif_cluster_0_mtu92",
+    "sw_dif_cluster_0_mtu93",
+    "sw_dif_cluster_0_mtu94",
+    "sw_dif_cluster_0_mtu95",
+    "sw_dif_cluster_1_mtu00",
+    "sw_dif_cluster_1_mtu01",
+    "sw_dif_cluster_1_mtu02",
+    "sw_dif_cluster_1_mtu03",
+    "sw_dif_cluster_1_mtu04",
+    "sw_dif_cluster_1_mtu05",
+    "sw_dif_cluster_1_mtu06",
+    "sw_dif_cluster_1_mtu07",
+    "sw_dif_cluster_1_mtu08",
+    "sw_dif_cluster_1_mtu09",
+    "sw_dif_cluster_1_mtu10",
+    "sw_dif_cluster_1_mtu11",
+    "sw_dif_cluster_1_mtu12",
+    "sw_dif_cluster_1_mtu13",
+    "sw_dif_cluster_1_mtu14",
+    "sw_dif_cluster_1_mtu15",
+    "sw_dif_cluster_1_mtu16",
+    "sw_dif_cluster_1_mtu17",
+    "sw_dif_cluster_1_mtu18",
+    "sw_dif_cluster_1_mtu19",
+    "sw_dif_cluster_1_mtu20",
+    "sw_dif_cluster_1_mtu21",
+    "sw_dif_cluster_1_mtu22",
+    "sw_dif_cluster_1_mtu23",
+    "sw_dif_cluster_1_mtu24",
+    "sw_dif_cluster_1_mtu25",
+    "sw_dif_cluster_1_mtu26",
+    "sw_dif_cluster_1_mtu27",
+    "sw_dif_cluster_1_mtu28",
+    "sw_dif_cluster_1_mtu29",
+    "sw_dif_cluster_1_mtu30",
+    "sw_dif_cluster_1_mtu31",
+    "sw_dif_cluster_1_mtu32",
+    "sw_dif_cluster_1_mtu33",
+    "sw_dif_cluster_1_mtu34",
+    "sw_dif_cluster_1_mtu35",
+    "sw_dif_cluster_1_mtu36",
+    "sw_dif_cluster_1_mtu37",
+    "sw_dif_cluster_1_mtu38",
+    "sw_dif_cluster_1_mtu39",
+    "sw_dif_cluster_1_mtu40",
+    "sw_dif_cluster_1_mtu41",
+    "sw_dif_cluster_1_mtu42",
+    "sw_dif_cluster_1_mtu43",
+    "sw_dif_cluster_1_mtu44",
+    "sw_dif_cluster_1_mtu45",
+    "sw_dif_cluster_1_mtu46",
+    "sw_dif_cluster_1_mtu47",
+    "sw_dif_cluster_1_mtu48",
+    "sw_dif_cluster_1_mtu49",
+    "sw_dif_cluster_1_mtu50",
+    "sw_dif_cluster_1_mtu51",
+    "sw_dif_cluster_1_mtu52",
+    "sw_dif_cluster_1_mtu53",
+    "sw_dif_cluster_1_mtu54",
+    "sw_dif_cluster_1_mtu55",
+    "sw_dif_cluster_1_mtu56",
+    "sw_dif_cluster_1_mtu57",
+    "sw_dif_cluster_1_mtu58",
+    "sw_dif_cluster_1_mtu59",
+    "sw_dif_cluster_1_mtu60",
+    "sw_dif_cluster_1_mtu61",
+    "sw_dif_cluster_1_mtu62",
+    "sw_dif_cluster_1_mtu63",
+    "sw_dif_cluster_1_mtu64",
+    "sw_dif_cluster_1_mtu65",
+    "sw_dif_cluster_1_mtu66",
+    "sw_dif_cluster_1_mtu67",
+    "sw_dif_cluster_1_mtu68",
+    "sw_dif_cluster_1_mtu69",
+    "sw_dif_cluster_1_mtu70",
+    "sw_dif_cluster_1_mtu71",
+    "sw_dif_cluster_1_mtu72",
+    "sw_dif_cluster_1_mtu73",
+    "sw_dif_cluster_1_mtu74",
+    "sw_dif_cluster_1_mtu75",
+    "sw_dif_cluster_1_mtu76",
+    "sw_dif_cluster_1_mtu77",
+    "sw_dif_cluster_1_mtu78",
+    "sw_dif_cluster_1_mtu79",
+    "sw_dif_cluster_1_mtu80",
+    "sw_dif_cluster_1_mtu81",
+    "sw_dif_cluster_1_mtu82",
+    "sw_dif_cluster_1_mtu83",
+    "sw_dif_cluster_1_mtu84",
+    "sw_dif_cluster_1_mtu85",
+    "sw_dif_cluster_1_mtu86",
+    "sw_dif_cluster_1_mtu87",
+    "sw_dif_cluster_1_mtu88",
+    "sw_dif_cluster_1_mtu89",
+    "sw_dif_cluster_1_mtu90",
+    "sw_dif_cluster_1_mtu91",
+    "sw_dif_cluster_1_mtu92",
+    "sw_dif_cluster_1_mtu93",
+    "sw_dif_cluster_1_mtu94",
+    "sw_dif_cluster_1_mtu95",
+    "sw_dif_cluster_2_mtu00",
+    "sw_dif_cluster_2_mtu01",
+    "sw_dif_cluster_2_mtu02",
+    "sw_dif_cluster_2_mtu03",
+    "sw_dif_cluster_2_mtu04",
+    "sw_dif_cluster_2_mtu05",
+    "sw_dif_cluster_2_mtu06",
+    "sw_dif_cluster_2_mtu07",
+    "sw_dif_cluster_2_mtu08",
+    "sw_dif_cluster_2_mtu09",
+    "sw_dif_cluster_2_mtu10",
+    "sw_dif_cluster_2_mtu11",
+    "sw_dif_cluster_2_mtu12",
+    "sw_dif_cluster_2_mtu13",
+    "sw_dif_cluster_2_mtu14",
+    "sw_dif_cluster_2_mtu15",
+    "sw_dif_cluster_2_mtu16",
+    "sw_dif_cluster_2_mtu17",
+    "sw_dif_cluster_2_mtu18",
+    "sw_dif_cluster_2_mtu19",
+    "sw_dif_cluster_2_mtu20",
+    "sw_dif_cluster_2_mtu21",
+    "sw_dif_cluster_2_mtu22",
+    "sw_dif_cluster_2_mtu23",
+    "sw_dif_cluster_2_mtu24",
+    "sw_dif_cluster_2_mtu25",
+    "sw_dif_cluster_2_mtu26",
+    "sw_dif_cluster_2_mtu27",
+    "sw_dif_cluster_2_mtu28",
+    "sw_dif_cluster_2_mtu29",
+    "sw_dif_cluster_2_mtu30",
+    "sw_dif_cluster_2_mtu31",
+    "sw_dif_cluster_2_mtu32",
+    "sw_dif_cluster_2_mtu33",
+    "sw_dif_cluster_2_mtu34",
+    "sw_dif_cluster_2_mtu35",
+    "sw_dif_cluster_2_mtu36",
+    "sw_dif_cluster_2_mtu37",
+    "sw_dif_cluster_2_mtu38",
+    "sw_dif_cluster_2_mtu39",
+    "sw_dif_cluster_2_mtu40",
+    "sw_dif_cluster_2_mtu41",
+    "sw_dif_cluster_2_mtu42",
+    "sw_dif_cluster_2_mtu43",
+    "sw_dif_cluster_2_mtu44",
+    "sw_dif_cluster_2_mtu45",
+    "sw_dif_cluster_2_mtu46",
+    "sw_dif_cluster_2_mtu47",
+    "sw_dif_cluster_2_mtu48",
+    "sw_dif_cluster_2_mtu49",
+    "sw_dif_cluster_2_mtu50",
+    "sw_dif_cluster_2_mtu51",
+    "sw_dif_cluster_2_mtu52",
+    "sw_dif_cluster_2_mtu53",
+    "sw_dif_cluster_2_mtu54",
+    "sw_dif_cluster_2_mtu55",
+    "sw_dif_cluster_2_mtu56",
+    "sw_dif_cluster_2_mtu57",
+    "sw_dif_cluster_2_mtu58",
+    "sw_dif_cluster_2_mtu59",
+    "sw_dif_cluster_2_mtu60",
+    "sw_dif_cluster_2_mtu61",
+    "sw_dif_cluster_2_mtu62",
+    "sw_dif_cluster_2_mtu63",
+    "sw_dif_cluster_2_mtu64",
+    "sw_dif_cluster_2_mtu65",
+    "sw_dif_cluster_2_mtu66",
+    "sw_dif_cluster_2_mtu67",
+    "sw_dif_cluster_2_mtu68",
+    "sw_dif_cluster_2_mtu69",
+    "sw_dif_cluster_2_mtu70",
+    "sw_dif_cluster_2_mtu71",
+    "sw_dif_cluster_2_mtu72",
+    "sw_dif_cluster_2_mtu73",
+    "sw_dif_cluster_2_mtu74",
+    "sw_dif_cluster_2_mtu75",
+    "sw_dif_cluster_2_mtu76",
+    "sw_dif_cluster_2_mtu77",
+    "sw_dif_cluster_2_mtu78",
+    "sw_dif_cluster_2_mtu79",
+    "sw_dif_cluster_2_mtu80",
+    "sw_dif_cluster_2_mtu81",
+    "sw_dif_cluster_2_mtu82",
+    "sw_dif_cluster_2_mtu83",
+    "sw_dif_cluster_2_mtu84",
+    "sw_dif_cluster_2_mtu85",
+    "sw_dif_cluster_2_mtu86",
+    "sw_dif_cluster_2_mtu87",
+    "sw_dif_cluster_2_mtu88",
+    "sw_dif_cluster_2_mtu89",
+    "sw_dif_cluster_2_mtu90",
+    "sw_dif_cluster_2_mtu91",
+    "sw_dif_cluster_2_mtu92",
+    "sw_dif_cluster_2_mtu93",
+    "sw_dif_cluster_2_mtu94",
+    "sw_dif_cluster_2_mtu95",
+    "sw_dif_cluster_3_mtu00",
+    "sw_dif_cluster_3_mtu01",
+    "sw_dif_cluster_3_mtu02",
+    "sw_dif_cluster_3_mtu03",
+    "sw_dif_cluster_3_mtu04",
+    "sw_dif_cluster_3_mtu05",
+    "sw_dif_cluster_3_mtu06",
+    "sw_dif_cluster_3_mtu07",
+    "sw_dif_cluster_3_mtu08",
+    "sw_dif_cluster_3_mtu09",
+    "sw_dif_cluster_3_mtu10",
+    "sw_dif_cluster_3_mtu11",
+    "sw_dif_cluster_3_mtu12",
+    "sw_dif_cluster_3_mtu13",
+    "sw_dif_cluster_3_mtu14",
+    "sw_dif_cluster_3_mtu15",
+    "sw_dif_cluster_3_mtu16",
+    "sw_dif_cluster_3_mtu17",
+    "sw_dif_cluster_3_mtu18",
+    "sw_dif_cluster_3_mtu19",
+    "sw_dif_cluster_3_mtu20",
+    "sw_dif_cluster_3_mtu21",
+    "sw_dif_cluster_3_mtu22",
+    "sw_dif_cluster_3_mtu23",
+    "sw_dif_cluster_3_mtu24",
+    "sw_dif_cluster_3_mtu25",
+    "sw_dif_cluster_3_mtu26",
+    "sw_dif_cluster_3_mtu27",
+    "sw_dif_cluster_3_mtu28",
+    "sw_dif_cluster_3_mtu29",
+    "sw_dif_cluster_3_mtu30",
+    "sw_dif_cluster_3_mtu31",
+    "sw_dif_cluster_3_mtu32",
+    "sw_dif_cluster_3_mtu33",
+    "sw_dif_cluster_3_mtu34",
+    "sw_dif_cluster_3_mtu35",
+    "sw_dif_cluster_3_mtu36",
+    "sw_dif_cluster_3_mtu37",
+    "sw_dif_cluster_3_mtu38",
+    "sw_dif_cluster_3_mtu39",
+    "sw_dif_cluster_3_mtu40",
+    "sw_dif_cluster_3_mtu41",
+    "sw_dif_cluster_3_mtu42",
+    "sw_dif_cluster_3_mtu43",
+    "sw_dif_cluster_3_mtu44",
+    "sw_dif_cluster_3_mtu45",
+    "sw_dif_cluster_3_mtu46",
+    "sw_dif_cluster_3_mtu47",
+    "sw_dif_cluster_3_mtu48",
+    "sw_dif_cluster_3_mtu49",
+    "sw_dif_cluster_3_mtu50",
+    "sw_dif_cluster_3_mtu51",
+    "sw_dif_cluster_3_mtu52",
+    "sw_dif_cluster_3_mtu53",
+    "sw_dif_cluster_3_mtu54",
+    "sw_dif_cluster_3_mtu55",
+    "sw_dif_cluster_3_mtu56",
+    "sw_dif_cluster_3_mtu57",
+    "sw_dif_cluster_3_mtu58",
+    "sw_dif_cluster_3_mtu59",
+    "sw_dif_cluster_3_mtu60",
+    "sw_dif_cluster_3_mtu61",
+    "sw_dif_cluster_3_mtu62",
+    "sw_dif_cluster_3_mtu63",
+    "sw_dif_cluster_3_mtu64",
+    "sw_dif_cluster_3_mtu65",
+    "sw_dif_cluster_3_mtu66",
+    "sw_dif_cluster_3_mtu67",
+    "sw_dif_cluster_3_mtu68",
+    "sw_dif_cluster_3_mtu69",
+    "sw_dif_cluster_3_mtu70",
+    "sw_dif_cluster_3_mtu71",
+    "sw_dif_cluster_3_mtu72",
+    "sw_dif_cluster_3_mtu73",
+    "sw_dif_cluster_3_mtu74",
+    "sw_dif_cluster_3_mtu75",
+    "sw_dif_cluster_3_mtu76",
+    "sw_dif_cluster_3_mtu77",
+    "sw_dif_cluster_3_mtu78",
+    "sw_dif_cluster_3_mtu79",
+    "sw_dif_cluster_3_mtu80",
+    "sw_dif_cluster_3_mtu81",
+    "sw_dif_cluster_3_mtu82",
+    "sw_dif_cluster_3_mtu83",
+    "sw_dif_cluster_3_mtu84",
+    "sw_dif_cluster_3_mtu85",
+    "sw_dif_cluster_3_mtu86",
+    "sw_dif_cluster_3_mtu87",
+    "sw_dif_cluster_3_mtu88",
+    "sw_dif_cluster_3_mtu89",
+    "sw_dif_cluster_3_mtu90",
+    "sw_dif_cluster_3_mtu91",
+    "sw_dif_cluster_3_mtu92",
+    "sw_dif_cluster_3_mtu93",
+    "sw_dif_cluster_3_mtu94",
+    "sw_dif_cluster_3_mtu95",
+    "sw_dif_cluster_4_mtu00",
+    "sw_dif_cluster_4_mtu01",
+    "sw_dif_cluster_4_mtu02",
+    "sw_dif_cluster_4_mtu03",
+    "sw_dif_cluster_4_mtu04",
+    "sw_dif_cluster_4_mtu05",
+    "sw_dif_cluster_4_mtu06",
+    "sw_dif_cluster_4_mtu07",
+    "sw_dif_cluster_4_mtu08",
+    "sw_dif_cluster_4_mtu09",
+    "sw_dif_cluster_4_mtu10",
+    "sw_dif_cluster_4_mtu11",
+    "sw_dif_cluster_4_mtu12",
+    "sw_dif_cluster_4_mtu13",
+    "sw_dif_cluster_4_mtu14",
+    "sw_dif_cluster_4_mtu15",
+    "sw_dif_cluster_4_mtu16",
+    "sw_dif_cluster_4_mtu17",
+    "sw_dif_cluster_4_mtu18",
+    "sw_dif_cluster_4_mtu19",
+    "sw_dif_cluster_4_mtu20",
+    "sw_dif_cluster_4_mtu21",
+    "sw_dif_cluster_4_mtu22",
+    "sw_dif_cluster_4_mtu23",
+    "sw_dif_cluster_4_mtu24",
+    "sw_dif_cluster_4_mtu25",
+    "sw_dif_cluster_4_mtu26",
+    "sw_dif_cluster_4_mtu27",
+    "sw_dif_cluster_4_mtu28",
+    "sw_dif_cluster_4_mtu29",
+    "sw_dif_cluster_4_mtu30",
+    "sw_dif_cluster_4_mtu31",
+    "sw_dif_cluster_4_mtu32",
+    "sw_dif_cluster_4_mtu33",
+    "sw_dif_cluster_4_mtu34",
+    "sw_dif_cluster_4_mtu35",
+    "sw_dif_cluster_4_mtu36",
+    "sw_dif_cluster_4_mtu37",
+    "sw_dif_cluster_4_mtu38",
+    "sw_dif_cluster_4_mtu39",
+    "sw_dif_cluster_4_mtu40",
+    "sw_dif_cluster_4_mtu41",
+    "sw_dif_cluster_4_mtu42",
+    "sw_dif_cluster_4_mtu43",
+    "sw_dif_cluster_4_mtu44",
+    "sw_dif_cluster_4_mtu45",
+    "sw_dif_cluster_4_mtu46",
+    "sw_dif_cluster_4_mtu47",
+    "sw_dif_cluster_4_mtu48",
+    "sw_dif_cluster_4_mtu49",
+    "sw_dif_cluster_4_mtu50",
+    "sw_dif_cluster_4_mtu51",
+    "sw_dif_cluster_4_mtu52",
+    "sw_dif_cluster_4_mtu53",
+    "sw_dif_cluster_4_mtu54",
+    "sw_dif_cluster_4_mtu55",
+    "sw_dif_cluster_4_mtu56",
+    "sw_dif_cluster_4_mtu57",
+    "sw_dif_cluster_4_mtu58",
+    "sw_dif_cluster_4_mtu59",
+    "sw_dif_cluster_4_mtu60",
+    "sw_dif_cluster_4_mtu61",
+    "sw_dif_cluster_4_mtu62",
+    "sw_dif_cluster_4_mtu63",
+    "sw_dif_cluster_4_mtu64",
+    "sw_dif_cluster_4_mtu65",
+    "sw_dif_cluster_4_mtu66",
+    "sw_dif_cluster_4_mtu67",
+    "sw_dif_cluster_4_mtu68",
+    "sw_dif_cluster_4_mtu69",
+    "sw_dif_cluster_4_mtu70",
+    "sw_dif_cluster_4_mtu71",
+    "sw_dif_cluster_4_mtu72",
+    "sw_dif_cluster_4_mtu73",
+    "sw_dif_cluster_4_mtu74",
+    "sw_dif_cluster_4_mtu75",
+    "sw_dif_cluster_4_mtu76",
+    "sw_dif_cluster_4_mtu77",
+    "sw_dif_cluster_4_mtu78",
+    "sw_dif_cluster_4_mtu79",
+    "sw_dif_cluster_4_mtu80",
+    "sw_dif_cluster_4_mtu81",
+    "sw_dif_cluster_4_mtu82",
+    "sw_dif_cluster_4_mtu83",
+    "sw_dif_cluster_4_mtu84",
+    "sw_dif_cluster_4_mtu85",
+    "sw_dif_cluster_4_mtu86",
+    "sw_dif_cluster_4_mtu87",
+    "sw_dif_cluster_4_mtu88",
+    "sw_dif_cluster_4_mtu89",
+    "sw_dif_cluster_4_mtu90",
+    "sw_dif_cluster_4_mtu91",
+    "sw_dif_cluster_4_mtu92",
+    "sw_dif_cluster_4_mtu93",
+    "sw_dif_cluster_4_mtu94",
+    "sw_dif_cluster_4_mtu95",
+    "sw_dir_cluster_0_mtu00",
+    "sw_dir_cluster_0_mtu01",
+    "sw_dir_cluster_0_mtu02",
+    "sw_dir_cluster_0_mtu03",
+    "sw_dir_cluster_0_mtu04",
+    "sw_dir_cluster_0_mtu05",
+    "sw_dir_cluster_0_mtu06",
+    "sw_dir_cluster_0_mtu07",
+    "sw_dir_cluster_0_mtu08",
+    "sw_dir_cluster_0_mtu09",
+    "sw_dir_cluster_0_mtu10",
+    "sw_dir_cluster_0_mtu11",
+    "sw_dir_cluster_0_mtu12",
+    "sw_dir_cluster_0_mtu13",
+    "sw_dir_cluster_0_mtu14",
+    "sw_dir_cluster_0_mtu15",
+    "sw_dir_cluster_0_mtu16",
+    "sw_dir_cluster_0_mtu17",
+    "sw_dir_cluster_0_mtu18",
+    "sw_dir_cluster_0_mtu19",
+    "sw_dir_cluster_0_mtu20",
+    "sw_dir_cluster_0_mtu21",
+    "sw_dir_cluster_0_mtu22",
+    "sw_dir_cluster_0_mtu23",
+    "sw_dir_cluster_0_mtu24",
+    "sw_dir_cluster_0_mtu25",
+    "sw_dir_cluster_0_mtu26",
+    "sw_dir_cluster_0_mtu27",
+    "sw_dir_cluster_0_mtu28",
+    "sw_dir_cluster_0_mtu29",
+    "sw_dir_cluster_0_mtu30",
+    "sw_dir_cluster_0_mtu31",
+    "sw_dir_cluster_0_mtu32",
+    "sw_dir_cluster_0_mtu33",
+    "sw_dir_cluster_0_mtu34",
+    "sw_dir_cluster_0_mtu35",
+    "sw_dir_cluster_0_mtu36",
+    "sw_dir_cluster_0_mtu37",
+    "sw_dir_cluster_0_mtu38",
+    "sw_dir_cluster_0_mtu39",
+    "sw_dir_cluster_0_mtu40",
+    "sw_dir_cluster_0_mtu41",
+    "sw_dir_cluster_0_mtu42",
+    "sw_dir_cluster_0_mtu43",
+    "sw_dir_cluster_0_mtu44",
+    "sw_dir_cluster_0_mtu45",
+    "sw_dir_cluster_0_mtu46",
+    "sw_dir_cluster_0_mtu47",
+    "sw_dir_cluster_0_mtu48",
+    "sw_dir_cluster_0_mtu49",
+    "sw_dir_cluster_0_mtu50",
+    "sw_dir_cluster_0_mtu51",
+    "sw_dir_cluster_0_mtu52",
+    "sw_dir_cluster_0_mtu53",
+    "sw_dir_cluster_0_mtu54",
+    "sw_dir_cluster_0_mtu55",
+    "sw_dir_cluster_0_mtu56",
+    "sw_dir_cluster_0_mtu57",
+    "sw_dir_cluster_0_mtu58",
+    "sw_dir_cluster_0_mtu59",
+    "sw_dir_cluster_0_mtu60",
+    "sw_dir_cluster_0_mtu61",
+    "sw_dir_cluster_0_mtu62",
+    "sw_dir_cluster_0_mtu63",
+    "sw_dir_cluster_0_mtu64",
+    "sw_dir_cluster_0_mtu65",
+    "sw_dir_cluster_0_mtu66",
+    "sw_dir_cluster_0_mtu67",
+    "sw_dir_cluster_0_mtu68",
+    "sw_dir_cluster_0_mtu69",
+    "sw_dir_cluster_0_mtu70",
+    "sw_dir_cluster_0_mtu71",
+    "sw_dir_cluster_0_mtu72",
+    "sw_dir_cluster_0_mtu73",
+    "sw_dir_cluster_0_mtu74",
+    "sw_dir_cluster_0_mtu75",
+    "sw_dir_cluster_0_mtu76",
+    "sw_dir_cluster_0_mtu77",
+    "sw_dir_cluster_0_mtu78",
+    "sw_dir_cluster_0_mtu79",
+    "sw_dir_cluster_0_mtu80",
+    "sw_dir_cluster_0_mtu81",
+    "sw_dir_cluster_0_mtu82",
+    "sw_dir_cluster_0_mtu83",
+    "sw_dir_cluster_0_mtu84",
+    "sw_dir_cluster_0_mtu85",
+    "sw_dir_cluster_0_mtu86",
+    "sw_dir_cluster_0_mtu87",
+    "sw_dir_cluster_0_mtu88",
+    "sw_dir_cluster_0_mtu89",
+    "sw_dir_cluster_0_mtu90",
+    "sw_dir_cluster_0_mtu91",
+    "sw_dir_cluster_0_mtu92",
+    "sw_dir_cluster_0_mtu93",
+    "sw_dir_cluster_0_mtu94",
+    "sw_dir_cluster_0_mtu95",
+    "sw_dir_cluster_1_mtu00",
+    "sw_dir_cluster_1_mtu01",
+    "sw_dir_cluster_1_mtu02",
+    "sw_dir_cluster_1_mtu03",
+    "sw_dir_cluster_1_mtu04",
+    "sw_dir_cluster_1_mtu05",
+    "sw_dir_cluster_1_mtu06",
+    "sw_dir_cluster_1_mtu07",
+    "sw_dir_cluster_1_mtu08",
+    "sw_dir_cluster_1_mtu09",
+    "sw_dir_cluster_1_mtu10",
+    "sw_dir_cluster_1_mtu11",
+    "sw_dir_cluster_1_mtu12",
+    "sw_dir_cluster_1_mtu13",
+    "sw_dir_cluster_1_mtu14",
+    "sw_dir_cluster_1_mtu15",
+    "sw_dir_cluster_1_mtu16",
+    "sw_dir_cluster_1_mtu17",
+    "sw_dir_cluster_1_mtu18",
+    "sw_dir_cluster_1_mtu19",
+    "sw_dir_cluster_1_mtu20",
+    "sw_dir_cluster_1_mtu21",
+    "sw_dir_cluster_1_mtu22",
+    "sw_dir_cluster_1_mtu23",
+    "sw_dir_cluster_1_mtu24",
+    "sw_dir_cluster_1_mtu25",
+    "sw_dir_cluster_1_mtu26",
+    "sw_dir_cluster_1_mtu27",
+    "sw_dir_cluster_1_mtu28",
+    "sw_dir_cluster_1_mtu29",
+    "sw_dir_cluster_1_mtu30",
+    "sw_dir_cluster_1_mtu31",
+    "sw_dir_cluster_1_mtu32",
+    "sw_dir_cluster_1_mtu33",
+    "sw_dir_cluster_1_mtu34",
+    "sw_dir_cluster_1_mtu35",
+    "sw_dir_cluster_1_mtu36",
+    "sw_dir_cluster_1_mtu37",
+    "sw_dir_cluster_1_mtu38",
+    "sw_dir_cluster_1_mtu39",
+    "sw_dir_cluster_1_mtu40",
+    "sw_dir_cluster_1_mtu41",
+    "sw_dir_cluster_1_mtu42",
+    "sw_dir_cluster_1_mtu43",
+    "sw_dir_cluster_1_mtu44",
+    "sw_dir_cluster_1_mtu45",
+    "sw_dir_cluster_1_mtu46",
+    "sw_dir_cluster_1_mtu47",
+    "sw_dir_cluster_1_mtu48",
+    "sw_dir_cluster_1_mtu49",
+    "sw_dir_cluster_1_mtu50",
+    "sw_dir_cluster_1_mtu51",
+    "sw_dir_cluster_1_mtu52",
+    "sw_dir_cluster_1_mtu53",
+    "sw_dir_cluster_1_mtu54",
+    "sw_dir_cluster_1_mtu55",
+    "sw_dir_cluster_1_mtu56",
+    "sw_dir_cluster_1_mtu57",
+    "sw_dir_cluster_1_mtu58",
+    "sw_dir_cluster_1_mtu59",
+    "sw_dir_cluster_1_mtu60",
+    "sw_dir_cluster_1_mtu61",
+    "sw_dir_cluster_1_mtu62",
+    "sw_dir_cluster_1_mtu63",
+    "sw_dir_cluster_1_mtu64",
+    "sw_dir_cluster_1_mtu65",
+    "sw_dir_cluster_1_mtu66",
+    "sw_dir_cluster_1_mtu67",
+    "sw_dir_cluster_1_mtu68",
+    "sw_dir_cluster_1_mtu69",
+    "sw_dir_cluster_1_mtu70",
+    "sw_dir_cluster_1_mtu71",
+    "sw_dir_cluster_1_mtu72",
+    "sw_dir_cluster_1_mtu73",
+    "sw_dir_cluster_1_mtu74",
+    "sw_dir_cluster_1_mtu75",
+    "sw_dir_cluster_1_mtu76",
+    "sw_dir_cluster_1_mtu77",
+    "sw_dir_cluster_1_mtu78",
+    "sw_dir_cluster_1_mtu79",
+    "sw_dir_cluster_1_mtu80",
+    "sw_dir_cluster_1_mtu81",
+    "sw_dir_cluster_1_mtu82",
+    "sw_dir_cluster_1_mtu83",
+    "sw_dir_cluster_1_mtu84",
+    "sw_dir_cluster_1_mtu85",
+    "sw_dir_cluster_1_mtu86",
+    "sw_dir_cluster_1_mtu87",
+    "sw_dir_cluster_1_mtu88",
+    "sw_dir_cluster_1_mtu89",
+    "sw_dir_cluster_1_mtu90",
+    "sw_dir_cluster_1_mtu91",
+    "sw_dir_cluster_1_mtu92",
+    "sw_dir_cluster_1_mtu93",
+    "sw_dir_cluster_1_mtu94",
+    "sw_dir_cluster_1_mtu95",
+    "sw_dir_cluster_2_mtu00",
+    "sw_dir_cluster_2_mtu01",
+    "sw_dir_cluster_2_mtu02",
+    "sw_dir_cluster_2_mtu03",
+    "sw_dir_cluster_2_mtu04",
+    "sw_dir_cluster_2_mtu05",
+    "sw_dir_cluster_2_mtu06",
+    "sw_dir_cluster_2_mtu07",
+    "sw_dir_cluster_2_mtu08",
+    "sw_dir_cluster_2_mtu09",
+    "sw_dir_cluster_2_mtu10",
+    "sw_dir_cluster_2_mtu11",
+    "sw_dir_cluster_2_mtu12",
+    "sw_dir_cluster_2_mtu13",
+    "sw_dir_cluster_2_mtu14",
+    "sw_dir_cluster_2_mtu15",
+    "sw_dir_cluster_2_mtu16",
+    "sw_dir_cluster_2_mtu17",
+    "sw_dir_cluster_2_mtu18",
+    "sw_dir_cluster_2_mtu19",
+    "sw_dir_cluster_2_mtu20",
+    "sw_dir_cluster_2_mtu21",
+    "sw_dir_cluster_2_mtu22",
+    "sw_dir_cluster_2_mtu23",
+    "sw_dir_cluster_2_mtu24",
+    "sw_dir_cluster_2_mtu25",
+    "sw_dir_cluster_2_mtu26",
+    "sw_dir_cluster_2_mtu27",
+    "sw_dir_cluster_2_mtu28",
+    "sw_dir_cluster_2_mtu29",
+    "sw_dir_cluster_2_mtu30",
+    "sw_dir_cluster_2_mtu31",
+    "sw_dir_cluster_2_mtu32",
+    "sw_dir_cluster_2_mtu33",
+    "sw_dir_cluster_2_mtu34",
+    "sw_dir_cluster_2_mtu35",
+    "sw_dir_cluster_2_mtu36",
+    "sw_dir_cluster_2_mtu37",
+    "sw_dir_cluster_2_mtu38",
+    "sw_dir_cluster_2_mtu39",
+    "sw_dir_cluster_2_mtu40",
+    "sw_dir_cluster_2_mtu41",
+    "sw_dir_cluster_2_mtu42",
+    "sw_dir_cluster_2_mtu43",
+    "sw_dir_cluster_2_mtu44",
+    "sw_dir_cluster_2_mtu45",
+    "sw_dir_cluster_2_mtu46",
+    "sw_dir_cluster_2_mtu47",
+    "sw_dir_cluster_2_mtu48",
+    "sw_dir_cluster_2_mtu49",
+    "sw_dir_cluster_2_mtu50",
+    "sw_dir_cluster_2_mtu51",
+    "sw_dir_cluster_2_mtu52",
+    "sw_dir_cluster_2_mtu53",
+    "sw_dir_cluster_2_mtu54",
+    "sw_dir_cluster_2_mtu55",
+    "sw_dir_cluster_2_mtu56",
+    "sw_dir_cluster_2_mtu57",
+    "sw_dir_cluster_2_mtu58",
+    "sw_dir_cluster_2_mtu59",
+    "sw_dir_cluster_2_mtu60",
+    "sw_dir_cluster_2_mtu61",
+    "sw_dir_cluster_2_mtu62",
+    "sw_dir_cluster_2_mtu63",
+    "sw_dir_cluster_2_mtu64",
+    "sw_dir_cluster_2_mtu65",
+    "sw_dir_cluster_2_mtu66",
+    "sw_dir_cluster_2_mtu67",
+    "sw_dir_cluster_2_mtu68",
+    "sw_dir_cluster_2_mtu69",
+    "sw_dir_cluster_2_mtu70",
+    "sw_dir_cluster_2_mtu71",
+    "sw_dir_cluster_2_mtu72",
+    "sw_dir_cluster_2_mtu73",
+    "sw_dir_cluster_2_mtu74",
+    "sw_dir_cluster_2_mtu75",
+    "sw_dir_cluster_2_mtu76",
+    "sw_dir_cluster_2_mtu77",
+    "sw_dir_cluster_2_mtu78",
+    "sw_dir_cluster_2_mtu79",
+    "sw_dir_cluster_2_mtu80",
+    "sw_dir_cluster_2_mtu81",
+    "sw_dir_cluster_2_mtu82",
+    "sw_dir_cluster_2_mtu83",
+    "sw_dir_cluster_2_mtu84",
+    "sw_dir_cluster_2_mtu85",
+    "sw_dir_cluster_2_mtu86",
+    "sw_dir_cluster_2_mtu87",
+    "sw_dir_cluster_2_mtu88",
+    "sw_dir_cluster_2_mtu89",
+    "sw_dir_cluster_2_mtu90",
+    "sw_dir_cluster_2_mtu91",
+    "sw_dir_cluster_2_mtu92",
+    "sw_dir_cluster_2_mtu93",
+    "sw_dir_cluster_2_mtu94",
+    "sw_dir_cluster_2_mtu95",
+    "sw_dir_cluster_3_mtu00",
+    "sw_dir_cluster_3_mtu01",
+    "sw_dir_cluster_3_mtu02",
+    "sw_dir_cluster_3_mtu03",
+    "sw_dir_cluster_3_mtu04",
+    "sw_dir_cluster_3_mtu05",
+    "sw_dir_cluster_3_mtu06",
+    "sw_dir_cluster_3_mtu07",
+    "sw_dir_cluster_3_mtu08",
+    "sw_dir_cluster_3_mtu09",
+    "sw_dir_cluster_3_mtu10",
+    "sw_dir_cluster_3_mtu11",
+    "sw_dir_cluster_3_mtu12",
+    "sw_dir_cluster_3_mtu13",
+    "sw_dir_cluster_3_mtu14",
+    "sw_dir_cluster_3_mtu15",
+    "sw_dir_cluster_3_mtu16",
+    "sw_dir_cluster_3_mtu17",
+    "sw_dir_cluster_3_mtu18",
+    "sw_dir_cluster_3_mtu19",
+    "sw_dir_cluster_3_mtu20",
+    "sw_dir_cluster_3_mtu21",
+    "sw_dir_cluster_3_mtu22",
+    "sw_dir_cluster_3_mtu23",
+    "sw_dir_cluster_3_mtu24",
+    "sw_dir_cluster_3_mtu25",
+    "sw_dir_cluster_3_mtu26",
+    "sw_dir_cluster_3_mtu27",
+    "sw_dir_cluster_3_mtu28",
+    "sw_dir_cluster_3_mtu29",
+    "sw_dir_cluster_3_mtu30",
+    "sw_dir_cluster_3_mtu31",
+    "sw_dir_cluster_3_mtu32",
+    "sw_dir_cluster_3_mtu33",
+    "sw_dir_cluster_3_mtu34",
+    "sw_dir_cluster_3_mtu35",
+    "sw_dir_cluster_3_mtu36",
+    "sw_dir_cluster_3_mtu37",
+    "sw_dir_cluster_3_mtu38",
+    "sw_dir_cluster_3_mtu39",
+    "sw_dir_cluster_3_mtu40",
+    "sw_dir_cluster_3_mtu41",
+    "sw_dir_cluster_3_mtu42",
+    "sw_dir_cluster_3_mtu43",
+    "sw_dir_cluster_3_mtu44",
+    "sw_dir_cluster_3_mtu45",
+    "sw_dir_cluster_3_mtu46",
+    "sw_dir_cluster_3_mtu47",
+    "sw_dir_cluster_3_mtu48",
+    "sw_dir_cluster_3_mtu49",
+    "sw_dir_cluster_3_mtu50",
+    "sw_dir_cluster_3_mtu51",
+    "sw_dir_cluster_3_mtu52",
+    "sw_dir_cluster_3_mtu53",
+    "sw_dir_cluster_3_mtu54",
+    "sw_dir_cluster_3_mtu55",
+    "sw_dir_cluster_3_mtu56",
+    "sw_dir_cluster_3_mtu57",
+    "sw_dir_cluster_3_mtu58",
+    "sw_dir_cluster_3_mtu59",
+    "sw_dir_cluster_3_mtu60",
+    "sw_dir_cluster_3_mtu61",
+    "sw_dir_cluster_3_mtu62",
+    "sw_dir_cluster_3_mtu63",
+    "sw_dir_cluster_3_mtu64",
+    "sw_dir_cluster_3_mtu65",
+    "sw_dir_cluster_3_mtu66",
+    "sw_dir_cluster_3_mtu67",
+    "sw_dir_cluster_3_mtu68",
+    "sw_dir_cluster_3_mtu69",
+    "sw_dir_cluster_3_mtu70",
+    "sw_dir_cluster_3_mtu71",
+    "sw_dir_cluster_3_mtu72",
+    "sw_dir_cluster_3_mtu73",
+    "sw_dir_cluster_3_mtu74",
+    "sw_dir_cluster_3_mtu75",
+    "sw_dir_cluster_3_mtu76",
+    "sw_dir_cluster_3_mtu77",
+    "sw_dir_cluster_3_mtu78",
+    "sw_dir_cluster_3_mtu79",
+    "sw_dir_cluster_3_mtu80",
+    "sw_dir_cluster_3_mtu81",
+    "sw_dir_cluster_3_mtu82",
+    "sw_dir_cluster_3_mtu83",
+    "sw_dir_cluster_3_mtu84",
+    "sw_dir_cluster_3_mtu85",
+    "sw_dir_cluster_3_mtu86",
+    "sw_dir_cluster_3_mtu87",
+    "sw_dir_cluster_3_mtu88",
+    "sw_dir_cluster_3_mtu89",
+    "sw_dir_cluster_3_mtu90",
+    "sw_dir_cluster_3_mtu91",
+    "sw_dir_cluster_3_mtu92",
+    "sw_dir_cluster_3_mtu93",
+    "sw_dir_cluster_3_mtu94",
+    "sw_dir_cluster_3_mtu95",
+    "sw_dir_cluster_4_mtu00",
+    "sw_dir_cluster_4_mtu01",
+    "sw_dir_cluster_4_mtu02",
+    "sw_dir_cluster_4_mtu03",
+    "sw_dir_cluster_4_mtu04",
+    "sw_dir_cluster_4_mtu05",
+    "sw_dir_cluster_4_mtu06",
+    "sw_dir_cluster_4_mtu07",
+    "sw_dir_cluster_4_mtu08",
+    "sw_dir_cluster_4_mtu09",
+    "sw_dir_cluster_4_mtu10",
+    "sw_dir_cluster_4_mtu11",
+    "sw_dir_cluster_4_mtu12",
+    "sw_dir_cluster_4_mtu13",
+    "sw_dir_cluster_4_mtu14",
+    "sw_dir_cluster_4_mtu15",
+    "sw_dir_cluster_4_mtu16",
+    "sw_dir_cluster_4_mtu17",
+    "sw_dir_cluster_4_mtu18",
+    "sw_dir_cluster_4_mtu19",
+    "sw_dir_cluster_4_mtu20",
+    "sw_dir_cluster_4_mtu21",
+    "sw_dir_cluster_4_mtu22",
+    "sw_dir_cluster_4_mtu23",
+    "sw_dir_cluster_4_mtu24",
+    "sw_dir_cluster_4_mtu25",
+    "sw_dir_cluster_4_mtu26",
+    "sw_dir_cluster_4_mtu27",
+    "sw_dir_cluster_4_mtu28",
+    "sw_dir_cluster_4_mtu29",
+    "sw_dir_cluster_4_mtu30",
+    "sw_dir_cluster_4_mtu31",
+    "sw_dir_cluster_4_mtu32",
+    "sw_dir_cluster_4_mtu33",
+    "sw_dir_cluster_4_mtu34",
+    "sw_dir_cluster_4_mtu35",
+    "sw_dir_cluster_4_mtu36",
+    "sw_dir_cluster_4_mtu37",
+    "sw_dir_cluster_4_mtu38",
+    "sw_dir_cluster_4_mtu39",
+    "sw_dir_cluster_4_mtu40",
+    "sw_dir_cluster_4_mtu41",
+    "sw_dir_cluster_4_mtu42",
+    "sw_dir_cluster_4_mtu43",
+    "sw_dir_cluster_4_mtu44",
+    "sw_dir_cluster_4_mtu45",
+    "sw_dir_cluster_4_mtu46",
+    "sw_dir_cluster_4_mtu47",
+    "sw_dir_cluster_4_mtu48",
+    "sw_dir_cluster_4_mtu49",
+    "sw_dir_cluster_4_mtu50",
+    "sw_dir_cluster_4_mtu51",
+    "sw_dir_cluster_4_mtu52",
+    "sw_dir_cluster_4_mtu53",
+    "sw_dir_cluster_4_mtu54",
+    "sw_dir_cluster_4_mtu55",
+    "sw_dir_cluster_4_mtu56",
+    "sw_dir_cluster_4_mtu57",
+    "sw_dir_cluster_4_mtu58",
+    "sw_dir_cluster_4_mtu59",
+    "sw_dir_cluster_4_mtu60",
+    "sw_dir_cluster_4_mtu61",
+    "sw_dir_cluster_4_mtu62",
+    "sw_dir_cluster_4_mtu63",
+    "sw_dir_cluster_4_mtu64",
+    "sw_dir_cluster_4_mtu65",
+    "sw_dir_cluster_4_mtu66",
+    "sw_dir_cluster_4_mtu67",
+    "sw_dir_cluster_4_mtu68",
+    "sw_dir_cluster_4_mtu69",
+    "sw_dir_cluster_4_mtu70",
+    "sw_dir_cluster_4_mtu71",
+    "sw_dir_cluster_4_mtu72",
+    "sw_dir_cluster_4_mtu73",
+    "sw_dir_cluster_4_mtu74",
+    "sw_dir_cluster_4_mtu75",
+    "sw_dir_cluster_4_mtu76",
+    "sw_dir_cluster_4_mtu77",
+    "sw_dir_cluster_4_mtu78",
+    "sw_dir_cluster_4_mtu79",
+    "sw_dir_cluster_4_mtu80",
+    "sw_dir_cluster_4_mtu81",
+    "sw_dir_cluster_4_mtu82",
+    "sw_dir_cluster_4_mtu83",
+    "sw_dir_cluster_4_mtu84",
+    "sw_dir_cluster_4_mtu85",
+    "sw_dir_cluster_4_mtu86",
+    "sw_dir_cluster_4_mtu87",
+    "sw_dir_cluster_4_mtu88",
+    "sw_dir_cluster_4_mtu89",
+    "sw_dir_cluster_4_mtu90",
+    "sw_dir_cluster_4_mtu91",
+    "sw_dir_cluster_4_mtu92",
+    "sw_dir_cluster_4_mtu93",
+    "sw_dir_cluster_4_mtu94",
+    "sw_dir_cluster_4_mtu95",
+    "load_d0_mtu_00",
+    "load_d0_mtu_01",
+    "load_d0_mtu_02",
+    "load_d0_mtu_03",
+    "load_d0_mtu_04",
+    "load_d0_mtu_05",
+    "load_d0_mtu_06",
+    "load_d0_mtu_07",
+    "load_d0_mtu_08",
+    "load_d0_mtu_09",
+    "load_d0_mtu_10",
+    "load_d0_mtu_11",
+    "load_d0_mtu_12",
+    "load_d0_mtu_13",
+    "load_d0_mtu_14",
+    "load_d0_mtu_15",
+    "load_d0_mtu_16",
+    "load_d0_mtu_17",
+    "load_d0_mtu_18",
+    "load_d0_mtu_19",
+    "load_d0_mtu_20",
+    "load_d0_mtu_21",
+    "load_d0_mtu_22",
+    "load_d0_mtu_23",
+    "load_d0_mtu_24",
+    "load_d0_mtu_25",
+    "load_d0_mtu_26",
+    "load_d0_mtu_27",
+    "load_d0_mtu_28",
+    "load_d0_mtu_29",
+    "load_d0_mtu_30",
+    "load_d0_mtu_31",
+    "load_d0_mtu_32",
+    "load_d0_mtu_33",
+    "load_d0_mtu_34",
+    "load_d0_mtu_35",
+    "load_d0_mtu_36",
+    "load_d0_mtu_37",
+    "load_d0_mtu_38",
+    "load_d0_mtu_39",
+    "load_d0_mtu_40",
+    "load_d0_mtu_41",
+    "load_d0_mtu_42",
+    "load_d0_mtu_43",
+    "load_d0_mtu_44",
+    "load_d0_mtu_45",
+    "load_d0_mtu_46",
+    "load_d0_mtu_47",
+    "load_d0_mtu_48",
+    "load_d0_mtu_49",
+    "load_d0_mtu_50",
+    "load_d0_mtu_51",
+    "load_d0_mtu_52",
+    "load_d0_mtu_53",
+    "load_d0_mtu_54",
+    "load_d0_mtu_55",
+    "load_d0_mtu_56",
+    "load_d0_mtu_57",
+    "load_d0_mtu_58",
+    "load_d0_mtu_59",
+    "load_d0_mtu_60",
+    "load_d0_mtu_61",
+    "load_d0_mtu_62",
+    "load_d0_mtu_63",
+    "load_d0_mtu_64",
+    "load_d0_mtu_65",
+    "load_d0_mtu_66",
+    "load_d0_mtu_67",
+    "load_d0_mtu_68",
+    "load_d0_mtu_69",
+    "load_d0_mtu_70",
+    "load_d0_mtu_71",
+    "load_d0_mtu_72",
+    "load_d0_mtu_73",
+    "load_d0_mtu_74",
+    "load_d0_mtu_75",
+    "load_d0_mtu_76",
+    "load_d0_mtu_77",
+    "load_d0_mtu_78",
+    "load_d0_mtu_79",
+    "load_d0_mtu_80",
+    "load_d0_mtu_81",
+    "load_d0_mtu_82",
+    "load_d0_mtu_83",
+    "load_d0_mtu_84",
+    "load_d0_mtu_85",
+    "load_d0_mtu_86",
+    "load_d0_mtu_87",
+    "load_d0_mtu_88",
+    "load_d0_mtu_89",
+    "load_d0_mtu_90",
+    "load_d0_mtu_91",
+    "load_d0_mtu_92",
+    "load_d0_mtu_93",
+    "load_d0_mtu_94",
+    "load_d0_mtu_95",
+    "is_15min_market",
+    "weekday_0",
+    "weekday_1",
+    "weekday_2",
+    "weekday_3",
+    "weekday_4",
+    "weekday_5",
+    "weekday_6",
+    "is_holiday",
+    "average_da_price_last_7d",
+    "exaa_d0_mtu_00",
+    "exaa_d0_mtu_01",
+    "exaa_d0_mtu_02",
+    "exaa_d0_mtu_03",
+    "exaa_d0_mtu_04",
+    "exaa_d0_mtu_05",
+    "exaa_d0_mtu_06",
+    "exaa_d0_mtu_07",
+    "exaa_d0_mtu_08",
+    "exaa_d0_mtu_09",
+    "exaa_d0_mtu_10",
+    "exaa_d0_mtu_11",
+    "exaa_d0_mtu_12",
+    "exaa_d0_mtu_13",
+    "exaa_d0_mtu_14",
+    "exaa_d0_mtu_15",
+    "exaa_d0_mtu_16",
+    "exaa_d0_mtu_17",
+    "exaa_d0_mtu_18",
+    "exaa_d0_mtu_19",
+    "exaa_d0_mtu_20",
+    "exaa_d0_mtu_21",
+    "exaa_d0_mtu_22",
+    "exaa_d0_mtu_23",
+    "exaa_d0_mtu_24",
+    "exaa_d0_mtu_25",
+    "exaa_d0_mtu_26",
+    "exaa_d0_mtu_27",
+    "exaa_d0_mtu_28",
+    "exaa_d0_mtu_29",
+    "exaa_d0_mtu_30",
+    "exaa_d0_mtu_31",
+    "exaa_d0_mtu_32",
+    "exaa_d0_mtu_33",
+    "exaa_d0_mtu_34",
+    "exaa_d0_mtu_35",
+    "exaa_d0_mtu_36",
+    "exaa_d0_mtu_37",
+    "exaa_d0_mtu_38",
+    "exaa_d0_mtu_39",
+    "exaa_d0_mtu_40",
+    "exaa_d0_mtu_41",
+    "exaa_d0_mtu_42",
+    "exaa_d0_mtu_43",
+    "exaa_d0_mtu_44",
+    "exaa_d0_mtu_45",
+    "exaa_d0_mtu_46",
+    "exaa_d0_mtu_47",
+    "exaa_d0_mtu_48",
+    "exaa_d0_mtu_49",
+    "exaa_d0_mtu_50",
+    "exaa_d0_mtu_51",
+    "exaa_d0_mtu_52",
+    "exaa_d0_mtu_53",
+    "exaa_d0_mtu_54",
+    "exaa_d0_mtu_55",
+    "exaa_d0_mtu_56",
+    "exaa_d0_mtu_57",
+    "exaa_d0_mtu_58",
+    "exaa_d0_mtu_59",
+    "exaa_d0_mtu_60",
+    "exaa_d0_mtu_61",
+    "exaa_d0_mtu_62",
+    "exaa_d0_mtu_63",
+    "exaa_d0_mtu_64",
+    "exaa_d0_mtu_65",
+    "exaa_d0_mtu_66",
+    "exaa_d0_mtu_67",
+    "exaa_d0_mtu_68",
+    "exaa_d0_mtu_69",
+    "exaa_d0_mtu_70",
+    "exaa_d0_mtu_71",
+    "exaa_d0_mtu_72",
+    "exaa_d0_mtu_73",
+    "exaa_d0_mtu_74",
+    "exaa_d0_mtu_75",
+    "exaa_d0_mtu_76",
+    "exaa_d0_mtu_77",
+    "exaa_d0_mtu_78",
+    "exaa_d0_mtu_79",
+    "exaa_d0_mtu_80",
+    "exaa_d0_mtu_81",
+    "exaa_d0_mtu_82",
+    "exaa_d0_mtu_83",
+    "exaa_d0_mtu_84",
+    "exaa_d0_mtu_85",
+    "exaa_d0_mtu_86",
+    "exaa_d0_mtu_87",
+    "exaa_d0_mtu_88",
+    "exaa_d0_mtu_89",
+    "exaa_d0_mtu_90",
+    "exaa_d0_mtu_91",
+    "exaa_d0_mtu_92",
+    "exaa_d0_mtu_93",
+    "exaa_d0_mtu_94",
+    "exaa_d0_mtu_95"
+  ],
+  "skip_columns": [
+    "price_d1_mtu_00",
+    "price_d1_mtu_01",
+    "price_d1_mtu_02",
+    "price_d1_mtu_03",
+    "price_d1_mtu_04",
+    "price_d1_mtu_05",
+    "price_d1_mtu_06",
+    "price_d1_mtu_07",
+    "price_d1_mtu_08",
+    "price_d1_mtu_09",
+    "price_d1_mtu_10",
+    "price_d1_mtu_11",
+    "price_d1_mtu_12",
+    "price_d1_mtu_13",
+    "price_d1_mtu_14",
+    "price_d1_mtu_15",
+    "price_d1_mtu_16",
+    "price_d1_mtu_17",
+    "price_d1_mtu_18",
+    "price_d1_mtu_19",
+    "price_d1_mtu_20",
+    "price_d1_mtu_21",
+    "price_d1_mtu_22",
+    "price_d1_mtu_23",
+    "price_d1_mtu_24",
+    "price_d1_mtu_25",
+    "price_d1_mtu_26",
+    "price_d1_mtu_27",
+    "price_d1_mtu_28",
+    "price_d1_mtu_29",
+    "price_d1_mtu_30",
+    "price_d1_mtu_31",
+    "price_d1_mtu_32",
+    "price_d1_mtu_33",
+    "price_d1_mtu_34",
+    "price_d1_mtu_35",
+    "price_d1_mtu_36",
+    "price_d1_mtu_37",
+    "price_d1_mtu_38",
+    "price_d1_mtu_39",
+    "price_d1_mtu_40",
+    "price_d1_mtu_41",
+    "price_d1_mtu_42",
+    "price_d1_mtu_43",
+    "price_d1_mtu_44",
+    "price_d1_mtu_45",
+    "price_d1_mtu_46",
+    "price_d1_mtu_47",
+    "price_d1_mtu_48",
+    "price_d1_mtu_49",
+    "price_d1_mtu_50",
+    "price_d1_mtu_51",
+    "price_d1_mtu_52",
+    "price_d1_mtu_53",
+    "price_d1_mtu_54",
+    "price_d1_mtu_55",
+    "price_d1_mtu_56",
+    "price_d1_mtu_57",
+    "price_d1_mtu_58",
+    "price_d1_mtu_59",
+    "price_d1_mtu_60",
+    "price_d1_mtu_61",
+    "price_d1_mtu_62",
+    "price_d1_mtu_63",
+    "price_d1_mtu_64",
+    "price_d1_mtu_65",
+    "price_d1_mtu_66",
+    "price_d1_mtu_67",
+    "price_d1_mtu_68",
+    "price_d1_mtu_69",
+    "price_d1_mtu_70",
+    "price_d1_mtu_71",
+    "price_d1_mtu_72",
+    "price_d1_mtu_73",
+    "price_d1_mtu_74",
+    "price_d1_mtu_75",
+    "price_d1_mtu_76",
+    "price_d1_mtu_77",
+    "price_d1_mtu_78",
+    "price_d1_mtu_79",
+    "price_d1_mtu_80",
+    "price_d1_mtu_81",
+    "price_d1_mtu_82",
+    "price_d1_mtu_83",
+    "price_d1_mtu_84",
+    "price_d1_mtu_85",
+    "price_d1_mtu_86",
+    "price_d1_mtu_87",
+    "price_d1_mtu_88",
+    "price_d1_mtu_89",
+    "price_d1_mtu_90",
+    "price_d1_mtu_91",
+    "price_d1_mtu_92",
+    "price_d1_mtu_93",
+    "price_d1_mtu_94",
+    "price_d1_mtu_95",
+    "price_d2_mtu_00",
+    "price_d2_mtu_01",
+    "price_d2_mtu_02",
+    "price_d2_mtu_03",
+    "price_d2_mtu_04",
+    "price_d2_mtu_05",
+    "price_d2_mtu_06",
+    "price_d2_mtu_07",
+    "price_d2_mtu_08",
+    "price_d2_mtu_09",
+    "price_d2_mtu_10",
+    "price_d2_mtu_11",
+    "price_d2_mtu_12",
+    "price_d2_mtu_13",
+    "price_d2_mtu_14",
+    "price_d2_mtu_15",
+    "price_d2_mtu_16",
+    "price_d2_mtu_17",
+    "price_d2_mtu_18",
+    "price_d2_mtu_19",
+    "price_d2_mtu_20",
+    "price_d2_mtu_21",
+    "price_d2_mtu_22",
+    "price_d2_mtu_23",
+    "price_d2_mtu_24",
+    "price_d2_mtu_25",
+    "price_d2_mtu_26",
+    "price_d2_mtu_27",
+    "price_d2_mtu_28",
+    "price_d2_mtu_29",
+    "price_d2_mtu_30",
+    "price_d2_mtu_31",
+    "price_d2_mtu_32",
+    "price_d2_mtu_33",
+    "price_d2_mtu_34",
+    "price_d2_mtu_35",
+    "price_d2_mtu_36",
+    "price_d2_mtu_37",
+    "price_d2_mtu_38",
+    "price_d2_mtu_39",
+    "price_d2_mtu_40",
+    "price_d2_mtu_41",
+    "price_d2_mtu_42",
+    "price_d2_mtu_43",
+    "price_d2_mtu_44",
+    "price_d2_mtu_45",
+    "price_d2_mtu_46",
+    "price_d2_mtu_47",
+    "price_d2_mtu_48",
+    "price_d2_mtu_49",
+    "price_d2_mtu_50",
+    "price_d2_mtu_51",
+    "price_d2_mtu_52",
+    "price_d2_mtu_53",
+    "price_d2_mtu_54",
+    "price_d2_mtu_55",
+    "price_d2_mtu_56",
+    "price_d2_mtu_57",
+    "price_d2_mtu_58",
+    "price_d2_mtu_59",
+    "price_d2_mtu_60",
+    "price_d2_mtu_61",
+    "price_d2_mtu_62",
+    "price_d2_mtu_63",
+    "price_d2_mtu_64",
+    "price_d2_mtu_65",
+    "price_d2_mtu_66",
+    "price_d2_mtu_67",
+    "price_d2_mtu_68",
+    "price_d2_mtu_69",
+    "price_d2_mtu_70",
+    "price_d2_mtu_71",
+    "price_d2_mtu_72",
+    "price_d2_mtu_73",
+    "price_d2_mtu_74",
+    "price_d2_mtu_75",
+    "price_d2_mtu_76",
+    "price_d2_mtu_77",
+    "price_d2_mtu_78",
+    "price_d2_mtu_79",
+    "price_d2_mtu_80",
+    "price_d2_mtu_81",
+    "price_d2_mtu_82",
+    "price_d2_mtu_83",
+    "price_d2_mtu_84",
+    "price_d2_mtu_85",
+    "price_d2_mtu_86",
+    "price_d2_mtu_87",
+    "price_d2_mtu_88",
+    "price_d2_mtu_89",
+    "price_d2_mtu_90",
+    "price_d2_mtu_91",
+    "price_d2_mtu_92",
+    "price_d2_mtu_93",
+    "price_d2_mtu_94",
+    "price_d2_mtu_95",
+    "price_d7_mtu_00",
+    "price_d7_mtu_01",
+    "price_d7_mtu_02",
+    "price_d7_mtu_03",
+    "price_d7_mtu_04",
+    "price_d7_mtu_05",
+    "price_d7_mtu_06",
+    "price_d7_mtu_07",
+    "price_d7_mtu_08",
+    "price_d7_mtu_09",
+    "price_d7_mtu_10",
+    "price_d7_mtu_11",
+    "price_d7_mtu_12",
+    "price_d7_mtu_13",
+    "price_d7_mtu_14",
+    "price_d7_mtu_15",
+    "price_d7_mtu_16",
+    "price_d7_mtu_17",
+    "price_d7_mtu_18",
+    "price_d7_mtu_19",
+    "price_d7_mtu_20",
+    "price_d7_mtu_21",
+    "price_d7_mtu_22",
+    "price_d7_mtu_23",
+    "price_d7_mtu_24",
+    "price_d7_mtu_25",
+    "price_d7_mtu_26",
+    "price_d7_mtu_27",
+    "price_d7_mtu_28",
+    "price_d7_mtu_29",
+    "price_d7_mtu_30",
+    "price_d7_mtu_31",
+    "price_d7_mtu_32",
+    "price_d7_mtu_33",
+    "price_d7_mtu_34",
+    "price_d7_mtu_35",
+    "price_d7_mtu_36",
+    "price_d7_mtu_37",
+    "price_d7_mtu_38",
+    "price_d7_mtu_39",
+    "price_d7_mtu_40",
+    "price_d7_mtu_41",
+    "price_d7_mtu_42",
+    "price_d7_mtu_43",
+    "price_d7_mtu_44",
+    "price_d7_mtu_45",
+    "price_d7_mtu_46",
+    "price_d7_mtu_47",
+    "price_d7_mtu_48",
+    "price_d7_mtu_49",
+    "price_d7_mtu_50",
+    "price_d7_mtu_51",
+    "price_d7_mtu_52",
+    "price_d7_mtu_53",
+    "price_d7_mtu_54",
+    "price_d7_mtu_55",
+    "price_d7_mtu_56",
+    "price_d7_mtu_57",
+    "price_d7_mtu_58",
+    "price_d7_mtu_59",
+    "price_d7_mtu_60",
+    "price_d7_mtu_61",
+    "price_d7_mtu_62",
+    "price_d7_mtu_63",
+    "price_d7_mtu_64",
+    "price_d7_mtu_65",
+    "price_d7_mtu_66",
+    "price_d7_mtu_67",
+    "price_d7_mtu_68",
+    "price_d7_mtu_69",
+    "price_d7_mtu_70",
+    "price_d7_mtu_71",
+    "price_d7_mtu_72",
+    "price_d7_mtu_73",
+    "price_d7_mtu_74",
+    "price_d7_mtu_75",
+    "price_d7_mtu_76",
+    "price_d7_mtu_77",
+    "price_d7_mtu_78",
+    "price_d7_mtu_79",
+    "price_d7_mtu_80",
+    "price_d7_mtu_81",
+    "price_d7_mtu_82",
+    "price_d7_mtu_83",
+    "price_d7_mtu_84",
+    "price_d7_mtu_85",
+    "price_d7_mtu_86",
+    "price_d7_mtu_87",
+    "price_d7_mtu_88",
+    "price_d7_mtu_89",
+    "price_d7_mtu_90",
+    "price_d7_mtu_91",
+    "price_d7_mtu_92",
+    "price_d7_mtu_93",
+    "price_d7_mtu_94",
+    "price_d7_mtu_95",
+    "exaa_d0_mtu_00",
+    "exaa_d0_mtu_01",
+    "exaa_d0_mtu_02",
+    "exaa_d0_mtu_03",
+    "exaa_d0_mtu_04",
+    "exaa_d0_mtu_05",
+    "exaa_d0_mtu_06",
+    "exaa_d0_mtu_07",
+    "exaa_d0_mtu_08",
+    "exaa_d0_mtu_09",
+    "exaa_d0_mtu_10",
+    "exaa_d0_mtu_11",
+    "exaa_d0_mtu_12",
+    "exaa_d0_mtu_13",
+    "exaa_d0_mtu_14",
+    "exaa_d0_mtu_15",
+    "exaa_d0_mtu_16",
+    "exaa_d0_mtu_17",
+    "exaa_d0_mtu_18",
+    "exaa_d0_mtu_19",
+    "exaa_d0_mtu_20",
+    "exaa_d0_mtu_21",
+    "exaa_d0_mtu_22",
+    "exaa_d0_mtu_23",
+    "exaa_d0_mtu_24",
+    "exaa_d0_mtu_25",
+    "exaa_d0_mtu_26",
+    "exaa_d0_mtu_27",
+    "exaa_d0_mtu_28",
+    "exaa_d0_mtu_29",
+    "exaa_d0_mtu_30",
+    "exaa_d0_mtu_31",
+    "exaa_d0_mtu_32",
+    "exaa_d0_mtu_33",
+    "exaa_d0_mtu_34",
+    "exaa_d0_mtu_35",
+    "exaa_d0_mtu_36",
+    "exaa_d0_mtu_37",
+    "exaa_d0_mtu_38",
+    "exaa_d0_mtu_39",
+    "exaa_d0_mtu_40",
+    "exaa_d0_mtu_41",
+    "exaa_d0_mtu_42",
+    "exaa_d0_mtu_43",
+    "exaa_d0_mtu_44",
+    "exaa_d0_mtu_45",
+    "exaa_d0_mtu_46",
+    "exaa_d0_mtu_47",
+    "exaa_d0_mtu_48",
+    "exaa_d0_mtu_49",
+    "exaa_d0_mtu_50",
+    "exaa_d0_mtu_51",
+    "exaa_d0_mtu_52",
+    "exaa_d0_mtu_53",
+    "exaa_d0_mtu_54",
+    "exaa_d0_mtu_55",
+    "exaa_d0_mtu_56",
+    "exaa_d0_mtu_57",
+    "exaa_d0_mtu_58",
+    "exaa_d0_mtu_59",
+    "exaa_d0_mtu_60",
+    "exaa_d0_mtu_61",
+    "exaa_d0_mtu_62",
+    "exaa_d0_mtu_63",
+    "exaa_d0_mtu_64",
+    "exaa_d0_mtu_65",
+    "exaa_d0_mtu_66",
+    "exaa_d0_mtu_67",
+    "exaa_d0_mtu_68",
+    "exaa_d0_mtu_69",
+    "exaa_d0_mtu_70",
+    "exaa_d0_mtu_71",
+    "exaa_d0_mtu_72",
+    "exaa_d0_mtu_73",
+    "exaa_d0_mtu_74",
+    "exaa_d0_mtu_75",
+    "exaa_d0_mtu_76",
+    "exaa_d0_mtu_77",
+    "exaa_d0_mtu_78",
+    "exaa_d0_mtu_79",
+    "exaa_d0_mtu_80",
+    "exaa_d0_mtu_81",
+    "exaa_d0_mtu_82",
+    "exaa_d0_mtu_83",
+    "exaa_d0_mtu_84",
+    "exaa_d0_mtu_85",
+    "exaa_d0_mtu_86",
+    "exaa_d0_mtu_87",
+    "exaa_d0_mtu_88",
+    "exaa_d0_mtu_89",
+    "exaa_d0_mtu_90",
+    "exaa_d0_mtu_91",
+    "exaa_d0_mtu_92",
+    "exaa_d0_mtu_93",
+    "exaa_d0_mtu_94",
+    "exaa_d0_mtu_95",
+    "average_da_price_last_7d"
+  ],
+  "scaler": {
+    "wind_speed_cluster_0_h00": [
+      "robust",
+      3.587723131077625,
+      1.6713581628079792
+    ],
+    "wind_speed_cluster_0_h01": [
+      "robust",
+      3.561897134449412,
+      1.700285129638849
+    ],
+    "wind_speed_cluster_0_h02": [
+      "robust",
+      3.5840646703236048,
+      1.7558197025733155
+    ],
+    "wind_speed_cluster_0_h03": [
+      "robust",
+      3.6247079184343103,
+      1.7568729873965434
+    ],
+    "wind_speed_cluster_0_h04": [
+      "robust",
+      3.6858697425345412,
+      1.7671496602118841
+    ],
+    "wind_speed_cluster_0_h05": [
+      "robust",
+      3.6333946933307493,
+      1.7713090254262887
+    ],
+    "wind_speed_cluster_0_h06": [
+      "robust",
+      3.6724794162872296,
+      1.7763455603486948
+    ],
+    "wind_speed_cluster_0_h07": [
+      "robust",
+      3.742389495457817,
+      1.8063743214939827
+    ],
+    "wind_speed_cluster_0_h08": [
+      "robust",
+      3.8931202139029124,
+      1.9370475211387201
+    ],
+    "wind_speed_cluster_0_h09": [
+      "robust",
+      4.051074155547091,
+      2.00003184879532
+    ],
+    "wind_speed_cluster_0_h10": [
+      "robust",
+      4.188360958040584,
+      2.0970812886109944
+    ],
+    "wind_speed_cluster_0_h11": [
+      "robust",
+      4.182570404542758,
+      2.041860532085383
+    ],
+    "wind_speed_cluster_0_h12": [
+      "robust",
+      4.093232743115656,
+      2.048867629614838
+    ],
+    "wind_speed_cluster_0_h13": [
+      "robust",
+      4.228736013647833,
+      2.0895344644720444
+    ],
+    "wind_speed_cluster_0_h14": [
+      "robust",
+      4.321860548105527,
+      2.143628691491208
+    ],
+    "wind_speed_cluster_0_h15": [
+      "robust",
+      4.340978764199003,
+      2.069915505005763
+    ],
+    "wind_speed_cluster_0_h16": [
+      "robust",
+      4.197061316571827,
+      2.055086615532927
+    ],
+    "wind_speed_cluster_0_h17": [
+      "robust",
+      4.091092011197584,
+      1.9849839557017361
+    ],
+    "wind_speed_cluster_0_h18": [
+      "robust",
+      4.000564722139314,
+      1.9523563206953174
+    ],
+    "wind_speed_cluster_0_h19": [
+      "robust",
+      3.8734449081566216,
+      1.9185544715453966
+    ],
+    "wind_speed_cluster_0_h20": [
+      "robust",
+      3.749198338635575,
+      1.8432671844256066
+    ],
+    "wind_speed_cluster_0_h21": [
+      "robust",
+      3.703332231908505,
+      1.7766048689940135
+    ],
+    "wind_speed_cluster_0_h22": [
+      "robust",
+      3.699114810161248,
+      1.7573396341023153
+    ],
+    "wind_speed_cluster_0_h23": [
+      "robust",
+      3.636580536691871,
+      1.7013640189207897
+    ],
+    "wind_speed_cluster_1_h00": [
+      "robust",
+      3.06694900997274,
+      1.4674226113034012
+    ],
+    "wind_speed_cluster_1_h01": [
+      "robust",
+      3.083763607759429,
+      1.5440043141636512
+    ],
+    "wind_speed_cluster_1_h02": [
+      "robust",
+      3.1065066102646215,
+      1.514399803818456
+    ],
+    "wind_speed_cluster_1_h03": [
+      "robust",
+      3.083619827189156,
+      1.5064019162420619
+    ],
+    "wind_speed_cluster_1_h04": [
+      "robust",
+      3.127838906754489,
+      1.5326213799860158
+    ],
+    "wind_speed_cluster_1_h05": [
+      "robust",
+      3.1396661910097508,
+      1.547789789963778
+    ],
+    "wind_speed_cluster_1_h06": [
+      "robust",
+      3.1694201382673284,
+      1.5426164880880868
+    ],
+    "wind_speed_cluster_1_h07": [
+      "robust",
+      3.2852804042575037,
+      1.5554343036292337
+    ],
+    "wind_speed_cluster_1_h08": [
+      "robust",
+      3.3895066313038247,
+      1.6989069054359252
+    ],
+    "wind_speed_cluster_1_h09": [
+      "robust",
+      3.5117240237982195,
+      1.8278068042277813
+    ],
+    "wind_speed_cluster_1_h10": [
+      "robust",
+      3.5863804184092714,
+      1.8174334055801733
+    ],
+    "wind_speed_cluster_1_h11": [
+      "robust",
+      3.600644532462419,
+      1.7106158044666262
+    ],
+    "wind_speed_cluster_1_h12": [
+      "robust",
+      3.491946517248559,
+      1.614684840912671
+    ],
+    "wind_speed_cluster_1_h13": [
+      "robust",
+      3.6358928812823494,
+      1.685965533796959
+    ],
+    "wind_speed_cluster_1_h14": [
+      "robust",
+      3.6655603109188353,
+      1.702953456855489
+    ],
+    "wind_speed_cluster_1_h15": [
+      "robust",
+      3.6927113581747864,
+      1.7395102066986647
+    ],
+    "wind_speed_cluster_1_h16": [
+      "robust",
+      3.687943036652031,
+      1.6857307602789064
+    ],
+    "wind_speed_cluster_1_h17": [
+      "robust",
+      3.5890349311699,
+      1.7427084729630218
+    ],
+    "wind_speed_cluster_1_h18": [
+      "robust",
+      3.50065744367007,
+      1.6729032099406989
+    ],
+    "wind_speed_cluster_1_h19": [
+      "robust",
+      3.3580487334164704,
+      1.6163054837843633
+    ],
+    "wind_speed_cluster_1_h20": [
+      "robust",
+      3.1180647355640834,
+      1.5492799406706892
+    ],
+    "wind_speed_cluster_1_h21": [
+      "robust",
+      3.1051034521879606,
+      1.5210343912508395
+    ],
+    "wind_speed_cluster_1_h22": [
+      "robust",
+      3.1240738173454163,
+      1.4757265045105705
+    ],
+    "wind_speed_cluster_1_h23": [
+      "robust",
+      3.0638691541173153,
+      1.4374299106794142
+    ],
+    "wind_speed_cluster_2_h00": [
+      "robust",
+      2.932963066588482,
+      1.423609862331095
+    ],
+    "wind_speed_cluster_2_h01": [
+      "robust",
+      2.9485993256474545,
+      1.4398249396679115
+    ],
+    "wind_speed_cluster_2_h02": [
+      "robust",
+      2.9348936730143937,
+      1.472910450335514
+    ],
+    "wind_speed_cluster_2_h03": [
+      "robust",
+      2.9233585442518732,
+      1.4960348758970186
+    ],
+    "wind_speed_cluster_2_h04": [
+      "robust",
+      2.9639839561736814,
+      1.5194289220723014
+    ],
+    "wind_speed_cluster_2_h05": [
+      "robust",
+      2.9464363428820146,
+      1.5089363537674667
+    ],
+    "wind_speed_cluster_2_h06": [
+      "robust",
+      2.9412968260655803,
+      1.4954379754067133
+    ],
+    "wind_speed_cluster_2_h07": [
+      "robust",
+      3.058768847380943,
+      1.5270628920997371
+    ],
+    "wind_speed_cluster_2_h08": [
+      "robust",
+      3.147604372144558,
+      1.6089883749268
+    ],
+    "wind_speed_cluster_2_h09": [
+      "robust",
+      3.35824908194286,
+      1.706887219226843
+    ],
+    "wind_speed_cluster_2_h10": [
+      "robust",
+      3.5169840123920864,
+      1.7766845831107603
+    ],
+    "wind_speed_cluster_2_h11": [
+      "robust",
+      3.5541464445296973,
+      1.7626621384241214
+    ],
+    "wind_speed_cluster_2_h12": [
+      "robust",
+      3.4512299881681527,
+      1.7040625787435035
+    ],
+    "wind_speed_cluster_2_h13": [
+      "robust",
+      3.652048781079537,
+      1.754646735190016
+    ],
+    "wind_speed_cluster_2_h14": [
+      "robust",
+      3.7360207882509986,
+      1.8003708134700886
+    ],
+    "wind_speed_cluster_2_h15": [
+      "robust",
+      3.7773105818925488,
+      1.7724060495111973
+    ],
+    "wind_speed_cluster_2_h16": [
+      "robust",
+      3.783432361509826,
+      1.8078049982023965
+    ],
+    "wind_speed_cluster_2_h17": [
+      "robust",
+      3.694512927500579,
+      1.7878291997086913
+    ],
+    "wind_speed_cluster_2_h18": [
+      "robust",
+      3.58379373153363,
+      1.721871882542555
+    ],
+    "wind_speed_cluster_2_h19": [
+      "robust",
+      3.475068686690043,
+      1.6682115166803206
+    ],
+    "wind_speed_cluster_2_h20": [
+      "robust",
+      3.269979456923737,
+      1.6465739360883611
+    ],
+    "wind_speed_cluster_2_h21": [
+      "robust",
+      3.1989466460834177,
+      1.5476483277453277
+    ],
+    "wind_speed_cluster_2_h22": [
+      "robust",
+      3.123349083359188,
+      1.4737631412718604
+    ],
+    "wind_speed_cluster_2_h23": [
+      "robust",
+      3.0517957019933446,
+      1.4224190186867018
+    ],
+    "wind_speed_cluster_3_h00": [
+      "robust",
+      1.719233943191792,
+      0.8593073694959732
+    ],
+    "wind_speed_cluster_3_h01": [
+      "robust",
+      1.728494003807386,
+      0.8689944375561298
+    ],
+    "wind_speed_cluster_3_h02": [
+      "robust",
+      1.7010463687125488,
+      0.8765106226991971
+    ],
+    "wind_speed_cluster_3_h03": [
+      "robust",
+      1.6940123625076968,
+      0.8972717289793655
+    ],
+    "wind_speed_cluster_3_h04": [
+      "robust",
+      1.6830931798962723,
+      0.8992278887967465
+    ],
+    "wind_speed_cluster_3_h05": [
+      "robust",
+      1.665990287023143,
+      0.8952239090121541
+    ],
+    "wind_speed_cluster_3_h06": [
+      "robust",
+      1.6422279690139145,
+      0.8858652832572492
+    ],
+    "wind_speed_cluster_3_h07": [
+      "robust",
+      1.6900419065342869,
+      0.8953771544656205
+    ],
+    "wind_speed_cluster_3_h08": [
+      "robust",
+      1.7838184723109063,
+      0.9574926928628001
+    ],
+    "wind_speed_cluster_3_h09": [
+      "robust",
+      1.8964251516522124,
+      1.045264033837542
+    ],
+    "wind_speed_cluster_3_h10": [
+      "robust",
+      2.050673143233648,
+      1.1737911001685999
+    ],
+    "wind_speed_cluster_3_h11": [
+      "robust",
+      2.0887721241463573,
+      1.2356970036285035
+    ],
+    "wind_speed_cluster_3_h12": [
+      "robust",
+      2.0201121475338844,
+      1.1611638114810194
+    ],
+    "wind_speed_cluster_3_h13": [
+      "robust",
+      2.164104490429468,
+      1.255105194490439
+    ],
+    "wind_speed_cluster_3_h14": [
+      "robust",
+      2.2515721809944007,
+      1.2701235817824945
+    ],
+    "wind_speed_cluster_3_h15": [
+      "robust",
+      2.3162155735480696,
+      1.2906196053540635
+    ],
+    "wind_speed_cluster_3_h16": [
+      "robust",
+      2.3009707213508674,
+      1.2864483963645656
+    ],
+    "wind_speed_cluster_3_h17": [
+      "robust",
+      2.235630597435271,
+      1.2035335745212647
+    ],
+    "wind_speed_cluster_3_h18": [
+      "robust",
+      2.164767970604371,
+      1.086239313378326
+    ],
+    "wind_speed_cluster_3_h19": [
+      "robust",
+      1.9945665228008684,
+      0.9921723875031233
+    ],
+    "wind_speed_cluster_3_h20": [
+      "robust",
+      1.9022594290483004,
+      0.9361755151351241
+    ],
+    "wind_speed_cluster_3_h21": [
+      "robust",
+      1.842238703143175,
+      0.8736601129873914
+    ],
+    "wind_speed_cluster_3_h22": [
+      "robust",
+      1.8443315732162706,
+      0.8476672642845684
+    ],
+    "wind_speed_cluster_3_h23": [
+      "robust",
+      1.7422278319136444,
+      0.8327478020846395
+    ],
+    "wind_speed_cluster_4_h00": [
+      "robust",
+      1.8104973834279225,
+      0.8564005683083326
+    ],
+    "wind_speed_cluster_4_h01": [
+      "robust",
+      1.769489569717394,
+      0.8519006971988492
+    ],
+    "wind_speed_cluster_4_h02": [
+      "robust",
+      1.7454892284604626,
+      0.8736354479326769
+    ],
+    "wind_speed_cluster_4_h03": [
+      "robust",
+      1.7295238840270253,
+      0.8535544280179747
+    ],
+    "wind_speed_cluster_4_h04": [
+      "robust",
+      1.7088372032493706,
+      0.8642558107054775
+    ],
+    "wind_speed_cluster_4_h05": [
+      "robust",
+      1.6991904708409236,
+      0.8900556966242682
+    ],
+    "wind_speed_cluster_4_h06": [
+      "robust",
+      1.6929136154435658,
+      0.9052302987620972
+    ],
+    "wind_speed_cluster_4_h07": [
+      "robust",
+      1.7638578582021147,
+      0.9511808928247694
+    ],
+    "wind_speed_cluster_4_h08": [
+      "robust",
+      1.871636300152725,
+      1.0728558917221502
+    ],
+    "wind_speed_cluster_4_h09": [
+      "robust",
+      1.9697106074456758,
+      1.1549343614368694
+    ],
+    "wind_speed_cluster_4_h10": [
+      "robust",
+      2.1495682452481035,
+      1.2485157446049548
+    ],
+    "wind_speed_cluster_4_h11": [
+      "robust",
+      2.2082704465832026,
+      1.255889137773338
+    ],
+    "wind_speed_cluster_4_h12": [
+      "robust",
+      2.119749960483228,
+      1.159753556170745
+    ],
+    "wind_speed_cluster_4_h13": [
+      "robust",
+      2.3333143570616963,
+      1.222283262478108
+    ],
+    "wind_speed_cluster_4_h14": [
+      "robust",
+      2.4349924855755964,
+      1.265654060534404
+    ],
+    "wind_speed_cluster_4_h15": [
+      "robust",
+      2.4704356212253122,
+      1.2407889976520154
+    ],
+    "wind_speed_cluster_4_h16": [
+      "robust",
+      2.469134882754045,
+      1.2510809425187623
+    ],
+    "wind_speed_cluster_4_h17": [
+      "robust",
+      2.4374848611966224,
+      1.2449022967353223
+    ],
+    "wind_speed_cluster_4_h18": [
+      "robust",
+      2.355206453753405,
+      1.1379258564282568
+    ],
+    "wind_speed_cluster_4_h19": [
+      "robust",
+      2.154385019085,
+      1.0198948179086107
+    ],
+    "wind_speed_cluster_4_h20": [
+      "robust",
+      2.025279405543168,
+      0.9540019311609764
+    ],
+    "wind_speed_cluster_4_h21": [
+      "robust",
+      1.9601572886332865,
+      0.8449730762025316
+    ],
+    "wind_speed_cluster_4_h22": [
+      "robust",
+      1.9635820141787765,
+      0.8322687525869107
+    ],
+    "wind_speed_cluster_4_h23": [
+      "robust",
+      1.9210076683936146,
+      0.844365482483121
+    ],
+    "sw_dif_cluster_0_mtu00": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu01": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu02": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu03": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu04": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu05": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu06": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu07": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu08": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu09": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu10": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu11": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu12": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu13": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu14": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu15": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu16": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu17": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu18": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu19": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu20": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu21": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu22": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu23": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu24": [
+      "minmax",
+      0.0,
+      71.43708767361112
+    ],
+    "sw_dif_cluster_0_mtu25": [
+      "minmax",
+      0.0,
+      71.43708767361112
+    ],
+    "sw_dif_cluster_0_mtu26": [
+      "minmax",
+      0.0,
+      71.43708767361112
+    ],
+    "sw_dif_cluster_0_mtu27": [
+      "minmax",
+      0.0,
+      71.43708767361112
+    ],
+    "sw_dif_cluster_0_mtu28": [
+      "minmax",
+      0.0,
+      114.52543402777775
+    ],
+    "sw_dif_cluster_0_mtu29": [
+      "minmax",
+      0.0,
+      114.52543402777775
+    ],
+    "sw_dif_cluster_0_mtu30": [
+      "minmax",
+      0.0,
+      114.52543402777775
+    ],
+    "sw_dif_cluster_0_mtu31": [
+      "minmax",
+      0.0,
+      114.52543402777775
+    ],
+    "sw_dif_cluster_0_mtu32": [
+      "minmax",
+      0.7750957743326824,
+      170.29396672566727
+    ],
+    "sw_dif_cluster_0_mtu33": [
+      "minmax",
+      0.7750957743326824,
+      170.29396672566727
+    ],
+    "sw_dif_cluster_0_mtu34": [
+      "minmax",
+      0.7750957743326824,
+      170.29396672566727
+    ],
+    "sw_dif_cluster_0_mtu35": [
+      "minmax",
+      0.7750957743326824,
+      170.29396672566727
+    ],
+    "sw_dif_cluster_0_mtu36": [
+      "minmax",
+      11.254176432291667,
+      205.17646592881945
+    ],
+    "sw_dif_cluster_0_mtu37": [
+      "minmax",
+      11.254176432291667,
+      205.17646592881945
+    ],
+    "sw_dif_cluster_0_mtu38": [
+      "minmax",
+      11.254176432291667,
+      205.17646592881945
+    ],
+    "sw_dif_cluster_0_mtu39": [
+      "minmax",
+      11.254176432291667,
+      205.17646592881945
+    ],
+    "sw_dif_cluster_0_mtu40": [
+      "minmax",
+      22.274330376519096,
+      252.94714531792536
+    ],
+    "sw_dif_cluster_0_mtu41": [
+      "minmax",
+      22.274330376519096,
+      252.94714531792536
+    ],
+    "sw_dif_cluster_0_mtu42": [
+      "minmax",
+      22.274330376519096,
+      252.94714531792536
+    ],
+    "sw_dif_cluster_0_mtu43": [
+      "minmax",
+      22.274330376519096,
+      252.94714531792536
+    ],
+    "sw_dif_cluster_0_mtu44": [
+      "minmax",
+      32.598621690538195,
+      265.4524373372396
+    ],
+    "sw_dif_cluster_0_mtu45": [
+      "minmax",
+      32.598621690538195,
+      265.4524373372396
+    ],
+    "sw_dif_cluster_0_mtu46": [
+      "minmax",
+      32.598621690538195,
+      265.4524373372396
+    ],
+    "sw_dif_cluster_0_mtu47": [
+      "minmax",
+      32.598621690538195,
+      265.4524373372396
+    ],
+    "sw_dif_cluster_0_mtu48": [
+      "minmax",
+      33.06053692287869,
+      293.67034849378797
+    ],
+    "sw_dif_cluster_0_mtu49": [
+      "minmax",
+      33.06053692287869,
+      293.67034849378797
+    ],
+    "sw_dif_cluster_0_mtu50": [
+      "minmax",
+      33.06053692287869,
+      293.67034849378797
+    ],
+    "sw_dif_cluster_0_mtu51": [
+      "minmax",
+      33.06053692287869,
+      293.67034849378797
+    ],
+    "sw_dif_cluster_0_mtu52": [
+      "minmax",
+      30.698237779405382,
+      288.10243930392795
+    ],
+    "sw_dif_cluster_0_mtu53": [
+      "minmax",
+      30.698237779405382,
+      288.10243930392795
+    ],
+    "sw_dif_cluster_0_mtu54": [
+      "minmax",
+      30.698237779405382,
+      288.10243930392795
+    ],
+    "sw_dif_cluster_0_mtu55": [
+      "minmax",
+      30.698237779405382,
+      288.10243930392795
+    ],
+    "sw_dif_cluster_0_mtu56": [
+      "minmax",
+      18.490575307210285,
+      319.01232399834527
+    ],
+    "sw_dif_cluster_0_mtu57": [
+      "minmax",
+      18.490575307210285,
+      319.01232399834527
+    ],
+    "sw_dif_cluster_0_mtu58": [
+      "minmax",
+      18.490575307210285,
+      319.01232399834527
+    ],
+    "sw_dif_cluster_0_mtu59": [
+      "minmax",
+      18.490575307210285,
+      319.01232399834527
+    ],
+    "sw_dif_cluster_0_mtu60": [
+      "minmax",
+      5.4142529296875,
+      277.45549533420143
+    ],
+    "sw_dif_cluster_0_mtu61": [
+      "minmax",
+      5.4142529296875,
+      277.45549533420143
+    ],
+    "sw_dif_cluster_0_mtu62": [
+      "minmax",
+      5.4142529296875,
+      277.45549533420143
+    ],
+    "sw_dif_cluster_0_mtu63": [
+      "minmax",
+      5.4142529296875,
+      277.45549533420143
+    ],
+    "sw_dif_cluster_0_mtu64": [
+      "minmax",
+      0.00965517255995,
+      243.9918899663289
+    ],
+    "sw_dif_cluster_0_mtu65": [
+      "minmax",
+      0.00965517255995,
+      243.9918899663289
+    ],
+    "sw_dif_cluster_0_mtu66": [
+      "minmax",
+      0.00965517255995,
+      243.9918899663289
+    ],
+    "sw_dif_cluster_0_mtu67": [
+      "minmax",
+      0.00965517255995,
+      243.9918899663289
+    ],
+    "sw_dif_cluster_0_mtu68": [
+      "minmax",
+      0.0,
+      203.19203125
+    ],
+    "sw_dif_cluster_0_mtu69": [
+      "minmax",
+      0.0,
+      203.19203125
+    ],
+    "sw_dif_cluster_0_mtu70": [
+      "minmax",
+      0.0,
+      203.19203125
+    ],
+    "sw_dif_cluster_0_mtu71": [
+      "minmax",
+      0.0,
+      203.19203125
+    ],
+    "sw_dif_cluster_0_mtu72": [
+      "minmax",
+      0.0,
+      158.1911892361111
+    ],
+    "sw_dif_cluster_0_mtu73": [
+      "minmax",
+      0.0,
+      158.1911892361111
+    ],
+    "sw_dif_cluster_0_mtu74": [
+      "minmax",
+      0.0,
+      158.1911892361111
+    ],
+    "sw_dif_cluster_0_mtu75": [
+      "minmax",
+      0.0,
+      158.1911892361111
+    ],
+    "sw_dif_cluster_0_mtu76": [
+      "minmax",
+      0.0,
+      99.31578559027777
+    ],
+    "sw_dif_cluster_0_mtu77": [
+      "minmax",
+      0.0,
+      99.31578559027777
+    ],
+    "sw_dif_cluster_0_mtu78": [
+      "minmax",
+      0.0,
+      99.31578559027777
+    ],
+    "sw_dif_cluster_0_mtu79": [
+      "minmax",
+      0.0,
+      99.31578559027777
+    ],
+    "sw_dif_cluster_0_mtu80": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu81": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu82": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu83": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu84": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu85": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu86": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu87": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu88": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu89": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu90": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu91": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu92": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu93": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu94": [
+      "zero"
+    ],
+    "sw_dif_cluster_0_mtu95": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu00": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu01": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu02": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu03": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu04": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu05": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu06": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu07": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu08": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu09": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu10": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu11": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu12": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu13": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu14": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu15": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu16": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu17": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu18": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu19": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu20": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu21": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu22": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu23": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu24": [
+      "minmax",
+      0.0,
+      75.55114583333334
+    ],
+    "sw_dif_cluster_1_mtu25": [
+      "minmax",
+      0.0,
+      75.55114583333334
+    ],
+    "sw_dif_cluster_1_mtu26": [
+      "minmax",
+      0.0,
+      75.55114583333334
+    ],
+    "sw_dif_cluster_1_mtu27": [
+      "minmax",
+      0.0,
+      75.55114583333334
+    ],
+    "sw_dif_cluster_1_mtu28": [
+      "minmax",
+      0.0,
+      130.3191753472222
+    ],
+    "sw_dif_cluster_1_mtu29": [
+      "minmax",
+      0.0,
+      130.3191753472222
+    ],
+    "sw_dif_cluster_1_mtu30": [
+      "minmax",
+      0.0,
+      130.3191753472222
+    ],
+    "sw_dif_cluster_1_mtu31": [
+      "minmax",
+      0.0,
+      130.3191753472222
+    ],
+    "sw_dif_cluster_1_mtu32": [
+      "minmax",
+      3.3706816270616318,
+      182.79917514377172
+    ],
+    "sw_dif_cluster_1_mtu33": [
+      "minmax",
+      3.3706816270616318,
+      182.79917514377172
+    ],
+    "sw_dif_cluster_1_mtu34": [
+      "minmax",
+      3.3706816270616318,
+      182.79917514377172
+    ],
+    "sw_dif_cluster_1_mtu35": [
+      "minmax",
+      3.3706816270616318,
+      182.79917514377172
+    ],
+    "sw_dif_cluster_1_mtu36": [
+      "minmax",
+      22.346891547309028,
+      203.1533949110243
+    ],
+    "sw_dif_cluster_1_mtu37": [
+      "minmax",
+      22.346891547309028,
+      203.1533949110243
+    ],
+    "sw_dif_cluster_1_mtu38": [
+      "minmax",
+      22.346891547309028,
+      203.1533949110243
+    ],
+    "sw_dif_cluster_1_mtu39": [
+      "minmax",
+      22.346891547309028,
+      203.1533949110243
+    ],
+    "sw_dif_cluster_1_mtu40": [
+      "minmax",
+      31.03051378038194,
+      230.64748969184026
+    ],
+    "sw_dif_cluster_1_mtu41": [
+      "minmax",
+      31.03051378038194,
+      230.64748969184026
+    ],
+    "sw_dif_cluster_1_mtu42": [
+      "minmax",
+      31.03051378038194,
+      230.64748969184026
+    ],
+    "sw_dif_cluster_1_mtu43": [
+      "minmax",
+      31.03051378038194,
+      230.64748969184026
+    ],
+    "sw_dif_cluster_1_mtu44": [
+      "minmax",
+      42.0035861545139,
+      273.30427842881943
+    ],
+    "sw_dif_cluster_1_mtu45": [
+      "minmax",
+      42.0035861545139,
+      273.30427842881943
+    ],
+    "sw_dif_cluster_1_mtu46": [
+      "minmax",
+      42.0035861545139,
+      273.30427842881943
+    ],
+    "sw_dif_cluster_1_mtu47": [
+      "minmax",
+      42.0035861545139,
+      273.30427842881943
+    ],
+    "sw_dif_cluster_1_mtu48": [
+      "minmax",
+      45.99858072916667,
+      299.41237413194443
+    ],
+    "sw_dif_cluster_1_mtu49": [
+      "minmax",
+      45.99858072916667,
+      299.41237413194443
+    ],
+    "sw_dif_cluster_1_mtu50": [
+      "minmax",
+      45.99858072916667,
+      299.41237413194443
+    ],
+    "sw_dif_cluster_1_mtu51": [
+      "minmax",
+      45.99858072916667,
+      299.41237413194443
+    ],
+    "sw_dif_cluster_1_mtu52": [
+      "minmax",
+      36.42442274305556,
+      291.40736545138884
+    ],
+    "sw_dif_cluster_1_mtu53": [
+      "minmax",
+      36.42442274305556,
+      291.40736545138884
+    ],
+    "sw_dif_cluster_1_mtu54": [
+      "minmax",
+      36.42442274305556,
+      291.40736545138884
+    ],
+    "sw_dif_cluster_1_mtu55": [
+      "minmax",
+      36.42442274305556,
+      291.40736545138884
+    ],
+    "sw_dif_cluster_1_mtu56": [
+      "minmax",
+      23.882951388888884,
+      282.91517361111113
+    ],
+    "sw_dif_cluster_1_mtu57": [
+      "minmax",
+      23.882951388888884,
+      282.91517361111113
+    ],
+    "sw_dif_cluster_1_mtu58": [
+      "minmax",
+      23.882951388888884,
+      282.91517361111113
+    ],
+    "sw_dif_cluster_1_mtu59": [
+      "minmax",
+      23.882951388888884,
+      282.91517361111113
+    ],
+    "sw_dif_cluster_1_mtu60": [
+      "minmax",
+      4.753912217881944,
+      284.7479367404514
+    ],
+    "sw_dif_cluster_1_mtu61": [
+      "minmax",
+      4.753912217881944,
+      284.7479367404514
+    ],
+    "sw_dif_cluster_1_mtu62": [
+      "minmax",
+      4.753912217881944,
+      284.7479367404514
+    ],
+    "sw_dif_cluster_1_mtu63": [
+      "minmax",
+      4.753912217881944,
+      284.7479367404514
+    ],
+    "sw_dif_cluster_1_mtu64": [
+      "minmax",
+      0.0,
+      238.13065104166668
+    ],
+    "sw_dif_cluster_1_mtu65": [
+      "minmax",
+      0.0,
+      238.13065104166668
+    ],
+    "sw_dif_cluster_1_mtu66": [
+      "minmax",
+      0.0,
+      238.13065104166668
+    ],
+    "sw_dif_cluster_1_mtu67": [
+      "minmax",
+      0.0,
+      238.13065104166668
+    ],
+    "sw_dif_cluster_1_mtu68": [
+      "minmax",
+      0.0,
+      199.37180555555557
+    ],
+    "sw_dif_cluster_1_mtu69": [
+      "minmax",
+      0.0,
+      199.37180555555557
+    ],
+    "sw_dif_cluster_1_mtu70": [
+      "minmax",
+      0.0,
+      199.37180555555557
+    ],
+    "sw_dif_cluster_1_mtu71": [
+      "minmax",
+      0.0,
+      199.37180555555557
+    ],
+    "sw_dif_cluster_1_mtu72": [
+      "minmax",
+      0.0,
+      144.61139322916665
+    ],
+    "sw_dif_cluster_1_mtu73": [
+      "minmax",
+      0.0,
+      144.61139322916665
+    ],
+    "sw_dif_cluster_1_mtu74": [
+      "minmax",
+      0.0,
+      144.61139322916665
+    ],
+    "sw_dif_cluster_1_mtu75": [
+      "minmax",
+      0.0,
+      144.61139322916665
+    ],
+    "sw_dif_cluster_1_mtu76": [
+      "minmax",
+      0.0,
+      93.64444010416665
+    ],
+    "sw_dif_cluster_1_mtu77": [
+      "minmax",
+      0.0,
+      93.64444010416665
+    ],
+    "sw_dif_cluster_1_mtu78": [
+      "minmax",
+      0.0,
+      93.64444010416665
+    ],
+    "sw_dif_cluster_1_mtu79": [
+      "minmax",
+      0.0,
+      93.64444010416665
+    ],
+    "sw_dif_cluster_1_mtu80": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu81": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu82": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu83": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu84": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu85": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu86": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu87": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu88": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu89": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu90": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu91": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu92": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu93": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu94": [
+      "zero"
+    ],
+    "sw_dif_cluster_1_mtu95": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu00": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu01": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu02": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu03": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu04": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu05": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu06": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu07": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu08": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu09": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu10": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu11": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu12": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu13": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu14": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu15": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu16": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu17": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu18": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu19": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu20": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu21": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu22": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu23": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu24": [
+      "minmax",
+      0.0,
+      51.10411838107639
+    ],
+    "sw_dif_cluster_2_mtu25": [
+      "minmax",
+      0.0,
+      51.10411838107639
+    ],
+    "sw_dif_cluster_2_mtu26": [
+      "minmax",
+      0.0,
+      51.10411838107639
+    ],
+    "sw_dif_cluster_2_mtu27": [
+      "minmax",
+      0.0,
+      51.10411838107639
+    ],
+    "sw_dif_cluster_2_mtu28": [
+      "minmax",
+      0.0,
+      109.77020399305555
+    ],
+    "sw_dif_cluster_2_mtu29": [
+      "minmax",
+      0.0,
+      109.77020399305555
+    ],
+    "sw_dif_cluster_2_mtu30": [
+      "minmax",
+      0.0,
+      109.77020399305555
+    ],
+    "sw_dif_cluster_2_mtu31": [
+      "minmax",
+      0.0,
+      109.77020399305555
+    ],
+    "sw_dif_cluster_2_mtu32": [
+      "minmax",
+      0.3139769151475694,
+      165.8467522515191
+    ],
+    "sw_dif_cluster_2_mtu33": [
+      "minmax",
+      0.3139769151475694,
+      165.8467522515191
+    ],
+    "sw_dif_cluster_2_mtu34": [
+      "minmax",
+      0.3139769151475694,
+      165.8467522515191
+    ],
+    "sw_dif_cluster_2_mtu35": [
+      "minmax",
+      0.3139769151475694,
+      165.8467522515191
+    ],
+    "sw_dif_cluster_2_mtu36": [
+      "minmax",
+      8.312908157772489,
+      214.39980017556087
+    ],
+    "sw_dif_cluster_2_mtu37": [
+      "minmax",
+      8.312908157772489,
+      214.39980017556087
+    ],
+    "sw_dif_cluster_2_mtu38": [
+      "minmax",
+      8.312908157772489,
+      214.39980017556087
+    ],
+    "sw_dif_cluster_2_mtu39": [
+      "minmax",
+      8.312908157772489,
+      214.39980017556087
+    ],
+    "sw_dif_cluster_2_mtu40": [
+      "minmax",
+      20.116477593315974,
+      260.3496508789063
+    ],
+    "sw_dif_cluster_2_mtu41": [
+      "minmax",
+      20.116477593315974,
+      260.3496508789063
+    ],
+    "sw_dif_cluster_2_mtu42": [
+      "minmax",
+      20.116477593315974,
+      260.3496508789063
+    ],
+    "sw_dif_cluster_2_mtu43": [
+      "minmax",
+      20.116477593315974,
+      260.3496508789063
+    ],
+    "sw_dif_cluster_2_mtu44": [
+      "minmax",
+      22.113612603081595,
+      318.7852762858073
+    ],
+    "sw_dif_cluster_2_mtu45": [
+      "minmax",
+      22.113612603081595,
+      318.7852762858073
+    ],
+    "sw_dif_cluster_2_mtu46": [
+      "minmax",
+      22.113612603081595,
+      318.7852762858073
+    ],
+    "sw_dif_cluster_2_mtu47": [
+      "minmax",
+      22.113612603081595,
+      318.7852762858073
+    ],
+    "sw_dif_cluster_2_mtu48": [
+      "minmax",
+      19.308998131222197,
+      343.1960279104444
+    ],
+    "sw_dif_cluster_2_mtu49": [
+      "minmax",
+      19.308998131222197,
+      343.1960279104444
+    ],
+    "sw_dif_cluster_2_mtu50": [
+      "minmax",
+      19.308998131222197,
+      343.1960279104444
+    ],
+    "sw_dif_cluster_2_mtu51": [
+      "minmax",
+      19.308998131222197,
+      343.1960279104444
+    ],
+    "sw_dif_cluster_2_mtu52": [
+      "minmax",
+      16.637960466808742,
+      329.8098216512468
+    ],
+    "sw_dif_cluster_2_mtu53": [
+      "minmax",
+      16.637960466808742,
+      329.8098216512468
+    ],
+    "sw_dif_cluster_2_mtu54": [
+      "minmax",
+      16.637960466808742,
+      329.8098216512468
+    ],
+    "sw_dif_cluster_2_mtu55": [
+      "minmax",
+      16.637960466808742,
+      329.8098216512468
+    ],
+    "sw_dif_cluster_2_mtu56": [
+      "minmax",
+      11.958130283090801,
+      315.076834994687
+    ],
+    "sw_dif_cluster_2_mtu57": [
+      "minmax",
+      11.958130283090801,
+      315.076834994687
+    ],
+    "sw_dif_cluster_2_mtu58": [
+      "minmax",
+      11.958130283090801,
+      315.076834994687
+    ],
+    "sw_dif_cluster_2_mtu59": [
+      "minmax",
+      11.958130283090801,
+      315.076834994687
+    ],
+    "sw_dif_cluster_2_mtu60": [
+      "minmax",
+      8.156891352335611,
+      281.9660600365533
+    ],
+    "sw_dif_cluster_2_mtu61": [
+      "minmax",
+      8.156891352335611,
+      281.9660600365533
+    ],
+    "sw_dif_cluster_2_mtu62": [
+      "minmax",
+      8.156891352335611,
+      281.9660600365533
+    ],
+    "sw_dif_cluster_2_mtu63": [
+      "minmax",
+      8.156891352335611,
+      281.9660600365533
+    ],
+    "sw_dif_cluster_2_mtu64": [
+      "minmax",
+      0.3372920396592881,
+      260.084322543674
+    ],
+    "sw_dif_cluster_2_mtu65": [
+      "minmax",
+      0.3372920396592881,
+      260.084322543674
+    ],
+    "sw_dif_cluster_2_mtu66": [
+      "minmax",
+      0.3372920396592881,
+      260.084322543674
+    ],
+    "sw_dif_cluster_2_mtu67": [
+      "minmax",
+      0.3372920396592881,
+      260.084322543674
+    ],
+    "sw_dif_cluster_2_mtu68": [
+      "minmax",
+      0.0,
+      220.20906250000004
+    ],
+    "sw_dif_cluster_2_mtu69": [
+      "minmax",
+      0.0,
+      220.20906250000004
+    ],
+    "sw_dif_cluster_2_mtu70": [
+      "minmax",
+      0.0,
+      220.20906250000004
+    ],
+    "sw_dif_cluster_2_mtu71": [
+      "minmax",
+      0.0,
+      220.20906250000004
+    ],
+    "sw_dif_cluster_2_mtu72": [
+      "minmax",
+      0.0,
+      168.11190972222224
+    ],
+    "sw_dif_cluster_2_mtu73": [
+      "minmax",
+      0.0,
+      168.11190972222224
+    ],
+    "sw_dif_cluster_2_mtu74": [
+      "minmax",
+      0.0,
+      168.11190972222224
+    ],
+    "sw_dif_cluster_2_mtu75": [
+      "minmax",
+      0.0,
+      168.11190972222224
+    ],
+    "sw_dif_cluster_2_mtu76": [
+      "minmax",
+      0.0,
+      103.31647569444443
+    ],
+    "sw_dif_cluster_2_mtu77": [
+      "minmax",
+      0.0,
+      103.31647569444443
+    ],
+    "sw_dif_cluster_2_mtu78": [
+      "minmax",
+      0.0,
+      103.31647569444443
+    ],
+    "sw_dif_cluster_2_mtu79": [
+      "minmax",
+      0.0,
+      103.31647569444443
+    ],
+    "sw_dif_cluster_2_mtu80": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu81": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu82": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu83": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu84": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu85": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu86": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu87": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu88": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu89": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu90": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu91": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu92": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu93": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu94": [
+      "zero"
+    ],
+    "sw_dif_cluster_2_mtu95": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu00": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu01": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu02": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu03": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu04": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu05": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu06": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu07": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu08": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu09": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu10": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu11": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu12": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu13": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu14": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu15": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu16": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu17": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu18": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu19": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu20": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu21": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu22": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu23": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu24": [
+      "minmax",
+      0.0,
+      62.46444661458332
+    ],
+    "sw_dif_cluster_3_mtu25": [
+      "minmax",
+      0.0,
+      62.46444661458332
+    ],
+    "sw_dif_cluster_3_mtu26": [
+      "minmax",
+      0.0,
+      62.46444661458332
+    ],
+    "sw_dif_cluster_3_mtu27": [
+      "minmax",
+      0.0,
+      62.46444661458332
+    ],
+    "sw_dif_cluster_3_mtu28": [
+      "minmax",
+      0.0,
+      113.96848090277781
+    ],
+    "sw_dif_cluster_3_mtu29": [
+      "minmax",
+      0.0,
+      113.96848090277781
+    ],
+    "sw_dif_cluster_3_mtu30": [
+      "minmax",
+      0.0,
+      113.96848090277781
+    ],
+    "sw_dif_cluster_3_mtu31": [
+      "minmax",
+      0.0,
+      113.96848090277781
+    ],
+    "sw_dif_cluster_3_mtu32": [
+      "minmax",
+      6.045079125298393,
+      155.50729934692384
+    ],
+    "sw_dif_cluster_3_mtu33": [
+      "minmax",
+      6.045079125298393,
+      155.50729934692384
+    ],
+    "sw_dif_cluster_3_mtu34": [
+      "minmax",
+      6.045079125298393,
+      155.50729934692384
+    ],
+    "sw_dif_cluster_3_mtu35": [
+      "minmax",
+      6.045079125298393,
+      155.50729934692384
+    ],
+    "sw_dif_cluster_3_mtu36": [
+      "minmax",
+      23.050477159288192,
+      188.20094645182292
+    ],
+    "sw_dif_cluster_3_mtu37": [
+      "minmax",
+      23.050477159288192,
+      188.20094645182292
+    ],
+    "sw_dif_cluster_3_mtu38": [
+      "minmax",
+      23.050477159288192,
+      188.20094645182292
+    ],
+    "sw_dif_cluster_3_mtu39": [
+      "minmax",
+      23.050477159288192,
+      188.20094645182292
+    ],
+    "sw_dif_cluster_3_mtu40": [
+      "minmax",
+      36.53761962890625,
+      223.07422064887155
+    ],
+    "sw_dif_cluster_3_mtu41": [
+      "minmax",
+      36.53761962890625,
+      223.07422064887155
+    ],
+    "sw_dif_cluster_3_mtu42": [
+      "minmax",
+      36.53761962890625,
+      223.07422064887155
+    ],
+    "sw_dif_cluster_3_mtu43": [
+      "minmax",
+      36.53761962890625,
+      223.07422064887155
+    ],
+    "sw_dif_cluster_3_mtu44": [
+      "minmax",
+      39.44349338107639,
+      278.44624620225693
+    ],
+    "sw_dif_cluster_3_mtu45": [
+      "minmax",
+      39.44349338107639,
+      278.44624620225693
+    ],
+    "sw_dif_cluster_3_mtu46": [
+      "minmax",
+      39.44349338107639,
+      278.44624620225693
+    ],
+    "sw_dif_cluster_3_mtu47": [
+      "minmax",
+      39.44349338107639,
+      278.44624620225693
+    ],
+    "sw_dif_cluster_3_mtu48": [
+      "minmax",
+      45.28849093967014,
+      310.3867694769965
+    ],
+    "sw_dif_cluster_3_mtu49": [
+      "minmax",
+      45.28849093967014,
+      310.3867694769965
+    ],
+    "sw_dif_cluster_3_mtu50": [
+      "minmax",
+      45.28849093967014,
+      310.3867694769965
+    ],
+    "sw_dif_cluster_3_mtu51": [
+      "minmax",
+      45.28849093967014,
+      310.3867694769965
+    ],
+    "sw_dif_cluster_3_mtu52": [
+      "minmax",
+      44.485318196614585,
+      295.79673041449655
+    ],
+    "sw_dif_cluster_3_mtu53": [
+      "minmax",
+      44.485318196614585,
+      295.79673041449655
+    ],
+    "sw_dif_cluster_3_mtu54": [
+      "minmax",
+      44.485318196614585,
+      295.79673041449655
+    ],
+    "sw_dif_cluster_3_mtu55": [
+      "minmax",
+      44.485318196614585,
+      295.79673041449655
+    ],
+    "sw_dif_cluster_3_mtu56": [
+      "minmax",
+      34.829206814236116,
+      302.84070638020836
+    ],
+    "sw_dif_cluster_3_mtu57": [
+      "minmax",
+      34.829206814236116,
+      302.84070638020836
+    ],
+    "sw_dif_cluster_3_mtu58": [
+      "minmax",
+      34.829206814236116,
+      302.84070638020836
+    ],
+    "sw_dif_cluster_3_mtu59": [
+      "minmax",
+      34.829206814236116,
+      302.84070638020836
+    ],
+    "sw_dif_cluster_3_mtu60": [
+      "minmax",
+      14.015555284288196,
+      302.927135687934
+    ],
+    "sw_dif_cluster_3_mtu61": [
+      "minmax",
+      14.015555284288196,
+      302.927135687934
+    ],
+    "sw_dif_cluster_3_mtu62": [
+      "minmax",
+      14.015555284288196,
+      302.927135687934
+    ],
+    "sw_dif_cluster_3_mtu63": [
+      "minmax",
+      14.015555284288196,
+      302.927135687934
+    ],
+    "sw_dif_cluster_3_mtu64": [
+      "minmax",
+      0.2549206421772639,
+      260.6638988022672
+    ],
+    "sw_dif_cluster_3_mtu65": [
+      "minmax",
+      0.2549206421772639,
+      260.6638988022672
+    ],
+    "sw_dif_cluster_3_mtu66": [
+      "minmax",
+      0.2549206421772639,
+      260.6638988022672
+    ],
+    "sw_dif_cluster_3_mtu67": [
+      "minmax",
+      0.2549206421772639,
+      260.6638988022672
+    ],
+    "sw_dif_cluster_3_mtu68": [
+      "minmax",
+      0.0,
+      189.9608637152778
+    ],
+    "sw_dif_cluster_3_mtu69": [
+      "minmax",
+      0.0,
+      189.9608637152778
+    ],
+    "sw_dif_cluster_3_mtu70": [
+      "minmax",
+      0.0,
+      189.9608637152778
+    ],
+    "sw_dif_cluster_3_mtu71": [
+      "minmax",
+      0.0,
+      189.9608637152778
+    ],
+    "sw_dif_cluster_3_mtu72": [
+      "minmax",
+      0.0,
+      138.18674045138889
+    ],
+    "sw_dif_cluster_3_mtu73": [
+      "minmax",
+      0.0,
+      138.18674045138889
+    ],
+    "sw_dif_cluster_3_mtu74": [
+      "minmax",
+      0.0,
+      138.18674045138889
+    ],
+    "sw_dif_cluster_3_mtu75": [
+      "minmax",
+      0.0,
+      138.18674045138889
+    ],
+    "sw_dif_cluster_3_mtu76": [
+      "minmax",
+      0.0,
+      77.75650390625
+    ],
+    "sw_dif_cluster_3_mtu77": [
+      "minmax",
+      0.0,
+      77.75650390625
+    ],
+    "sw_dif_cluster_3_mtu78": [
+      "minmax",
+      0.0,
+      77.75650390625
+    ],
+    "sw_dif_cluster_3_mtu79": [
+      "minmax",
+      0.0,
+      77.75650390625
+    ],
+    "sw_dif_cluster_3_mtu80": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu81": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu82": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu83": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu84": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu85": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu86": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu87": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu88": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu89": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu90": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu91": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu92": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu93": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu94": [
+      "zero"
+    ],
+    "sw_dif_cluster_3_mtu95": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu00": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu01": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu02": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu03": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu04": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu05": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu06": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu07": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu08": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu09": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu10": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu11": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu12": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu13": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu14": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu15": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu16": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu17": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu18": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu19": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu20": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu21": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu22": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu23": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu24": [
+      "minmax",
+      0.0,
+      54.10426215277779
+    ],
+    "sw_dif_cluster_4_mtu25": [
+      "minmax",
+      0.0,
+      54.10426215277779
+    ],
+    "sw_dif_cluster_4_mtu26": [
+      "minmax",
+      0.0,
+      54.10426215277779
+    ],
+    "sw_dif_cluster_4_mtu27": [
+      "minmax",
+      0.0,
+      54.10426215277779
+    ],
+    "sw_dif_cluster_4_mtu28": [
+      "minmax",
+      0.0,
+      111.22978298611112
+    ],
+    "sw_dif_cluster_4_mtu29": [
+      "minmax",
+      0.0,
+      111.22978298611112
+    ],
+    "sw_dif_cluster_4_mtu30": [
+      "minmax",
+      0.0,
+      111.22978298611112
+    ],
+    "sw_dif_cluster_4_mtu31": [
+      "minmax",
+      0.0,
+      111.22978298611112
+    ],
+    "sw_dif_cluster_4_mtu32": [
+      "minmax",
+      1.7684948582119413,
+      159.90252510706583
+    ],
+    "sw_dif_cluster_4_mtu33": [
+      "minmax",
+      1.7684948582119413,
+      159.90252510706583
+    ],
+    "sw_dif_cluster_4_mtu34": [
+      "minmax",
+      1.7684948582119413,
+      159.90252510706583
+    ],
+    "sw_dif_cluster_4_mtu35": [
+      "minmax",
+      1.7684948582119413,
+      159.90252510706583
+    ],
+    "sw_dif_cluster_4_mtu36": [
+      "minmax",
+      17.726634046766492,
+      194.20268886990016
+    ],
+    "sw_dif_cluster_4_mtu37": [
+      "minmax",
+      17.726634046766492,
+      194.20268886990016
+    ],
+    "sw_dif_cluster_4_mtu38": [
+      "minmax",
+      17.726634046766492,
+      194.20268886990016
+    ],
+    "sw_dif_cluster_4_mtu39": [
+      "minmax",
+      17.726634046766492,
+      194.20268886990016
+    ],
+    "sw_dif_cluster_4_mtu40": [
+      "minmax",
+      28.475795762803816,
+      248.89546291775176
+    ],
+    "sw_dif_cluster_4_mtu41": [
+      "minmax",
+      28.475795762803816,
+      248.89546291775176
+    ],
+    "sw_dif_cluster_4_mtu42": [
+      "minmax",
+      28.475795762803816,
+      248.89546291775176
+    ],
+    "sw_dif_cluster_4_mtu43": [
+      "minmax",
+      28.475795762803816,
+      248.89546291775176
+    ],
+    "sw_dif_cluster_4_mtu44": [
+      "minmax",
+      44.487004530164924,
+      284.80342949761285
+    ],
+    "sw_dif_cluster_4_mtu45": [
+      "minmax",
+      44.487004530164924,
+      284.80342949761285
+    ],
+    "sw_dif_cluster_4_mtu46": [
+      "minmax",
+      44.487004530164924,
+      284.80342949761285
+    ],
+    "sw_dif_cluster_4_mtu47": [
+      "minmax",
+      44.487004530164924,
+      284.80342949761285
+    ],
+    "sw_dif_cluster_4_mtu48": [
+      "minmax",
+      48.457406684027774,
+      296.66320095486117
+    ],
+    "sw_dif_cluster_4_mtu49": [
+      "minmax",
+      48.457406684027774,
+      296.66320095486117
+    ],
+    "sw_dif_cluster_4_mtu50": [
+      "minmax",
+      48.457406684027774,
+      296.66320095486117
+    ],
+    "sw_dif_cluster_4_mtu51": [
+      "minmax",
+      48.457406684027774,
+      296.66320095486117
+    ],
+    "sw_dif_cluster_4_mtu52": [
+      "minmax",
+      46.829555121527775,
+      303.5398806423611
+    ],
+    "sw_dif_cluster_4_mtu53": [
+      "minmax",
+      46.829555121527775,
+      303.5398806423611
+    ],
+    "sw_dif_cluster_4_mtu54": [
+      "minmax",
+      46.829555121527775,
+      303.5398806423611
+    ],
+    "sw_dif_cluster_4_mtu55": [
+      "minmax",
+      46.829555121527775,
+      303.5398806423611
+    ],
+    "sw_dif_cluster_4_mtu56": [
+      "minmax",
+      31.965496419270835,
+      306.9986702473958
+    ],
+    "sw_dif_cluster_4_mtu57": [
+      "minmax",
+      31.965496419270835,
+      306.9986702473958
+    ],
+    "sw_dif_cluster_4_mtu58": [
+      "minmax",
+      31.965496419270835,
+      306.9986702473958
+    ],
+    "sw_dif_cluster_4_mtu59": [
+      "minmax",
+      31.965496419270835,
+      306.9986702473958
+    ],
+    "sw_dif_cluster_4_mtu60": [
+      "minmax",
+      13.76945760091146,
+      297.4720528157553
+    ],
+    "sw_dif_cluster_4_mtu61": [
+      "minmax",
+      13.76945760091146,
+      297.4720528157553
+    ],
+    "sw_dif_cluster_4_mtu62": [
+      "minmax",
+      13.76945760091146,
+      297.4720528157553
+    ],
+    "sw_dif_cluster_4_mtu63": [
+      "minmax",
+      13.76945760091146,
+      297.4720528157553
+    ],
+    "sw_dif_cluster_4_mtu64": [
+      "minmax",
+      0.5946360270182292,
+      246.2368309868707
+    ],
+    "sw_dif_cluster_4_mtu65": [
+      "minmax",
+      0.5946360270182292,
+      246.2368309868707
+    ],
+    "sw_dif_cluster_4_mtu66": [
+      "minmax",
+      0.5946360270182292,
+      246.2368309868707
+    ],
+    "sw_dif_cluster_4_mtu67": [
+      "minmax",
+      0.5946360270182292,
+      246.2368309868707
+    ],
+    "sw_dif_cluster_4_mtu68": [
+      "minmax",
+      0.0,
+      197.22553385416666
+    ],
+    "sw_dif_cluster_4_mtu69": [
+      "minmax",
+      0.0,
+      197.22553385416666
+    ],
+    "sw_dif_cluster_4_mtu70": [
+      "minmax",
+      0.0,
+      197.22553385416666
+    ],
+    "sw_dif_cluster_4_mtu71": [
+      "minmax",
+      0.0,
+      197.22553385416666
+    ],
+    "sw_dif_cluster_4_mtu72": [
+      "minmax",
+      0.0,
+      160.60444010416668
+    ],
+    "sw_dif_cluster_4_mtu73": [
+      "minmax",
+      0.0,
+      160.60444010416668
+    ],
+    "sw_dif_cluster_4_mtu74": [
+      "minmax",
+      0.0,
+      160.60444010416668
+    ],
+    "sw_dif_cluster_4_mtu75": [
+      "minmax",
+      0.0,
+      160.60444010416668
+    ],
+    "sw_dif_cluster_4_mtu76": [
+      "minmax",
+      0.0,
+      94.97765190972223
+    ],
+    "sw_dif_cluster_4_mtu77": [
+      "minmax",
+      0.0,
+      94.97765190972223
+    ],
+    "sw_dif_cluster_4_mtu78": [
+      "minmax",
+      0.0,
+      94.97765190972223
+    ],
+    "sw_dif_cluster_4_mtu79": [
+      "minmax",
+      0.0,
+      94.97765190972223
+    ],
+    "sw_dif_cluster_4_mtu80": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu81": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu82": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu83": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu84": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu85": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu86": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu87": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu88": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu89": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu90": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu91": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu92": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu93": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu94": [
+      "zero"
+    ],
+    "sw_dif_cluster_4_mtu95": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu00": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu01": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu02": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu03": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu04": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu05": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu06": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu07": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu08": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu09": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu10": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu11": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu12": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu13": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu14": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu15": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu16": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu17": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu18": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu19": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu20": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu21": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu22": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu23": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu24": [
+      "minmax",
+      0.0,
+      75.93149305555555
+    ],
+    "sw_dir_cluster_0_mtu25": [
+      "minmax",
+      0.0,
+      75.93149305555555
+    ],
+    "sw_dir_cluster_0_mtu26": [
+      "minmax",
+      0.0,
+      75.93149305555555
+    ],
+    "sw_dir_cluster_0_mtu27": [
+      "minmax",
+      0.0,
+      75.93149305555555
+    ],
+    "sw_dir_cluster_0_mtu28": [
+      "minmax",
+      0.0,
+      186.7046701388889
+    ],
+    "sw_dir_cluster_0_mtu29": [
+      "minmax",
+      0.0,
+      186.7046701388889
+    ],
+    "sw_dir_cluster_0_mtu30": [
+      "minmax",
+      0.0,
+      186.7046701388889
+    ],
+    "sw_dir_cluster_0_mtu31": [
+      "minmax",
+      0.0,
+      186.7046701388889
+    ],
+    "sw_dir_cluster_0_mtu32": [
+      "minmax",
+      0.0,
+      316.52489583333335
+    ],
+    "sw_dir_cluster_0_mtu33": [
+      "minmax",
+      0.0,
+      316.52489583333335
+    ],
+    "sw_dir_cluster_0_mtu34": [
+      "minmax",
+      0.0,
+      316.52489583333335
+    ],
+    "sw_dir_cluster_0_mtu35": [
+      "minmax",
+      0.0,
+      316.52489583333335
+    ],
+    "sw_dir_cluster_0_mtu36": [
+      "minmax",
+      0.0488122600979275,
+      447.2618474621243
+    ],
+    "sw_dir_cluster_0_mtu37": [
+      "minmax",
+      0.0488122600979275,
+      447.2618474621243
+    ],
+    "sw_dir_cluster_0_mtu38": [
+      "minmax",
+      0.0488122600979275,
+      447.2618474621243
+    ],
+    "sw_dir_cluster_0_mtu39": [
+      "minmax",
+      0.0488122600979275,
+      447.2618474621243
+    ],
+    "sw_dir_cluster_0_mtu40": [
+      "minmax",
+      0.0197701157463921,
+      564.3638409953647
+    ],
+    "sw_dir_cluster_0_mtu41": [
+      "minmax",
+      0.0197701157463921,
+      564.3638409953647
+    ],
+    "sw_dir_cluster_0_mtu42": [
+      "minmax",
+      0.0197701157463921,
+      564.3638409953647
+    ],
+    "sw_dir_cluster_0_mtu43": [
+      "minmax",
+      0.0197701157463921,
+      564.3638409953647
+    ],
+    "sw_dir_cluster_0_mtu44": [
+      "minmax",
+      0.088199234008789,
+      654.8061757659912
+    ],
+    "sw_dir_cluster_0_mtu45": [
+      "minmax",
+      0.088199234008789,
+      654.8061757659912
+    ],
+    "sw_dir_cluster_0_mtu46": [
+      "minmax",
+      0.088199234008789,
+      654.8061757659912
+    ],
+    "sw_dir_cluster_0_mtu47": [
+      "minmax",
+      0.088199234008789,
+      654.8061757659912
+    ],
+    "sw_dir_cluster_0_mtu48": [
+      "minmax",
+      0.0813793097601996,
+      709.555842912462
+    ],
+    "sw_dir_cluster_0_mtu49": [
+      "minmax",
+      0.0813793097601996,
+      709.555842912462
+    ],
+    "sw_dir_cluster_0_mtu50": [
+      "minmax",
+      0.0813793097601996,
+      709.555842912462
+    ],
+    "sw_dir_cluster_0_mtu51": [
+      "minmax",
+      0.0813793097601996,
+      709.555842912462
+    ],
+    "sw_dir_cluster_0_mtu52": [
+      "minmax",
+      0.0507279713948567,
+      726.8282998063829
+    ],
+    "sw_dir_cluster_0_mtu53": [
+      "minmax",
+      0.0507279713948567,
+      726.8282998063829
+    ],
+    "sw_dir_cluster_0_mtu54": [
+      "minmax",
+      0.0507279713948567,
+      726.8282998063829
+    ],
+    "sw_dir_cluster_0_mtu55": [
+      "minmax",
+      0.0507279713948567,
+      726.8282998063829
+    ],
+    "sw_dir_cluster_0_mtu56": [
+      "minmax",
+      0.0117241382598876,
+      702.983414750629
+    ],
+    "sw_dir_cluster_0_mtu57": [
+      "minmax",
+      0.0117241382598876,
+      702.983414750629
+    ],
+    "sw_dir_cluster_0_mtu58": [
+      "minmax",
+      0.0117241382598876,
+      702.983414750629
+    ],
+    "sw_dir_cluster_0_mtu59": [
+      "minmax",
+      0.0117241382598876,
+      702.983414750629
+    ],
+    "sw_dir_cluster_0_mtu60": [
+      "minmax",
+      0.0,
+      637.6575694444444
+    ],
+    "sw_dir_cluster_0_mtu61": [
+      "minmax",
+      0.0,
+      637.6575694444444
+    ],
+    "sw_dir_cluster_0_mtu62": [
+      "minmax",
+      0.0,
+      637.6575694444444
+    ],
+    "sw_dir_cluster_0_mtu63": [
+      "minmax",
+      0.0,
+      637.6575694444444
+    ],
+    "sw_dir_cluster_0_mtu64": [
+      "minmax",
+      0.0,
+      543.9085069444444
+    ],
+    "sw_dir_cluster_0_mtu65": [
+      "minmax",
+      0.0,
+      543.9085069444444
+    ],
+    "sw_dir_cluster_0_mtu66": [
+      "minmax",
+      0.0,
+      543.9085069444444
+    ],
+    "sw_dir_cluster_0_mtu67": [
+      "minmax",
+      0.0,
+      543.9085069444444
+    ],
+    "sw_dir_cluster_0_mtu68": [
+      "minmax",
+      0.0,
+      421.6138541666666
+    ],
+    "sw_dir_cluster_0_mtu69": [
+      "minmax",
+      0.0,
+      421.6138541666666
+    ],
+    "sw_dir_cluster_0_mtu70": [
+      "minmax",
+      0.0,
+      421.6138541666666
+    ],
+    "sw_dir_cluster_0_mtu71": [
+      "minmax",
+      0.0,
+      421.6138541666666
+    ],
+    "sw_dir_cluster_0_mtu72": [
+      "minmax",
+      0.0,
+      288.735625
+    ],
+    "sw_dir_cluster_0_mtu73": [
+      "minmax",
+      0.0,
+      288.735625
+    ],
+    "sw_dir_cluster_0_mtu74": [
+      "minmax",
+      0.0,
+      288.735625
+    ],
+    "sw_dir_cluster_0_mtu75": [
+      "minmax",
+      0.0,
+      288.735625
+    ],
+    "sw_dir_cluster_0_mtu76": [
+      "minmax",
+      0.0,
+      160.92229166666667
+    ],
+    "sw_dir_cluster_0_mtu77": [
+      "minmax",
+      0.0,
+      160.92229166666667
+    ],
+    "sw_dir_cluster_0_mtu78": [
+      "minmax",
+      0.0,
+      160.92229166666667
+    ],
+    "sw_dir_cluster_0_mtu79": [
+      "minmax",
+      0.0,
+      160.92229166666667
+    ],
+    "sw_dir_cluster_0_mtu80": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu81": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu82": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu83": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu84": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu85": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu86": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu87": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu88": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu89": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu90": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu91": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu92": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu93": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu94": [
+      "zero"
+    ],
+    "sw_dir_cluster_0_mtu95": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu00": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu01": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu02": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu03": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu04": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu05": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu06": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu07": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu08": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu09": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu10": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu11": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu12": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu13": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu14": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu15": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu16": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu17": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu18": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu19": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu20": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu21": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu22": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu23": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu24": [
+      "minmax",
+      0.0,
+      96.09919270833332
+    ],
+    "sw_dir_cluster_1_mtu25": [
+      "minmax",
+      0.0,
+      96.09919270833332
+    ],
+    "sw_dir_cluster_1_mtu26": [
+      "minmax",
+      0.0,
+      96.09919270833332
+    ],
+    "sw_dir_cluster_1_mtu27": [
+      "minmax",
+      0.0,
+      96.09919270833332
+    ],
+    "sw_dir_cluster_1_mtu28": [
+      "minmax",
+      0.0,
+      215.13022569444445
+    ],
+    "sw_dir_cluster_1_mtu29": [
+      "minmax",
+      0.0,
+      215.13022569444445
+    ],
+    "sw_dir_cluster_1_mtu30": [
+      "minmax",
+      0.0,
+      215.13022569444445
+    ],
+    "sw_dir_cluster_1_mtu31": [
+      "minmax",
+      0.0,
+      215.13022569444445
+    ],
+    "sw_dir_cluster_1_mtu32": [
+      "minmax",
+      0.0002987861964437,
+      349.57227065824804
+    ],
+    "sw_dir_cluster_1_mtu33": [
+      "minmax",
+      0.0002987861964437,
+      349.57227065824804
+    ],
+    "sw_dir_cluster_1_mtu34": [
+      "minmax",
+      0.0002987861964437,
+      349.57227065824804
+    ],
+    "sw_dir_cluster_1_mtu35": [
+      "minmax",
+      0.0002987861964437,
+      349.57227065824804
+    ],
+    "sw_dir_cluster_1_mtu36": [
+      "minmax",
+      0.0982259538438585,
+      479.9582323794895
+    ],
+    "sw_dir_cluster_1_mtu37": [
+      "minmax",
+      0.0982259538438585,
+      479.9582323794895
+    ],
+    "sw_dir_cluster_1_mtu38": [
+      "minmax",
+      0.0982259538438585,
+      479.9582323794895
+    ],
+    "sw_dir_cluster_1_mtu39": [
+      "minmax",
+      0.0982259538438585,
+      479.9582323794895
+    ],
+    "sw_dir_cluster_1_mtu40": [
+      "minmax",
+      0.2195331488715277,
+      587.9273418511285
+    ],
+    "sw_dir_cluster_1_mtu41": [
+      "minmax",
+      0.2195331488715277,
+      587.9273418511285
+    ],
+    "sw_dir_cluster_1_mtu42": [
+      "minmax",
+      0.2195331488715277,
+      587.9273418511285
+    ],
+    "sw_dir_cluster_1_mtu43": [
+      "minmax",
+      0.2195331488715277,
+      587.9273418511285
+    ],
+    "sw_dir_cluster_1_mtu44": [
+      "minmax",
+      0.2335014004177517,
+      672.5702485995823
+    ],
+    "sw_dir_cluster_1_mtu45": [
+      "minmax",
+      0.2335014004177517,
+      672.5702485995823
+    ],
+    "sw_dir_cluster_1_mtu46": [
+      "minmax",
+      0.2335014004177517,
+      672.5702485995823
+    ],
+    "sw_dir_cluster_1_mtu47": [
+      "minmax",
+      0.2335014004177517,
+      672.5702485995823
+    ],
+    "sw_dir_cluster_1_mtu48": [
+      "minmax",
+      0.8383192952473958,
+      718.2766112603082
+    ],
+    "sw_dir_cluster_1_mtu49": [
+      "minmax",
+      0.8383192952473958,
+      718.2766112603082
+    ],
+    "sw_dir_cluster_1_mtu50": [
+      "minmax",
+      0.8383192952473958,
+      718.2766112603082
+    ],
+    "sw_dir_cluster_1_mtu51": [
+      "minmax",
+      0.8383192952473958,
+      718.2766112603082
+    ],
+    "sw_dir_cluster_1_mtu52": [
+      "minmax",
+      0.0537068176269531,
+      724.0601126268175
+    ],
+    "sw_dir_cluster_1_mtu53": [
+      "minmax",
+      0.0537068176269531,
+      724.0601126268175
+    ],
+    "sw_dir_cluster_1_mtu54": [
+      "minmax",
+      0.0537068176269531,
+      724.0601126268175
+    ],
+    "sw_dir_cluster_1_mtu55": [
+      "minmax",
+      0.0537068176269531,
+      724.0601126268175
+    ],
+    "sw_dir_cluster_1_mtu56": [
+      "minmax",
+      0.0283846876356336,
+      689.52779586792
+    ],
+    "sw_dir_cluster_1_mtu57": [
+      "minmax",
+      0.0283846876356336,
+      689.52779586792
+    ],
+    "sw_dir_cluster_1_mtu58": [
+      "minmax",
+      0.0283846876356336,
+      689.52779586792
+    ],
+    "sw_dir_cluster_1_mtu59": [
+      "minmax",
+      0.0283846876356336,
+      689.52779586792
+    ],
+    "sw_dir_cluster_1_mtu60": [
+      "minmax",
+      0.0,
+      616.8470138888889
+    ],
+    "sw_dir_cluster_1_mtu61": [
+      "minmax",
+      0.0,
+      616.8470138888889
+    ],
+    "sw_dir_cluster_1_mtu62": [
+      "minmax",
+      0.0,
+      616.8470138888889
+    ],
+    "sw_dir_cluster_1_mtu63": [
+      "minmax",
+      0.0,
+      616.8470138888889
+    ],
+    "sw_dir_cluster_1_mtu64": [
+      "minmax",
+      0.0,
+      512.5912152777778
+    ],
+    "sw_dir_cluster_1_mtu65": [
+      "minmax",
+      0.0,
+      512.5912152777778
+    ],
+    "sw_dir_cluster_1_mtu66": [
+      "minmax",
+      0.0,
+      512.5912152777778
+    ],
+    "sw_dir_cluster_1_mtu67": [
+      "minmax",
+      0.0,
+      512.5912152777778
+    ],
+    "sw_dir_cluster_1_mtu68": [
+      "minmax",
+      0.0,
+      386.55395833333336
+    ],
+    "sw_dir_cluster_1_mtu69": [
+      "minmax",
+      0.0,
+      386.55395833333336
+    ],
+    "sw_dir_cluster_1_mtu70": [
+      "minmax",
+      0.0,
+      386.55395833333336
+    ],
+    "sw_dir_cluster_1_mtu71": [
+      "minmax",
+      0.0,
+      386.55395833333336
+    ],
+    "sw_dir_cluster_1_mtu72": [
+      "minmax",
+      0.0,
+      252.01890625
+    ],
+    "sw_dir_cluster_1_mtu73": [
+      "minmax",
+      0.0,
+      252.01890625
+    ],
+    "sw_dir_cluster_1_mtu74": [
+      "minmax",
+      0.0,
+      252.01890625
+    ],
+    "sw_dir_cluster_1_mtu75": [
+      "minmax",
+      0.0,
+      252.01890625
+    ],
+    "sw_dir_cluster_1_mtu76": [
+      "minmax",
+      0.0,
+      126.60212673611112
+    ],
+    "sw_dir_cluster_1_mtu77": [
+      "minmax",
+      0.0,
+      126.60212673611112
+    ],
+    "sw_dir_cluster_1_mtu78": [
+      "minmax",
+      0.0,
+      126.60212673611112
+    ],
+    "sw_dir_cluster_1_mtu79": [
+      "minmax",
+      0.0,
+      126.60212673611112
+    ],
+    "sw_dir_cluster_1_mtu80": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu81": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu82": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu83": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu84": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu85": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu86": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu87": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu88": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu89": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu90": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu91": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu92": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu93": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu94": [
+      "zero"
+    ],
+    "sw_dir_cluster_1_mtu95": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu00": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu01": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu02": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu03": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu04": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu05": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu06": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu07": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu08": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu09": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu10": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu11": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu12": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu13": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu14": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu15": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu16": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu17": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu18": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu19": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu20": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu21": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu22": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu23": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu24": [
+      "minmax",
+      0.0,
+      51.700208333333336
+    ],
+    "sw_dir_cluster_2_mtu25": [
+      "minmax",
+      0.0,
+      51.700208333333336
+    ],
+    "sw_dir_cluster_2_mtu26": [
+      "minmax",
+      0.0,
+      51.700208333333336
+    ],
+    "sw_dir_cluster_2_mtu27": [
+      "minmax",
+      0.0,
+      51.700208333333336
+    ],
+    "sw_dir_cluster_2_mtu28": [
+      "minmax",
+      0.0,
+      155.54583333333332
+    ],
+    "sw_dir_cluster_2_mtu29": [
+      "minmax",
+      0.0,
+      155.54583333333332
+    ],
+    "sw_dir_cluster_2_mtu30": [
+      "minmax",
+      0.0,
+      155.54583333333332
+    ],
+    "sw_dir_cluster_2_mtu31": [
+      "minmax",
+      0.0,
+      155.54583333333332
+    ],
+    "sw_dir_cluster_2_mtu32": [
+      "minmax",
+      0.0,
+      288.4931076388889
+    ],
+    "sw_dir_cluster_2_mtu33": [
+      "minmax",
+      0.0,
+      288.4931076388889
+    ],
+    "sw_dir_cluster_2_mtu34": [
+      "minmax",
+      0.0,
+      288.4931076388889
+    ],
+    "sw_dir_cluster_2_mtu35": [
+      "minmax",
+      0.0,
+      288.4931076388889
+    ],
+    "sw_dir_cluster_2_mtu36": [
+      "minmax",
+      0.0019429265128241,
+      425.9311820734872
+    ],
+    "sw_dir_cluster_2_mtu37": [
+      "minmax",
+      0.0019429265128241,
+      425.9311820734872
+    ],
+    "sw_dir_cluster_2_mtu38": [
+      "minmax",
+      0.0019429265128241,
+      425.9311820734872
+    ],
+    "sw_dir_cluster_2_mtu39": [
+      "minmax",
+      0.0019429265128241,
+      425.9311820734872
+    ],
+    "sw_dir_cluster_2_mtu40": [
+      "minmax",
+      0.0698482089572482,
+      551.5829642910427
+    ],
+    "sw_dir_cluster_2_mtu41": [
+      "minmax",
+      0.0698482089572482,
+      551.5829642910427
+    ],
+    "sw_dir_cluster_2_mtu42": [
+      "minmax",
+      0.0698482089572482,
+      551.5829642910427
+    ],
+    "sw_dir_cluster_2_mtu43": [
+      "minmax",
+      0.0698482089572482,
+      551.5829642910427
+    ],
+    "sw_dir_cluster_2_mtu44": [
+      "minmax",
+      0.0718882836235894,
+      651.906653383043
+    ],
+    "sw_dir_cluster_2_mtu45": [
+      "minmax",
+      0.0718882836235894,
+      651.906653383043
+    ],
+    "sw_dir_cluster_2_mtu46": [
+      "minmax",
+      0.0718882836235894,
+      651.906653383043
+    ],
+    "sw_dir_cluster_2_mtu47": [
+      "minmax",
+      0.0718882836235894,
+      651.906653383043
+    ],
+    "sw_dir_cluster_2_mtu48": [
+      "minmax",
+      0.0091317547692192,
+      715.7709376896752
+    ],
+    "sw_dir_cluster_2_mtu49": [
+      "minmax",
+      0.0091317547692192,
+      715.7709376896752
+    ],
+    "sw_dir_cluster_2_mtu50": [
+      "minmax",
+      0.0091317547692192,
+      715.7709376896752
+    ],
+    "sw_dir_cluster_2_mtu51": [
+      "minmax",
+      0.0091317547692192,
+      715.7709376896752
+    ],
+    "sw_dir_cluster_2_mtu52": [
+      "minmax",
+      0.0068973890940348,
+      739.3396303886838
+    ],
+    "sw_dir_cluster_2_mtu53": [
+      "minmax",
+      0.0068973890940348,
+      739.3396303886838
+    ],
+    "sw_dir_cluster_2_mtu54": [
+      "minmax",
+      0.0068973890940348,
+      739.3396303886838
+    ],
+    "sw_dir_cluster_2_mtu55": [
+      "minmax",
+      0.0068973890940348,
+      739.3396303886838
+    ],
+    "sw_dir_cluster_2_mtu56": [
+      "minmax",
+      0.0020400728119744,
+      721.1281682605214
+    ],
+    "sw_dir_cluster_2_mtu57": [
+      "minmax",
+      0.0020400728119744,
+      721.1281682605214
+    ],
+    "sw_dir_cluster_2_mtu58": [
+      "minmax",
+      0.0020400728119744,
+      721.1281682605214
+    ],
+    "sw_dir_cluster_2_mtu59": [
+      "minmax",
+      0.0020400728119744,
+      721.1281682605214
+    ],
+    "sw_dir_cluster_2_mtu60": [
+      "minmax",
+      0.0433272637261284,
+      661.7911171807183
+    ],
+    "sw_dir_cluster_2_mtu61": [
+      "minmax",
+      0.0433272637261284,
+      661.7911171807183
+    ],
+    "sw_dir_cluster_2_mtu62": [
+      "minmax",
+      0.0433272637261284,
+      661.7911171807183
+    ],
+    "sw_dir_cluster_2_mtu63": [
+      "minmax",
+      0.0433272637261284,
+      661.7911171807183
+    ],
+    "sw_dir_cluster_2_mtu64": [
+      "minmax",
+      0.0,
+      566.8493055555556
+    ],
+    "sw_dir_cluster_2_mtu65": [
+      "minmax",
+      0.0,
+      566.8493055555556
+    ],
+    "sw_dir_cluster_2_mtu66": [
+      "minmax",
+      0.0,
+      566.8493055555556
+    ],
+    "sw_dir_cluster_2_mtu67": [
+      "minmax",
+      0.0,
+      566.8493055555556
+    ],
+    "sw_dir_cluster_2_mtu68": [
+      "minmax",
+      0.0,
+      444.9296875
+    ],
+    "sw_dir_cluster_2_mtu69": [
+      "minmax",
+      0.0,
+      444.9296875
+    ],
+    "sw_dir_cluster_2_mtu70": [
+      "minmax",
+      0.0,
+      444.9296875
+    ],
+    "sw_dir_cluster_2_mtu71": [
+      "minmax",
+      0.0,
+      444.9296875
+    ],
+    "sw_dir_cluster_2_mtu72": [
+      "minmax",
+      0.0,
+      308.2726736111111
+    ],
+    "sw_dir_cluster_2_mtu73": [
+      "minmax",
+      0.0,
+      308.2726736111111
+    ],
+    "sw_dir_cluster_2_mtu74": [
+      "minmax",
+      0.0,
+      308.2726736111111
+    ],
+    "sw_dir_cluster_2_mtu75": [
+      "minmax",
+      0.0,
+      308.2726736111111
+    ],
+    "sw_dir_cluster_2_mtu76": [
+      "minmax",
+      0.0,
+      173.38317708333332
+    ],
+    "sw_dir_cluster_2_mtu77": [
+      "minmax",
+      0.0,
+      173.38317708333332
+    ],
+    "sw_dir_cluster_2_mtu78": [
+      "minmax",
+      0.0,
+      173.38317708333332
+    ],
+    "sw_dir_cluster_2_mtu79": [
+      "minmax",
+      0.0,
+      173.38317708333332
+    ],
+    "sw_dir_cluster_2_mtu80": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu81": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu82": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu83": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu84": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu85": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu86": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu87": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu88": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu89": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu90": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu91": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu92": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu93": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu94": [
+      "zero"
+    ],
+    "sw_dir_cluster_2_mtu95": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu00": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu01": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu02": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu03": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu04": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu05": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu06": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu07": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu08": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu09": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu10": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu11": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu12": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu13": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu14": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu15": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu16": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu17": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu18": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu19": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu20": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu21": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu22": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu23": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu24": [
+      "minmax",
+      0.0,
+      70.44777777777777
+    ],
+    "sw_dir_cluster_3_mtu25": [
+      "minmax",
+      0.0,
+      70.44777777777777
+    ],
+    "sw_dir_cluster_3_mtu26": [
+      "minmax",
+      0.0,
+      70.44777777777777
+    ],
+    "sw_dir_cluster_3_mtu27": [
+      "minmax",
+      0.0,
+      70.44777777777777
+    ],
+    "sw_dir_cluster_3_mtu28": [
+      "minmax",
+      0.0,
+      192.3087326388889
+    ],
+    "sw_dir_cluster_3_mtu29": [
+      "minmax",
+      0.0,
+      192.3087326388889
+    ],
+    "sw_dir_cluster_3_mtu30": [
+      "minmax",
+      0.0,
+      192.3087326388889
+    ],
+    "sw_dir_cluster_3_mtu31": [
+      "minmax",
+      0.0,
+      192.3087326388889
+    ],
+    "sw_dir_cluster_3_mtu32": [
+      "minmax",
+      0.1497619120279948,
+      337.215863087972
+    ],
+    "sw_dir_cluster_3_mtu33": [
+      "minmax",
+      0.1497619120279948,
+      337.215863087972
+    ],
+    "sw_dir_cluster_3_mtu34": [
+      "minmax",
+      0.1497619120279948,
+      337.215863087972
+    ],
+    "sw_dir_cluster_3_mtu35": [
+      "minmax",
+      0.1497619120279948,
+      337.215863087972
+    ],
+    "sw_dir_cluster_3_mtu36": [
+      "minmax",
+      0.8915873209635417,
+      480.07007934570305
+    ],
+    "sw_dir_cluster_3_mtu37": [
+      "minmax",
+      0.8915873209635417,
+      480.07007934570305
+    ],
+    "sw_dir_cluster_3_mtu38": [
+      "minmax",
+      0.8915873209635417,
+      480.07007934570305
+    ],
+    "sw_dir_cluster_3_mtu39": [
+      "minmax",
+      0.8915873209635417,
+      480.07007934570305
+    ],
+    "sw_dir_cluster_3_mtu40": [
+      "minmax",
+      1.1923015679253472,
+      605.8358234320747
+    ],
+    "sw_dir_cluster_3_mtu41": [
+      "minmax",
+      1.1923015679253472,
+      605.8358234320747
+    ],
+    "sw_dir_cluster_3_mtu42": [
+      "minmax",
+      1.1923015679253472,
+      605.8358234320747
+    ],
+    "sw_dir_cluster_3_mtu43": [
+      "minmax",
+      1.1923015679253472,
+      605.8358234320747
+    ],
+    "sw_dir_cluster_3_mtu44": [
+      "minmax",
+      1.308650851779514,
+      699.9394741482205
+    ],
+    "sw_dir_cluster_3_mtu45": [
+      "minmax",
+      1.308650851779514,
+      699.9394741482205
+    ],
+    "sw_dir_cluster_3_mtu46": [
+      "minmax",
+      1.308650851779514,
+      699.9394741482205
+    ],
+    "sw_dir_cluster_3_mtu47": [
+      "minmax",
+      1.308650851779514,
+      699.9394741482205
+    ],
+    "sw_dir_cluster_3_mtu48": [
+      "minmax",
+      1.650079345703125,
+      753.676517876519
+    ],
+    "sw_dir_cluster_3_mtu49": [
+      "minmax",
+      1.650079345703125,
+      753.676517876519
+    ],
+    "sw_dir_cluster_3_mtu50": [
+      "minmax",
+      1.650079345703125,
+      753.676517876519
+    ],
+    "sw_dir_cluster_3_mtu51": [
+      "minmax",
+      1.650079345703125,
+      753.676517876519
+    ],
+    "sw_dir_cluster_3_mtu52": [
+      "minmax",
+      0.3988095092773437,
+      764.9557043796115
+    ],
+    "sw_dir_cluster_3_mtu53": [
+      "minmax",
+      0.3988095092773437,
+      764.9557043796115
+    ],
+    "sw_dir_cluster_3_mtu54": [
+      "minmax",
+      0.3988095092773437,
+      764.9557043796115
+    ],
+    "sw_dir_cluster_3_mtu55": [
+      "minmax",
+      0.3988095092773437,
+      764.9557043796115
+    ],
+    "sw_dir_cluster_3_mtu56": [
+      "minmax",
+      0.1526190524631076,
+      729.4043948364257
+    ],
+    "sw_dir_cluster_3_mtu57": [
+      "minmax",
+      0.1526190524631076,
+      729.4043948364257
+    ],
+    "sw_dir_cluster_3_mtu58": [
+      "minmax",
+      0.1526190524631076,
+      729.4043948364257
+    ],
+    "sw_dir_cluster_3_mtu59": [
+      "minmax",
+      0.1526190524631076,
+      729.4043948364257
+    ],
+    "sw_dir_cluster_3_mtu60": [
+      "minmax",
+      0.5474603271484375,
+      650.3358035617405
+    ],
+    "sw_dir_cluster_3_mtu61": [
+      "minmax",
+      0.5474603271484375,
+      650.3358035617405
+    ],
+    "sw_dir_cluster_3_mtu62": [
+      "minmax",
+      0.5474603271484375,
+      650.3358035617405
+    ],
+    "sw_dir_cluster_3_mtu63": [
+      "minmax",
+      0.5474603271484375,
+      650.3358035617405
+    ],
+    "sw_dir_cluster_3_mtu64": [
+      "minmax",
+      0.000952380961842,
+      536.366512896816
+    ],
+    "sw_dir_cluster_3_mtu65": [
+      "minmax",
+      0.000952380961842,
+      536.366512896816
+    ],
+    "sw_dir_cluster_3_mtu66": [
+      "minmax",
+      0.000952380961842,
+      536.366512896816
+    ],
+    "sw_dir_cluster_3_mtu67": [
+      "minmax",
+      0.000952380961842,
+      536.366512896816
+    ],
+    "sw_dir_cluster_3_mtu68": [
+      "minmax",
+      0.0,
+      400.4096875
+    ],
+    "sw_dir_cluster_3_mtu69": [
+      "minmax",
+      0.0,
+      400.4096875
+    ],
+    "sw_dir_cluster_3_mtu70": [
+      "minmax",
+      0.0,
+      400.4096875
+    ],
+    "sw_dir_cluster_3_mtu71": [
+      "minmax",
+      0.0,
+      400.4096875
+    ],
+    "sw_dir_cluster_3_mtu72": [
+      "minmax",
+      0.0,
+      250.31817708333327
+    ],
+    "sw_dir_cluster_3_mtu73": [
+      "minmax",
+      0.0,
+      250.31817708333327
+    ],
+    "sw_dir_cluster_3_mtu74": [
+      "minmax",
+      0.0,
+      250.31817708333327
+    ],
+    "sw_dir_cluster_3_mtu75": [
+      "minmax",
+      0.0,
+      250.31817708333327
+    ],
+    "sw_dir_cluster_3_mtu76": [
+      "minmax",
+      0.0,
+      114.14428819444444
+    ],
+    "sw_dir_cluster_3_mtu77": [
+      "minmax",
+      0.0,
+      114.14428819444444
+    ],
+    "sw_dir_cluster_3_mtu78": [
+      "minmax",
+      0.0,
+      114.14428819444444
+    ],
+    "sw_dir_cluster_3_mtu79": [
+      "minmax",
+      0.0,
+      114.14428819444444
+    ],
+    "sw_dir_cluster_3_mtu80": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu81": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu82": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu83": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu84": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu85": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu86": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu87": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu88": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu89": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu90": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu91": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu92": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu93": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu94": [
+      "zero"
+    ],
+    "sw_dir_cluster_3_mtu95": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu00": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu01": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu02": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu03": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu04": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu05": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu06": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu07": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu08": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu09": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu10": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu11": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu12": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu13": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu14": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu15": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu16": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu17": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu18": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu19": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu20": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu21": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu22": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu23": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu24": [
+      "minmax",
+      0.0,
+      49.05423177083333
+    ],
+    "sw_dir_cluster_4_mtu25": [
+      "minmax",
+      0.0,
+      49.05423177083333
+    ],
+    "sw_dir_cluster_4_mtu26": [
+      "minmax",
+      0.0,
+      49.05423177083333
+    ],
+    "sw_dir_cluster_4_mtu27": [
+      "minmax",
+      0.0,
+      49.05423177083333
+    ],
+    "sw_dir_cluster_4_mtu28": [
+      "minmax",
+      0.0,
+      160.5272048611111
+    ],
+    "sw_dir_cluster_4_mtu29": [
+      "minmax",
+      0.0,
+      160.5272048611111
+    ],
+    "sw_dir_cluster_4_mtu30": [
+      "minmax",
+      0.0,
+      160.5272048611111
+    ],
+    "sw_dir_cluster_4_mtu31": [
+      "minmax",
+      0.0,
+      160.5272048611111
+    ],
+    "sw_dir_cluster_4_mtu32": [
+      "minmax",
+      0.0118226602342393,
+      301.36022595087684
+    ],
+    "sw_dir_cluster_4_mtu33": [
+      "minmax",
+      0.0118226602342393,
+      301.36022595087684
+    ],
+    "sw_dir_cluster_4_mtu34": [
+      "minmax",
+      0.0118226602342393,
+      301.36022595087684
+    ],
+    "sw_dir_cluster_4_mtu35": [
+      "minmax",
+      0.0118226602342393,
+      301.36022595087684
+    ],
+    "sw_dir_cluster_4_mtu36": [
+      "minmax",
+      0.2044882371690538,
+      446.25603259616423
+    ],
+    "sw_dir_cluster_4_mtu37": [
+      "minmax",
+      0.2044882371690538,
+      446.25603259616423
+    ],
+    "sw_dir_cluster_4_mtu38": [
+      "minmax",
+      0.2044882371690538,
+      446.25603259616423
+    ],
+    "sw_dir_cluster_4_mtu39": [
+      "minmax",
+      0.2044882371690538,
+      446.25603259616423
+    ],
+    "sw_dir_cluster_4_mtu40": [
+      "minmax",
+      0.5642474026150174,
+      575.2396762084961
+    ],
+    "sw_dir_cluster_4_mtu41": [
+      "minmax",
+      0.5642474026150174,
+      575.2396762084961
+    ],
+    "sw_dir_cluster_4_mtu42": [
+      "minmax",
+      0.5642474026150174,
+      575.2396762084961
+    ],
+    "sw_dir_cluster_4_mtu43": [
+      "minmax",
+      0.5642474026150174,
+      575.2396762084961
+    ],
+    "sw_dir_cluster_4_mtu44": [
+      "minmax",
+      1.5506951226128471,
+      675.2160409884982
+    ],
+    "sw_dir_cluster_4_mtu45": [
+      "minmax",
+      1.5506951226128471,
+      675.2160409884982
+    ],
+    "sw_dir_cluster_4_mtu46": [
+      "minmax",
+      1.5506951226128471,
+      675.2160409884982
+    ],
+    "sw_dir_cluster_4_mtu47": [
+      "minmax",
+      1.5506951226128471,
+      675.2160409884982
+    ],
+    "sw_dir_cluster_4_mtu48": [
+      "minmax",
+      3.363327907986111,
+      736.1554220920139
+    ],
+    "sw_dir_cluster_4_mtu49": [
+      "minmax",
+      3.363327907986111,
+      736.1554220920139
+    ],
+    "sw_dir_cluster_4_mtu50": [
+      "minmax",
+      3.363327907986111,
+      736.1554220920139
+    ],
+    "sw_dir_cluster_4_mtu51": [
+      "minmax",
+      3.363327907986111,
+      736.1554220920139
+    ],
+    "sw_dir_cluster_4_mtu52": [
+      "minmax",
+      1.9987301974826388,
+      759.1384225802952
+    ],
+    "sw_dir_cluster_4_mtu53": [
+      "minmax",
+      1.9987301974826388,
+      759.1384225802952
+    ],
+    "sw_dir_cluster_4_mtu54": [
+      "minmax",
+      1.9987301974826388,
+      759.1384225802952
+    ],
+    "sw_dir_cluster_4_mtu55": [
+      "minmax",
+      1.9987301974826388,
+      759.1384225802952
+    ],
+    "sw_dir_cluster_4_mtu56": [
+      "minmax",
+      1.5814340549045138,
+      733.3112048339843
+    ],
+    "sw_dir_cluster_4_mtu57": [
+      "minmax",
+      1.5814340549045138,
+      733.3112048339843
+    ],
+    "sw_dir_cluster_4_mtu58": [
+      "minmax",
+      1.5814340549045138,
+      733.3112048339843
+    ],
+    "sw_dir_cluster_4_mtu59": [
+      "minmax",
+      1.5814340549045138,
+      733.3112048339843
+    ],
+    "sw_dir_cluster_4_mtu60": [
+      "minmax",
+      0.9568472629123264,
+      668.8135694037543
+    ],
+    "sw_dir_cluster_4_mtu61": [
+      "minmax",
+      0.9568472629123264,
+      668.8135694037543
+    ],
+    "sw_dir_cluster_4_mtu62": [
+      "minmax",
+      0.9568472629123264,
+      668.8135694037543
+    ],
+    "sw_dir_cluster_4_mtu63": [
+      "minmax",
+      0.9568472629123264,
+      668.8135694037543
+    ],
+    "sw_dir_cluster_4_mtu64": [
+      "minmax",
+      0.0,
+      563.0694097222222
+    ],
+    "sw_dir_cluster_4_mtu65": [
+      "minmax",
+      0.0,
+      563.0694097222222
+    ],
+    "sw_dir_cluster_4_mtu66": [
+      "minmax",
+      0.0,
+      563.0694097222222
+    ],
+    "sw_dir_cluster_4_mtu67": [
+      "minmax",
+      0.0,
+      563.0694097222222
+    ],
+    "sw_dir_cluster_4_mtu68": [
+      "minmax",
+      0.0,
+      432.5694097222223
+    ],
+    "sw_dir_cluster_4_mtu69": [
+      "minmax",
+      0.0,
+      432.5694097222223
+    ],
+    "sw_dir_cluster_4_mtu70": [
+      "minmax",
+      0.0,
+      432.5694097222223
+    ],
+    "sw_dir_cluster_4_mtu71": [
+      "minmax",
+      0.0,
+      432.5694097222223
+    ],
+    "sw_dir_cluster_4_mtu72": [
+      "minmax",
+      0.0,
+      286.1081076388889
+    ],
+    "sw_dir_cluster_4_mtu73": [
+      "minmax",
+      0.0,
+      286.1081076388889
+    ],
+    "sw_dir_cluster_4_mtu74": [
+      "minmax",
+      0.0,
+      286.1081076388889
+    ],
+    "sw_dir_cluster_4_mtu75": [
+      "minmax",
+      0.0,
+      286.1081076388889
+    ],
+    "sw_dir_cluster_4_mtu76": [
+      "minmax",
+      0.0,
+      145.35269097222223
+    ],
+    "sw_dir_cluster_4_mtu77": [
+      "minmax",
+      0.0,
+      145.35269097222223
+    ],
+    "sw_dir_cluster_4_mtu78": [
+      "minmax",
+      0.0,
+      145.35269097222223
+    ],
+    "sw_dir_cluster_4_mtu79": [
+      "minmax",
+      0.0,
+      145.35269097222223
+    ],
+    "sw_dir_cluster_4_mtu80": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu81": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu82": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu83": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu84": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu85": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu86": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu87": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu88": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu89": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu90": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu91": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu92": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu93": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu94": [
+      "zero"
+    ],
+    "sw_dir_cluster_4_mtu95": [
+      "zero"
+    ],
+    "price_d1_mtu_00": [
+      "asinh_robust",
+      104.05,
+      29.60756630355687
+    ],
+    "price_d1_mtu_01": [
+      "asinh_robust",
+      101.55,
+      27.472619108908805
+    ],
+    "price_d1_mtu_02": [
+      "asinh_robust",
+      100.41,
+      27.30953286487319
+    ],
+    "price_d1_mtu_03": [
+      "asinh_robust",
+      99.57,
+      27.606053308574293
+    ],
+    "price_d1_mtu_04": [
+      "asinh_robust",
+      99.35,
+      26.909230265876683
+    ],
+    "price_d1_mtu_05": [
+      "asinh_robust",
+      96.85,
+      26.286537334104306
+    ],
+    "price_d1_mtu_06": [
+      "asinh_robust",
+      96.99,
+      26.657187888730707
+    ],
+    "price_d1_mtu_07": [
+      "asinh_robust",
+      95.64,
+      25.75280053544231
+    ],
+    "price_d1_mtu_08": [
+      "asinh_robust",
+      95.71,
+      26.316189378474434
+    ],
+    "price_d1_mtu_09": [
+      "asinh_robust",
+      94.92,
+      26.464449600324986
+    ],
+    "price_d1_mtu_10": [
+      "asinh_robust",
+      94.51,
+      26.16792915662388
+    ],
+    "price_d1_mtu_11": [
+      "asinh_robust",
+      94.32,
+      25.574888269221635
+    ],
+    "price_d1_mtu_12": [
+      "asinh_robust",
+      93.86,
+      25.130107603669956
+    ],
+    "price_d1_mtu_13": [
+      "asinh_robust",
+      93.01,
+      25.36732395863085
+    ],
+    "price_d1_mtu_14": [
+      "asinh_robust",
+      93.38,
+      25.174585670225106
+    ],
+    "price_d1_mtu_15": [
+      "asinh_robust",
+      93.38,
+      25.871408712922758
+    ],
+    "price_d1_mtu_16": [
+      "asinh_robust",
+      94.5,
+      26.06414700132848
+    ],
+    "price_d1_mtu_17": [
+      "asinh_robust",
+      94.5,
+      26.10862506788365
+    ],
+    "price_d1_mtu_18": [
+      "asinh_robust",
+      95.03,
+      26.464449600324986
+    ],
+    "price_d1_mtu_19": [
+      "asinh_robust",
+      95.72,
+      26.47927562251005
+    ],
+    "price_d1_mtu_20": [
+      "asinh_robust",
+      97.98,
+      25.56006224703657
+    ],
+    "price_d1_mtu_21": [
+      "asinh_robust",
+      98.37,
+      26.019668934773332
+    ],
+    "price_d1_mtu_22": [
+      "asinh_robust",
+      99.48,
+      25.97519086821814
+    ],
+    "price_d1_mtu_23": [
+      "asinh_robust",
+      101.69,
+      26.879578221506556
+    ],
+    "price_d1_mtu_24": [
+      "asinh_robust",
+      109.53,
+      35.62693131068961
+    ],
+    "price_d1_mtu_25": [
+      "asinh_robust",
+      113.18,
+      36.575796730533206
+    ],
+    "price_d1_mtu_26": [
+      "asinh_robust",
+      114.97,
+      37.10953352919522
+    ],
+    "price_d1_mtu_27": [
+      "asinh_robust",
+      116.2,
+      36.9167952407895
+    ],
+    "price_d1_mtu_28": [
+      "asinh_robust",
+      123.3,
+      46.034798884598935
+    ],
+    "price_d1_mtu_29": [
+      "asinh_robust",
+      122.8,
+      44.35945837768761
+    ],
+    "price_d1_mtu_30": [
+      "asinh_robust",
+      122.13,
+      43.455071024399196
+    ],
+    "price_d1_mtu_31": [
+      "asinh_robust",
+      120.0,
+      41.49803609597179
+    ],
+    "price_d1_mtu_32": [
+      "asinh_robust",
+      123.5,
+      50.39364940700543
+    ],
+    "price_d1_mtu_33": [
+      "asinh_robust",
+      120.0,
+      43.54402715750953
+    ],
+    "price_d1_mtu_34": [
+      "asinh_robust",
+      113.54,
+      40.96429929730975
+    ],
+    "price_d1_mtu_35": [
+      "asinh_robust",
+      107.54,
+      36.531318663978034
+    ],
+    "price_d1_mtu_36": [
+      "asinh_robust",
+      108.57,
+      43.88502566776581
+    ],
+    "price_d1_mtu_37": [
+      "asinh_robust",
+      102.05,
+      39.629957300654745
+    ],
+    "price_d1_mtu_38": [
+      "asinh_robust",
+      96.45,
+      40.80121305327416
+    ],
+    "price_d1_mtu_39": [
+      "asinh_robust",
+      91.1,
+      41.72042642874763
+    ],
+    "price_d1_mtu_40": [
+      "asinh_robust",
+      92.82,
+      51.52042709306966
+    ],
+    "price_d1_mtu_41": [
+      "asinh_robust",
+      86.13,
+      52.246902180137425
+    ],
+    "price_d1_mtu_42": [
+      "asinh_robust",
+      82.71,
+      51.68351333710528
+    ],
+    "price_d1_mtu_43": [
+      "asinh_robust",
+      78.02,
+      51.75764344803058
+    ],
+    "price_d1_mtu_44": [
+      "asinh_robust",
+      77.9,
+      62.53616157656628
+    ],
+    "price_d1_mtu_45": [
+      "asinh_robust",
+      74.06,
+      61.780034445128436
+    ],
+    "price_d1_mtu_46": [
+      "asinh_robust",
+      69.93,
+      66.04992883442458
+    ],
+    "price_d1_mtu_47": [
+      "asinh_robust",
+      65.25,
+      69.77126040287364
+    ],
+    "price_d1_mtu_48": [
+      "asinh_robust",
+      63.13,
+      71.35764477667462
+    ],
+    "price_d1_mtu_49": [
+      "asinh_robust",
+      59.19,
+      72.18790201903775
+    ],
+    "price_d1_mtu_50": [
+      "asinh_robust",
+      54.09,
+      73.4184618603974
+    ],
+    "price_d1_mtu_51": [
+      "asinh_robust",
+      50.02,
+      73.83359048157898
+    ],
+    "price_d1_mtu_52": [
+      "asinh_robust",
+      48.81,
+      72.36581428525844
+    ],
+    "price_d1_mtu_53": [
+      "asinh_robust",
+      47.13,
+      69.88986858035408
+    ],
+    "price_d1_mtu_54": [
+      "asinh_robust",
+      43.17,
+      64.2856321944029
+    ],
+    "price_d1_mtu_55": [
+      "asinh_robust",
+      42.47,
+      64.56732661591896
+    ],
+    "price_d1_mtu_56": [
+      "asinh_robust",
+      45.03,
+      66.77640392149232
+    ],
+    "price_d1_mtu_57": [
+      "asinh_robust",
+      50.14,
+      74.33767523587088
+    ],
+    "price_d1_mtu_58": [
+      "asinh_robust",
+      53.21,
+      78.14796293743028
+    ],
+    "price_d1_mtu_59": [
+      "asinh_robust",
+      59.3,
+      81.23177555192193
+    ],
+    "price_d1_mtu_60": [
+      "asinh_robust",
+      64.56,
+      72.63268268458944
+    ],
+    "price_d1_mtu_61": [
+      "asinh_robust",
+      70.01,
+      72.18790201903775
+    ],
+    "price_d1_mtu_62": [
+      "asinh_robust",
+      75.89,
+      74.14493694746515
+    ],
+    "price_d1_mtu_63": [
+      "asinh_robust",
+      81.29,
+      75.46445292193515
+    ],
+    "price_d1_mtu_64": [
+      "asinh_robust",
+      79.6,
+      63.3071147301892
+    ],
+    "price_d1_mtu_65": [
+      "asinh_robust",
+      85.11,
+      62.03207682227439
+    ],
+    "price_d1_mtu_66": [
+      "asinh_robust",
+      93.76,
+      57.673226299867906
+    ],
+    "price_d1_mtu_67": [
+      "asinh_robust",
+      101.9,
+      59.60060918392518
+    ],
+    "price_d1_mtu_68": [
+      "asinh_robust",
+      98.63,
+      45.9754947958587
+    ],
+    "price_d1_mtu_69": [
+      "asinh_robust",
+      106.17,
+      44.181546111466936
+    ],
+    "price_d1_mtu_70": [
+      "asinh_robust",
+      114.13,
+      47.02814237099769
+    ],
+    "price_d1_mtu_71": [
+      "asinh_robust",
+      124.28,
+      51.96520775862135
+    ],
+    "price_d1_mtu_72": [
+      "asinh_robust",
+      118.64,
+      38.577309725515754
+    ],
+    "price_d1_mtu_73": [
+      "asinh_robust",
+      123.04,
+      38.59213574770082
+    ],
+    "price_d1_mtu_74": [
+      "asinh_robust",
+      129.53,
+      43.89985168995087
+    ],
+    "price_d1_mtu_75": [
+      "asinh_robust",
+      133.55,
+      50.79395200600191
+    ],
+    "price_d1_mtu_76": [
+      "asinh_robust",
+      135.1,
+      39.62995730065472
+    ],
+    "price_d1_mtu_77": [
+      "asinh_robust",
+      137.96,
+      43.084420469772795
+    ],
+    "price_d1_mtu_78": [
+      "asinh_robust",
+      140.42,
+      46.46475352796555
+    ],
+    "price_d1_mtu_79": [
+      "asinh_robust",
+      142.1,
+      51.65386129273516
+    ],
+    "price_d1_mtu_80": [
+      "asinh_robust",
+      142.14,
+      44.74493495449906
+    ],
+    "price_d1_mtu_81": [
+      "asinh_robust",
+      141.0,
+      44.982151309459965
+    ],
+    "price_d1_mtu_82": [
+      "asinh_robust",
+      138.0,
+      46.30166728392995
+    ],
+    "price_d1_mtu_83": [
+      "asinh_robust",
+      135.46,
+      47.65083530277003
+    ],
+    "price_d1_mtu_84": [
+      "asinh_robust",
+      130.0,
+      38.01392088248363
+    ],
+    "price_d1_mtu_85": [
+      "asinh_robust",
+      128.07,
+      39.0665684576226
+    ],
+    "price_d1_mtu_86": [
+      "asinh_robust",
+      125.13,
+      37.25779375104577
+    ],
+    "price_d1_mtu_87": [
+      "asinh_robust",
+      122.45,
+      38.31044132618474
+    ],
+    "price_d1_mtu_88": [
+      "asinh_robust",
+      120.05,
+      31.297732832653256
+    ],
+    "price_d1_mtu_89": [
+      "asinh_robust",
+      117.45,
+      30.526779679030348
+    ],
+    "price_d1_mtu_90": [
+      "asinh_robust",
+      115.92,
+      30.363693434994733
+    ],
+    "price_d1_mtu_91": [
+      "asinh_robust",
+      113.33,
+      29.97821685818327
+    ],
+    "price_d1_mtu_92": [
+      "asinh_robust",
+      107.82,
+      27.90257375227542
+    ],
+    "price_d1_mtu_93": [
+      "asinh_robust",
+      105.15,
+      27.235402753947916
+    ],
+    "price_d1_mtu_94": [
+      "asinh_robust",
+      103.67,
+      27.48744513109387
+    ],
+    "price_d1_mtu_95": [
+      "asinh_robust",
+      102.34,
+      28.64387486152824
+    ],
+    "price_d2_mtu_00": [
+      "asinh_robust",
+      104.02,
+      29.5630882370017
+    ],
+    "price_d2_mtu_01": [
+      "asinh_robust",
+      101.48,
+      27.576401264204186
+    ],
+    "price_d2_mtu_02": [
+      "asinh_robust",
+      100.15,
+      27.32435888705823
+    ],
+    "price_d2_mtu_03": [
+      "asinh_robust",
+      99.56,
+      27.591227286389252
+    ],
+    "price_d2_mtu_04": [
+      "asinh_robust",
+      99.29,
+      26.924056288061728
+    ],
+    "price_d2_mtu_05": [
+      "asinh_robust",
+      96.75,
+      26.286537334104327
+    ],
+    "price_d2_mtu_06": [
+      "asinh_robust",
+      96.7,
+      26.494101644695114
+    ],
+    "price_d2_mtu_07": [
+      "asinh_robust",
+      95.54,
+      25.901060757292864
+    ],
+    "price_d2_mtu_08": [
+      "asinh_robust",
+      95.59,
+      26.197581200993987
+    ],
+    "price_d2_mtu_09": [
+      "asinh_robust",
+      94.67,
+      26.746144021841047
+    ],
+    "price_d2_mtu_10": [
+      "asinh_robust",
+      94.44,
+      26.06414700132848
+    ],
+    "price_d2_mtu_11": [
+      "asinh_robust",
+      94.3,
+      25.54523622485153
+    ],
+    "price_d2_mtu_12": [
+      "asinh_robust",
+      93.73,
+      25.32284589207568
+    ],
+    "price_d2_mtu_13": [
+      "asinh_robust",
+      92.95,
+      25.337671914260742
+    ],
+    "price_d2_mtu_14": [
+      "asinh_robust",
+      93.18,
+      24.996673404004447
+    ],
+    "price_d2_mtu_15": [
+      "asinh_robust",
+      93.18,
+      25.693496446702078
+    ],
+    "price_d2_mtu_16": [
+      "asinh_robust",
+      94.23,
+      25.723148491072205
+    ],
+    "price_d2_mtu_17": [
+      "asinh_robust",
+      94.5,
+      26.10862506788365
+    ],
+    "price_d2_mtu_18": [
+      "asinh_robust",
+      94.89,
+      26.494101644695114
+    ],
+    "price_d2_mtu_19": [
+      "asinh_robust",
+      95.39,
+      26.30136335628937
+    ],
+    "price_d2_mtu_20": [
+      "asinh_robust",
+      97.89,
+      25.574888269221635
+    ],
+    "price_d2_mtu_21": [
+      "asinh_robust",
+      98.29,
+      25.901060757292885
+    ],
+    "price_d2_mtu_22": [
+      "asinh_robust",
+      99.4,
+      26.093799045698585
+    ],
+    "price_d2_mtu_23": [
+      "asinh_robust",
+      101.51,
+      26.716491977470962
+    ],
+    "price_d2_mtu_24": [
+      "asinh_robust",
+      109.44,
+      35.53797517757928
+    ],
+    "price_d2_mtu_25": [
+      "asinh_robust",
+      113.1,
+      36.45718855305274
+    ],
+    "price_d2_mtu_26": [
+      "asinh_robust",
+      114.9,
+      37.2133156844906
+    ],
+    "price_d2_mtu_27": [
+      "asinh_robust",
+      115.92,
+      36.9167952407895
+    ],
+    "price_d2_mtu_28": [
+      "asinh_robust",
+      122.95,
+      45.73827844089783
+    ],
+    "price_d2_mtu_29": [
+      "asinh_robust",
+      122.57,
+      44.70045688794391
+    ],
+    "price_d2_mtu_30": [
+      "asinh_robust",
+      122.05,
+      43.39576693565896
+    ],
+    "price_d2_mtu_31": [
+      "asinh_robust",
+      119.96,
+      41.49803609597179
+    ],
+    "price_d2_mtu_32": [
+      "asinh_robust",
+      123.05,
+      50.37882338482036
+    ],
+    "price_d2_mtu_33": [
+      "asinh_robust",
+      118.37,
+      43.5588531796946
+    ],
+    "price_d2_mtu_34": [
+      "asinh_robust",
+      113.41,
+      40.83086509764426
+    ],
+    "price_d2_mtu_35": [
+      "asinh_robust",
+      107.33,
+      36.709230930198714
+    ],
+    "price_d2_mtu_36": [
+      "asinh_robust",
+      108.53,
+      43.8257215790256
+    ],
+    "price_d2_mtu_37": [
+      "asinh_robust",
+      102.05,
+      39.60030525628462
+    ],
+    "price_d2_mtu_38": [
+      "asinh_robust",
+      96.43,
+      40.80121305327416
+    ],
+    "price_d2_mtu_39": [
+      "asinh_robust",
+      91.04,
+      41.45355802941662
+    ],
+    "price_d2_mtu_40": [
+      "asinh_robust",
+      92.67,
+      50.91256018348238
+    ],
+    "price_d2_mtu_41": [
+      "asinh_robust",
+      86.0,
+      51.238732671553606
+    ],
+    "price_d2_mtu_42": [
+      "asinh_robust",
+      82.47,
+      51.00151631659271
+    ],
+    "price_d2_mtu_43": [
+      "asinh_robust",
+      78.02,
+      51.55007913743977
+    ],
+    "price_d2_mtu_44": [
+      "asinh_robust",
+      77.9,
+      62.37307533253066
+    ],
+    "price_d2_mtu_45": [
+      "asinh_robust",
+      74.06,
+      61.30560173520663
+    ],
+    "price_d2_mtu_46": [
+      "asinh_robust",
+      69.93,
+      65.634800213243
+    ],
+    "price_d2_mtu_47": [
+      "asinh_robust",
+      65.25,
+      69.65265222539318
+    ],
+    "price_d2_mtu_48": [
+      "asinh_robust",
+      63.13,
+      71.31316671011946
+    ],
+    "price_d2_mtu_49": [
+      "asinh_robust",
+      59.19,
+      71.6986432869309
+    ],
+    "price_d2_mtu_50": [
+      "asinh_robust",
+      54.09,
+      73.24054959417674
+    ],
+    "price_d2_mtu_51": [
+      "asinh_robust",
+      50.02,
+      73.67050423754337
+    ],
+    "price_d2_mtu_52": [
+      "asinh_robust",
+      48.81,
+      72.36581428525844
+    ],
+    "price_d2_mtu_53": [
+      "asinh_robust",
+      47.13,
+      69.88986858035408
+    ],
+    "price_d2_mtu_54": [
+      "asinh_robust",
+      43.17,
+      64.27080617221783
+    ],
+    "price_d2_mtu_55": [
+      "asinh_robust",
+      42.47,
+      64.52284854936379
+    ],
+    "price_d2_mtu_56": [
+      "asinh_robust",
+      45.03,
+      66.77640392149232
+    ],
+    "price_d2_mtu_57": [
+      "asinh_robust",
+      50.14,
+      74.32284921368583
+    ],
+    "price_d2_mtu_58": [
+      "asinh_robust",
+      53.21,
+      78.13313691524522
+    ],
+    "price_d2_mtu_59": [
+      "asinh_robust",
+      59.3,
+      81.11316737444149
+    ],
+    "price_d2_mtu_60": [
+      "asinh_robust",
+      64.56,
+      71.99516373063203
+    ],
+    "price_d2_mtu_61": [
+      "asinh_robust",
+      70.01,
+      71.15008046608384
+    ],
+    "price_d2_mtu_62": [
+      "asinh_robust",
+      75.89,
+      73.8928945703192
+    ],
+    "price_d2_mtu_63": [
+      "asinh_robust",
+      81.29,
+      75.30136667789954
+    ],
+    "price_d2_mtu_64": [
+      "asinh_robust",
+      79.6,
+      62.966116219932914
+    ],
+    "price_d2_mtu_65": [
+      "asinh_robust",
+      85.1,
+      61.54281809016754
+    ],
+    "price_d2_mtu_66": [
+      "asinh_robust",
+      93.74,
+      57.18396756776106
+    ],
+    "price_d2_mtu_67": [
+      "asinh_robust",
+      101.86,
+      59.511653050814864
+    ],
+    "price_d2_mtu_68": [
+      "asinh_robust",
+      98.51,
+      45.79758252963804
+    ],
+    "price_d2_mtu_69": [
+      "asinh_robust",
+      105.89,
+      44.492892577353125
+    ],
+    "price_d2_mtu_70": [
+      "asinh_robust",
+      114.07,
+      46.73162192729659
+    ],
+    "price_d2_mtu_71": [
+      "asinh_robust",
+      124.23,
+      51.891077647696065
+    ],
+    "price_d2_mtu_72": [
+      "asinh_robust",
+      118.57,
+      38.473527570220355
+    ],
+    "price_d2_mtu_73": [
+      "asinh_robust",
+      122.96,
+      38.636613814255966
+    ],
+    "price_d2_mtu_74": [
+      "asinh_robust",
+      129.43,
+      43.781243512470425
+    ],
+    "price_d2_mtu_75": [
+      "asinh_robust",
+      133.37,
+      50.97186427222259
+    ],
+    "price_d2_mtu_76": [
+      "asinh_robust",
+      135.0,
+      39.481697078804174
+    ],
+    "price_d2_mtu_77": [
+      "asinh_robust",
+      137.63,
+      42.69894389296133
+    ],
+    "price_d2_mtu_78": [
+      "asinh_robust",
+      140.14,
+      46.16823308426442
+    ],
+    "price_d2_mtu_79": [
+      "asinh_robust",
+      141.41,
+      50.82360405037203
+    ],
+    "price_d2_mtu_80": [
+      "asinh_robust",
+      141.94,
+      44.52254462172323
+    ],
+    "price_d2_mtu_81": [
+      "asinh_robust",
+      140.99,
+      44.967325287274925
+    ],
+    "price_d2_mtu_82": [
+      "asinh_robust",
+      137.6,
+      46.44992750578051
+    ],
+    "price_d2_mtu_83": [
+      "asinh_robust",
+      135.34,
+      47.813921546805666
+    ],
+    "price_d2_mtu_84": [
+      "asinh_robust",
+      129.95,
+      37.939790771558336
+    ],
+    "price_d2_mtu_85": [
+      "asinh_robust",
+      128.0,
+      38.977612324512265
+    ],
+    "price_d2_mtu_86": [
+      "asinh_robust",
+      125.11,
+      37.228141706675665
+    ],
+    "price_d2_mtu_87": [
+      "asinh_robust",
+      122.45,
+      38.31044132618474
+    ],
+    "price_d2_mtu_88": [
+      "asinh_robust",
+      120.0,
+      31.223602721727982
+    ],
+    "price_d2_mtu_89": [
+      "asinh_robust",
+      117.35,
+      30.556431723400475
+    ],
+    "price_d2_mtu_90": [
+      "asinh_robust",
+      115.79,
+      30.274737301884393
+    ],
+    "price_d2_mtu_91": [
+      "asinh_robust",
+      113.21,
+      29.88926072507295
+    ],
+    "price_d2_mtu_92": [
+      "asinh_robust",
+      107.7,
+      27.81361761916508
+    ],
+    "price_d2_mtu_93": [
+      "asinh_robust",
+      105.12,
+      27.190924687392744
+    ],
+    "price_d2_mtu_94": [
+      "asinh_robust",
+      103.66,
+      27.472619108908805
+    ],
+    "price_d2_mtu_95": [
+      "asinh_robust",
+      102.31,
+      28.59939679497307
+    ],
+    "price_d7_mtu_00": [
+      "asinh_robust",
+      103.97,
+      29.444480059521254
+    ],
+    "price_d7_mtu_01": [
+      "asinh_robust",
+      101.44,
+      27.50227115327891
+    ],
+    "price_d7_mtu_02": [
+      "asinh_robust",
+      100.04,
+      27.25022877613298
+    ],
+    "price_d7_mtu_03": [
+      "asinh_robust",
+      99.41,
+      27.339184909243297
+    ],
+    "price_d7_mtu_04": [
+      "asinh_robust",
+      99.02,
+      26.39031948939971
+    ],
+    "price_d7_mtu_05": [
+      "asinh_robust",
+      96.56,
+      25.960364846033077
+    ],
+    "price_d7_mtu_06": [
+      "asinh_robust",
+      96.65,
+      25.990016890403204
+    ],
+    "price_d7_mtu_07": [
+      "asinh_robust",
+      95.31,
+      25.56006224703659
+    ],
+    "price_d7_mtu_08": [
+      "asinh_robust",
+      95.36,
+      25.97519086821814
+    ],
+    "price_d7_mtu_09": [
+      "asinh_robust",
+      94.51,
+      26.10862506788365
+    ],
+    "price_d7_mtu_10": [
+      "asinh_robust",
+      94.41,
+      25.619366335776803
+    ],
+    "price_d7_mtu_11": [
+      "asinh_robust",
+      94.22,
+      25.396976003000955
+    ],
+    "price_d7_mtu_12": [
+      "asinh_robust",
+      93.4,
+      24.611196827192984
+    ],
+    "price_d7_mtu_13": [
+      "asinh_robust",
+      92.94,
+      24.996673404004447
+    ],
+    "price_d7_mtu_14": [
+      "asinh_robust",
+      92.95,
+      24.670500915933218
+    ],
+    "price_d7_mtu_15": [
+      "asinh_robust",
+      93.06,
+      25.115281581484894
+    ],
+    "price_d7_mtu_16": [
+      "asinh_robust",
+      94.18,
+      25.23388975896536
+    ],
+    "price_d7_mtu_17": [
+      "asinh_robust",
+      94.23,
+      25.66384440233197
+    ],
+    "price_d7_mtu_18": [
+      "asinh_robust",
+      94.8,
+      25.723148491072184
+    ],
+    "price_d7_mtu_19": [
+      "asinh_robust",
+      95.3,
+      26.004842912588266
+    ],
+    "price_d7_mtu_20": [
+      "asinh_robust",
+      97.73,
+      25.130107603669956
+    ],
+    "price_d7_mtu_21": [
+      "asinh_robust",
+      98.26,
+      25.219063736780296
+    ],
+    "price_d7_mtu_22": [
+      "asinh_robust",
+      99.31,
+      25.66384440233197
+    ],
+    "price_d7_mtu_23": [
+      "asinh_robust",
+      101.4,
+      26.449623578139942
+    ],
+    "price_d7_mtu_24": [
+      "asinh_robust",
+      109.02,
+      34.91528224580692
+    ],
+    "price_d7_mtu_25": [
+      "asinh_robust",
+      112.43,
+      36.08653799842636
+    ],
+    "price_d7_mtu_26": [
+      "asinh_robust",
+      114.29,
+      36.56097070834816
+    ],
+    "price_d7_mtu_27": [
+      "asinh_robust",
+      115.38,
+      36.501666619607924
+    ],
+    "price_d7_mtu_28": [
+      "asinh_robust",
+      122.57,
+      45.11558550912548
+    ],
+    "price_d7_mtu_29": [
+      "asinh_robust",
+      122.2,
+      44.41876246642784
+    ],
+    "price_d7_mtu_30": [
+      "asinh_robust",
+      121.66,
+      42.4765535601855
+    ],
+    "price_d7_mtu_31": [
+      "asinh_robust",
+      119.32,
+      41.02360338605003
+    ],
+    "price_d7_mtu_32": [
+      "asinh_robust",
+      122.67,
+      49.311349787496326
+    ],
+    "price_d7_mtu_33": [
+      "asinh_robust",
+      118.0,
+      43.01029035884752
+    ],
+    "price_d7_mtu_34": [
+      "asinh_robust",
+      113.2,
+      39.97095581091102
+    ],
+    "price_d7_mtu_35": [
+      "asinh_robust",
+      107.01,
+      36.23479822027693
+    ],
+    "price_d7_mtu_36": [
+      "asinh_robust",
+      108.53,
+      43.618157268434814
+    ],
+    "price_d7_mtu_37": [
+      "asinh_robust",
+      102.0,
+      38.99243834669735
+    ],
+    "price_d7_mtu_38": [
+      "asinh_robust",
+      96.38,
+      39.452045034434065
+    ],
+    "price_d7_mtu_39": [
+      "asinh_robust",
+      91.0,
+      40.37125840990755
+    ],
+    "price_d7_mtu_40": [
+      "asinh_robust",
+      92.11,
+      49.81543454178823
+    ],
+    "price_d7_mtu_41": [
+      "asinh_robust",
+      85.96,
+      50.61603973978125
+    ],
+    "price_d7_mtu_42": [
+      "asinh_robust",
+      82.47,
+      50.11195498548934
+    ],
+    "price_d7_mtu_43": [
+      "asinh_robust",
+      78.02,
+      50.77912598381687
+    ],
+    "price_d7_mtu_44": [
+      "asinh_robust",
+      77.9,
+      59.98608576073664
+    ],
+    "price_d7_mtu_45": [
+      "asinh_robust",
+      74.06,
+      60.63843073687911
+    ],
+    "price_d7_mtu_46": [
+      "asinh_robust",
+      69.93,
+      64.12254595036728
+    ],
+    "price_d7_mtu_47": [
+      "asinh_robust",
+      65.25,
+      68.34796227310824
+    ],
+    "price_d7_mtu_48": [
+      "asinh_robust",
+      63.13,
+      69.56369609228284
+    ],
+    "price_d7_mtu_49": [
+      "asinh_robust",
+      59.19,
+      71.52073102071026
+    ],
+    "price_d7_mtu_50": [
+      "asinh_robust",
+      54.09,
+      72.6771607511446
+    ],
+    "price_d7_mtu_51": [
+      "asinh_robust",
+      50.02,
+      73.56672208224796
+    ],
+    "price_d7_mtu_52": [
+      "asinh_robust",
+      48.81,
+      72.36581428525844
+    ],
+    "price_d7_mtu_53": [
+      "asinh_robust",
+      47.13,
+      69.88986858035408
+    ],
+    "price_d7_mtu_54": [
+      "asinh_robust",
+      43.17,
+      64.22632810566267
+    ],
+    "price_d7_mtu_55": [
+      "asinh_robust",
+      42.47,
+      64.52284854936379
+    ],
+    "price_d7_mtu_56": [
+      "asinh_robust",
+      45.03,
+      66.77640392149232
+    ],
+    "price_d7_mtu_57": [
+      "asinh_robust",
+      50.14,
+      74.30802319150078
+    ],
+    "price_d7_mtu_58": [
+      "asinh_robust",
+      53.21,
+      77.91074658246939
+    ],
+    "price_d7_mtu_59": [
+      "asinh_robust",
+      59.3,
+      80.65356068670475
+    ],
+    "price_d7_mtu_60": [
+      "asinh_robust",
+      64.56,
+      71.58003510945046
+    ],
+    "price_d7_mtu_61": [
+      "asinh_robust",
+      70.01,
+      70.86838604456777
+    ],
+    "price_d7_mtu_62": [
+      "asinh_robust",
+      75.89,
+      73.49259197132268
+    ],
+    "price_d7_mtu_63": [
+      "asinh_robust",
+      81.29,
+      73.87806854813414
+    ],
+    "price_d7_mtu_64": [
+      "asinh_robust",
+      79.6,
+      62.462031465641026
+    ],
+    "price_d7_mtu_65": [
+      "asinh_robust",
+      85.1,
+      60.51982255939868
+    ],
+    "price_d7_mtu_66": [
+      "asinh_robust",
+      93.74,
+      56.66505679128412
+    ],
+    "price_d7_mtu_67": [
+      "asinh_robust",
+      101.71,
+      59.42269691770451
+    ],
+    "price_d7_mtu_68": [
+      "asinh_robust",
+      98.51,
+      44.95249926508986
+    ],
+    "price_d7_mtu_69": [
+      "asinh_robust",
+      105.89,
+      44.34463235550257
+    ],
+    "price_d7_mtu_70": [
+      "asinh_robust",
+      113.71,
+      46.360971372670164
+    ],
+    "price_d7_mtu_71": [
+      "asinh_robust",
+      124.09,
+      50.85325609474214
+    ],
+    "price_d7_mtu_72": [
+      "asinh_robust",
+      118.57,
+      37.48018408382162
+    ],
+    "price_d7_mtu_73": [
+      "asinh_robust",
+      122.81,
+      38.251137237444524
+    ],
+    "price_d7_mtu_74": [
+      "asinh_robust",
+      128.89,
+      42.980638314477375
+    ],
+    "price_d7_mtu_75": [
+      "asinh_robust",
+      133.19,
+      50.63086576196631
+    ],
+    "price_d7_mtu_76": [
+      "asinh_robust",
+      134.87,
+      38.99243834669735
+    ],
+    "price_d7_mtu_77": [
+      "asinh_robust",
+      137.13,
+      42.3727714048901
+    ],
+    "price_d7_mtu_78": [
+      "asinh_robust",
+      140.02,
+      45.515888108122006
+    ],
+    "price_d7_mtu_79": [
+      "asinh_robust",
+      140.92,
+      49.99334680800887
+    ],
+    "price_d7_mtu_80": [
+      "asinh_robust",
+      141.4,
+      43.88502566776581
+    ],
+    "price_d7_mtu_81": [
+      "asinh_robust",
+      139.99,
+      43.67746135717505
+    ],
+    "price_d7_mtu_82": [
+      "asinh_robust",
+      136.95,
+      45.42693197501166
+    ],
+    "price_d7_mtu_83": [
+      "asinh_robust",
+      134.82,
+      45.69380037434264
+    ],
+    "price_d7_mtu_84": [
+      "asinh_robust",
+      129.29,
+      38.01392088248365
+    ],
+    "price_d7_mtu_85": [
+      "asinh_robust",
+      127.49,
+      37.91013872718823
+    ],
+    "price_d7_mtu_86": [
+      "asinh_robust",
+      124.99,
+      37.050229440454984
+    ],
+    "price_d7_mtu_87": [
+      "asinh_robust",
+      121.38,
+      37.64327032785724
+    ],
+    "price_d7_mtu_88": [
+      "asinh_robust",
+      119.88,
+      30.971560344582027
+    ],
+    "price_d7_mtu_89": [
+      "asinh_robust",
+      117.17,
+      30.408171501549905
+    ],
+    "price_d7_mtu_90": [
+      "asinh_robust",
+      115.57,
+      29.622392325741913
+    ],
+    "price_d7_mtu_91": [
+      "asinh_robust",
+      112.9,
+      29.577914259186763
+    ],
+    "price_d7_mtu_92": [
+      "asinh_robust",
+      107.34,
+      26.405145511584774
+    ],
+    "price_d7_mtu_93": [
+      "asinh_robust",
+      105.04,
+      26.597883799990516
+    ],
+    "price_d7_mtu_94": [
+      "asinh_robust",
+      103.59,
+      27.22057673176285
+    ],
+    "price_d7_mtu_95": [
+      "asinh_robust",
+      102.08,
+      28.036007951940928
+    ],
+    "exaa_d0_mtu_00": [
+      "asinh_robust",
+      109.95,
+      30.022694924738417
+    ],
+    "exaa_d0_mtu_01": [
+      "asinh_robust",
+      105.5,
+      28.836613149933964
+    ],
+    "exaa_d0_mtu_02": [
+      "asinh_robust",
+      97.54,
+      29.577914259186763
+    ],
+    "exaa_d0_mtu_03": [
+      "asinh_robust",
+      94.1,
+      29.05900348270979
+    ],
+    "exaa_d0_mtu_04": [
+      "asinh_robust",
+      103.6,
+      28.762483039008686
+    ],
+    "exaa_d0_mtu_05": [
+      "asinh_robust",
+      98.8,
+      29.37034994859598
+    ],
+    "exaa_d0_mtu_06": [
+      "asinh_robust",
+      95.3,
+      28.169442151606436
+    ],
+    "exaa_d0_mtu_07": [
+      "asinh_robust",
+      93.9,
+      29.948564813813164
+    ],
+    "exaa_d0_mtu_08": [
+      "asinh_robust",
+      99.23,
+      30.526779679030327
+    ],
+    "exaa_d0_mtu_09": [
+      "asinh_robust",
+      94.8,
+      27.457793086723743
+    ],
+    "exaa_d0_mtu_10": [
+      "asinh_robust",
+      94.2,
+      28.40665850656733
+    ],
+    "exaa_d0_mtu_11": [
+      "asinh_robust",
+      93.8,
+      27.887747730090375
+    ],
+    "exaa_d0_mtu_12": [
+      "asinh_robust",
+      95.52,
+      28.73283099463858
+    ],
+    "exaa_d0_mtu_13": [
+      "asinh_robust",
+      94.18,
+      29.47413210389136
+    ],
+    "exaa_d0_mtu_14": [
+      "asinh_robust",
+      94.9,
+      28.614222817158133
+    ],
+    "exaa_d0_mtu_15": [
+      "asinh_robust",
+      93.5,
+      28.391832484382284
+    ],
+    "exaa_d0_mtu_16": [
+      "asinh_robust",
+      91.5,
+      29.266567793300574
+    ],
+    "exaa_d0_mtu_17": [
+      "asinh_robust",
+      94.2,
+      28.465962595307563
+    ],
+    "exaa_d0_mtu_18": [
+      "asinh_robust",
+      97.5,
+      28.199094195976542
+    ],
+    "exaa_d0_mtu_19": [
+      "asinh_robust",
+      99.01,
+      29.133133593635065
+    ],
+    "exaa_d0_mtu_20": [
+      "asinh_robust",
+      94.91,
+      29.78547856977755
+    ],
+    "exaa_d0_mtu_21": [
+      "asinh_robust",
+      97.4,
+      29.57791425918674
+    ],
+    "exaa_d0_mtu_22": [
+      "asinh_robust",
+      103.6,
+      28.999699393969557
+    ],
+    "exaa_d0_mtu_23": [
+      "asinh_robust",
+      111.21,
+      33.80333058192772
+    ],
+    "exaa_d0_mtu_24": [
+      "asinh_robust",
+      99.8,
+      35.523149155394215
+    ],
+    "exaa_d0_mtu_25": [
+      "asinh_robust",
+      114.9,
+      36.027233909686146
+    ],
+    "exaa_d0_mtu_26": [
+      "asinh_robust",
+      123.47,
+      42.13555504992921
+    ],
+    "exaa_d0_mtu_27": [
+      "asinh_robust",
+      129.1,
+      46.553709661075885
+    ],
+    "exaa_d0_mtu_28": [
+      "asinh_robust",
+      131.55,
+      46.64266579418625
+    ],
+    "exaa_d0_mtu_29": [
+      "asinh_robust",
+      128.2,
+      43.14372455851301
+    ],
+    "exaa_d0_mtu_30": [
+      "asinh_robust",
+      124.6,
+      46.405449439225336
+    ],
+    "exaa_d0_mtu_31": [
+      "asinh_robust",
+      121.59,
+      55.019368328742885
+    ],
+    "exaa_d0_mtu_32": [
+      "asinh_robust",
+      143.0,
+      48.42178845639295
+    ],
+    "exaa_d0_mtu_33": [
+      "asinh_robust",
+      124.19,
+      43.15855058069807
+    ],
+    "exaa_d0_mtu_34": [
+      "asinh_robust",
+      109.44,
+      45.9754947958587
+    ],
+    "exaa_d0_mtu_35": [
+      "asinh_robust",
+      100.0,
+      56.10166794825198
+    ],
+    "exaa_d0_mtu_36": [
+      "asinh_robust",
+      128.75,
+      46.13858103989434
+    ],
+    "exaa_d0_mtu_37": [
+      "asinh_robust",
+      107.3,
+      41.11255951916035
+    ],
+    "exaa_d0_mtu_38": [
+      "asinh_robust",
+      92.7,
+      47.29501077032869
+    ],
+    "exaa_d0_mtu_39": [
+      "asinh_robust",
+      79.98,
+      55.553105127404905
+    ],
+    "exaa_d0_mtu_40": [
+      "asinh_robust",
+      105.24,
+      47.53222712528962
+    ],
+    "exaa_d0_mtu_41": [
+      "asinh_robust",
+      89.9,
+      48.18457210143206
+    ],
+    "exaa_d0_mtu_42": [
+      "asinh_robust",
+      78.4,
+      52.89924715627987
+    ],
+    "exaa_d0_mtu_43": [
+      "asinh_robust",
+      64.68,
+      60.534648581583724
+    ],
+    "exaa_d0_mtu_44": [
+      "asinh_robust",
+      83.1,
+      56.4278404363232
+    ],
+    "exaa_d0_mtu_45": [
+      "asinh_robust",
+      72.3,
+      58.8593080746724
+    ],
+    "exaa_d0_mtu_46": [
+      "asinh_robust",
+      65.24,
+      61.20181957991124
+    ],
+    "exaa_d0_mtu_47": [
+      "asinh_robust",
+      54.47,
+      64.58215263810402
+    ],
+    "exaa_d0_mtu_48": [
+      "asinh_robust",
+      64.0,
+      62.506509532196176
+    ],
+    "exaa_d0_mtu_49": [
+      "asinh_robust",
+      54.7,
+      66.27231916720041
+    ],
+    "exaa_d0_mtu_50": [
+      "asinh_robust",
+      51.2,
+      68.34796227310825
+    ],
+    "exaa_d0_mtu_51": [
+      "asinh_robust",
+      45.49,
+      67.5918351416704
+    ],
+    "exaa_d0_mtu_52": [
+      "asinh_robust",
+      48.45,
+      64.2559801500328
+    ],
+    "exaa_d0_mtu_53": [
+      "asinh_robust",
+      45.2,
+      66.36127530031072
+    ],
+    "exaa_d0_mtu_54": [
+      "asinh_robust",
+      44.9,
+      67.0136202764532
+    ],
+    "exaa_d0_mtu_55": [
+      "asinh_robust",
+      42.17,
+      69.01513327143577
+    ],
+    "exaa_d0_mtu_56": [
+      "asinh_robust",
+      40.9,
+      67.91800762974162
+    ],
+    "exaa_d0_mtu_57": [
+      "asinh_robust",
+      47.5,
+      70.11225891312992
+    ],
+    "exaa_d0_mtu_58": [
+      "asinh_robust",
+      52.18,
+      71.92103361970675
+    ],
+    "exaa_d0_mtu_59": [
+      "asinh_robust",
+      60.3,
+      71.46142693197002
+    ],
+    "exaa_d0_mtu_60": [
+      "asinh_robust",
+      49.93,
+      72.55855257366416
+    ],
+    "exaa_d0_mtu_61": [
+      "asinh_robust",
+      62.39,
+      70.64599571179194
+    ],
+    "exaa_d0_mtu_62": [
+      "asinh_robust",
+      76.3,
+      69.86021653598397
+    ],
+    "exaa_d0_mtu_63": [
+      "asinh_robust",
+      87.48,
+      68.17005000688758
+    ],
+    "exaa_d0_mtu_64": [
+      "asinh_robust",
+      65.03,
+      68.1255719403324
+    ],
+    "exaa_d0_mtu_65": [
+      "asinh_robust",
+      82.59,
+      61.24629764646642
+    ],
+    "exaa_d0_mtu_66": [
+      "asinh_robust",
+      96.1,
+      57.65840027768288
+    ],
+    "exaa_d0_mtu_67": [
+      "asinh_robust",
+      113.0,
+      56.249928170102535
+    ],
+    "exaa_d0_mtu_68": [
+      "asinh_robust",
+      85.07,
+      66.58366563308658
+    ],
+    "exaa_d0_mtu_69": [
+      "asinh_robust",
+      101.48,
+      54.88593412907738
+    ],
+    "exaa_d0_mtu_70": [
+      "asinh_robust",
+      117.56,
+      49.326175809681395
+    ],
+    "exaa_d0_mtu_71": [
+      "asinh_robust",
+      138.37,
+      46.65749181637129
+    ],
+    "exaa_d0_mtu_72": [
+      "asinh_robust",
+      114.99,
+      68.33313625092318
+    ],
+    "exaa_d0_mtu_73": [
+      "asinh_robust",
+      122.57,
+      50.33434531826517
+    ],
+    "exaa_d0_mtu_74": [
+      "asinh_robust",
+      134.9,
+      39.5113491231743
+    ],
+    "exaa_d0_mtu_75": [
+      "asinh_robust",
+      152.52,
+      40.74190896453393
+    ],
+    "exaa_d0_mtu_76": [
+      "asinh_robust",
+      133.64,
+      61.76520842294342
+    ],
+    "exaa_d0_mtu_77": [
+      "asinh_robust",
+      135.57,
+      49.56339216464228
+    ],
+    "exaa_d0_mtu_78": [
+      "asinh_robust",
+      143.2,
+      41.80938256185796
+    ],
+    "exaa_d0_mtu_79": [
+      "asinh_robust",
+      152.79,
+      51.594557203994945
+    ],
+    "exaa_d0_mtu_80": [
+      "asinh_robust",
+      147.49,
+      52.20242411358221
+    ],
+    "exaa_d0_mtu_81": [
+      "asinh_robust",
+      141.54,
+      43.87019964558077
+    ],
+    "exaa_d0_mtu_82": [
+      "asinh_robust",
+      138.5,
+      43.87019964558077
+    ],
+    "exaa_d0_mtu_83": [
+      "asinh_robust",
+      134.97,
+      49.326175809681374
+    ],
+    "exaa_d0_mtu_84": [
+      "asinh_robust",
+      144.01,
+      43.48472306876933
+    ],
+    "exaa_d0_mtu_85": [
+      "asinh_robust",
+      132.8,
+      39.73373945595011
+    ],
+    "exaa_d0_mtu_86": [
+      "asinh_robust",
+      122.69,
+      39.42239299006396
+    ],
+    "exaa_d0_mtu_87": [
+      "asinh_robust",
+      114.16,
+      38.17700712651925
+    ],
+    "exaa_d0_mtu_88": [
+      "asinh_robust",
+      129.7,
+      36.44236253086771
+    ],
+    "exaa_d0_mtu_89": [
+      "asinh_robust",
+      119.7,
+      33.343723894191
+    ],
+    "exaa_d0_mtu_90": [
+      "asinh_robust",
+      113.88,
+      31.609079298539424
+    ],
+    "exaa_d0_mtu_91": [
+      "asinh_robust",
+      104.91,
+      33.31407184982088
+    ],
+    "exaa_d0_mtu_92": [
+      "asinh_robust",
+      118.1,
+      31.431167032318744
+    ],
+    "exaa_d0_mtu_93": [
+      "asinh_robust",
+      109.7,
+      29.948564813813164
+    ],
+    "exaa_d0_mtu_94": [
+      "asinh_robust",
+      101.6,
+      29.42965403733621
+    ],
+    "exaa_d0_mtu_95": [
+      "asinh_robust",
+      93.2,
+      29.133133593635087
+    ],
+    "load_d0_mtu_00": [
+      "robust",
+      46334.896702,
+      3521.709116127346
+    ],
+    "load_d0_mtu_01": [
+      "robust",
+      45762.07,
+      3515.9318570972937
+    ],
+    "load_d0_mtu_02": [
+      "robust",
+      45277.14,
+      3444.337237629825
+    ],
+    "load_d0_mtu_03": [
+      "robust",
+      44958.317538,
+      3384.9403009256685
+    ],
+    "load_d0_mtu_04": [
+      "robust",
+      44464.964022,
+      3413.1045302478683
+    ],
+    "load_d0_mtu_05": [
+      "robust",
+      44161.801253,
+      3475.588393031185
+    ],
+    "load_d0_mtu_06": [
+      "robust",
+      43898.238207,
+      3514.1055980627552
+    ],
+    "load_d0_mtu_07": [
+      "robust",
+      43636.652302,
+      3532.430843177905
+    ],
+    "load_d0_mtu_08": [
+      "robust",
+      43435.96,
+      3460.2749698145917
+    ],
+    "load_d0_mtu_09": [
+      "robust",
+      43264.013688,
+      3467.225474249447
+    ],
+    "load_d0_mtu_10": [
+      "robust",
+      43229.71,
+      3599.5260273328104
+    ],
+    "load_d0_mtu_11": [
+      "robust",
+      43269.86815,
+      3701.091305352363
+    ],
+    "load_d0_mtu_12": [
+      "robust",
+      43204.27,
+      3773.1188639414618
+    ],
+    "load_d0_mtu_13": [
+      "robust",
+      43204.02,
+      3852.897689319245
+    ],
+    "load_d0_mtu_14": [
+      "robust",
+      43310.83664,
+      3934.134446414626
+    ],
+    "load_d0_mtu_15": [
+      "robust",
+      43369.519843,
+      4030.7217199514953
+    ],
+    "load_d0_mtu_16": [
+      "robust",
+      43669.04,
+      4114.637810571907
+    ],
+    "load_d0_mtu_17": [
+      "robust",
+      43924.679684,
+      4163.828558081944
+    ],
+    "load_d0_mtu_18": [
+      "robust",
+      44410.081804,
+      4299.988373665949
+    ],
+    "load_d0_mtu_19": [
+      "robust",
+      44792.083759,
+      4387.366536170075
+    ],
+    "load_d0_mtu_20": [
+      "robust",
+      45604.6,
+      4706.05936869645
+    ],
+    "load_d0_mtu_21": [
+      "robust",
+      46242.641863,
+      5001.457564061283
+    ],
+    "load_d0_mtu_22": [
+      "robust",
+      47189.71,
+      5081.726362785449
+    ],
+    "load_d0_mtu_23": [
+      "robust",
+      48266.09522,
+      5493.683524357177
+    ],
+    "load_d0_mtu_24": [
+      "robust",
+      50466.714963,
+      6081.715788575708
+    ],
+    "load_d0_mtu_25": [
+      "robust",
+      51823.22,
+      6721.138854492753
+    ],
+    "load_d0_mtu_26": [
+      "robust",
+      53253.13,
+      7235.251835304092
+    ],
+    "load_d0_mtu_27": [
+      "robust",
+      54485.64,
+      7421.224708818532
+    ],
+    "load_d0_mtu_28": [
+      "robust",
+      55801.603349,
+      7980.712586714808
+    ],
+    "load_d0_mtu_29": [
+      "robust",
+      56955.951091,
+      7987.2260570807
+    ],
+    "load_d0_mtu_30": [
+      "robust",
+      58090.1,
+      7865.657745662829
+    ],
+    "load_d0_mtu_31": [
+      "robust",
+      58993.066254,
+      7741.343643075466
+    ],
+    "load_d0_mtu_32": [
+      "robust",
+      59797.177906,
+      7739.334945390141
+    ],
+    "load_d0_mtu_33": [
+      "robust",
+      60408.971913,
+      7733.413421751212
+    ],
+    "load_d0_mtu_34": [
+      "robust",
+      60989.16,
+      7377.100072393228
+    ],
+    "load_d0_mtu_35": [
+      "robust",
+      61345.018922,
+      7058.856625494884
+    ],
+    "load_d0_mtu_36": [
+      "robust",
+      61341.335731,
+      6891.208746535832
+    ],
+    "load_d0_mtu_37": [
+      "robust",
+      61509.58,
+      6887.59169231181
+    ],
+    "load_d0_mtu_38": [
+      "robust",
+      61893.57677,
+      6826.928398335733
+    ],
+    "load_d0_mtu_39": [
+      "robust",
+      62144.561157,
+      6592.761929602746
+    ],
+    "load_d0_mtu_40": [
+      "robust",
+      62046.739378,
+      6457.5035168937675
+    ],
+    "load_d0_mtu_41": [
+      "robust",
+      62174.43,
+      6382.882067145473
+    ],
+    "load_d0_mtu_42": [
+      "robust",
+      62331.614956,
+      6333.941015053271
+    ],
+    "load_d0_mtu_43": [
+      "robust",
+      62475.579857,
+      6485.157825939358
+    ],
+    "load_d0_mtu_44": [
+      "robust",
+      62266.74,
+      6521.22585809689
+    ],
+    "load_d0_mtu_45": [
+      "robust",
+      62335.43,
+      6533.338716739476
+    ],
+    "load_d0_mtu_46": [
+      "robust",
+      62383.20746,
+      6394.729686768566
+    ],
+    "load_d0_mtu_47": [
+      "robust",
+      62267.056048,
+      6470.689807712006
+    ],
+    "load_d0_mtu_48": [
+      "robust",
+      61897.272259,
+      6442.7847239141665
+    ],
+    "load_d0_mtu_49": [
+      "robust",
+      61649.33561,
+      6461.850952861705
+    ],
+    "load_d0_mtu_50": [
+      "robust",
+      61458.55196,
+      6361.690123167305
+    ],
+    "load_d0_mtu_51": [
+      "robust",
+      61244.897672,
+      6562.763369959538
+    ],
+    "load_d0_mtu_52": [
+      "robust",
+      60872.747004,
+      6586.871042456066
+    ],
+    "load_d0_mtu_53": [
+      "robust",
+      60682.89,
+      6477.622526850646
+    ],
+    "load_d0_mtu_54": [
+      "robust",
+      60270.2179,
+      6429.31225825053
+    ],
+    "load_d0_mtu_55": [
+      "robust",
+      59761.9,
+      6436.717531642071
+    ],
+    "load_d0_mtu_56": [
+      "robust",
+      59389.987266,
+      6270.684962626099
+    ],
+    "load_d0_mtu_57": [
+      "robust",
+      59070.234116,
+      6210.273592418979
+    ],
+    "load_d0_mtu_58": [
+      "robust",
+      58771.669164,
+      6303.9472041849585
+    ],
+    "load_d0_mtu_59": [
+      "robust",
+      58440.87,
+      6149.567682524728
+    ],
+    "load_d0_mtu_60": [
+      "robust",
+      58352.259753,
+      6137.3206884116225
+    ],
+    "load_d0_mtu_61": [
+      "robust",
+      58045.32,
+      6098.109348295168
+    ],
+    "load_d0_mtu_62": [
+      "robust",
+      57689.872924,
+      6096.322553166477
+    ],
+    "load_d0_mtu_63": [
+      "robust",
+      57519.48538,
+      6032.567016499695
+    ],
+    "load_d0_mtu_64": [
+      "robust",
+      57940.632963,
+      5765.39935687608
+    ],
+    "load_d0_mtu_65": [
+      "robust",
+      57724.954564,
+      5870.312239509848
+    ],
+    "load_d0_mtu_66": [
+      "robust",
+      57585.43,
+      6032.056082123148
+    ],
+    "load_d0_mtu_67": [
+      "robust",
+      57580.96,
+      6335.6930164731
+    ],
+    "load_d0_mtu_68": [
+      "robust",
+      57919.296111,
+      5846.42522418409
+    ],
+    "load_d0_mtu_69": [
+      "robust",
+      58102.998632,
+      6156.522566566531
+    ],
+    "load_d0_mtu_70": [
+      "robust",
+      58239.472191,
+      6317.860560165939
+    ],
+    "load_d0_mtu_71": [
+      "robust",
+      58337.44,
+      6587.639531524815
+    ],
+    "load_d0_mtu_72": [
+      "robust",
+      58663.87,
+      6303.686562714939
+    ],
+    "load_d0_mtu_73": [
+      "robust",
+      58829.13,
+      6257.53005404903
+    ],
+    "load_d0_mtu_74": [
+      "robust",
+      58934.07,
+      6226.488050825233
+    ],
+    "load_d0_mtu_75": [
+      "robust",
+      58990.340109,
+      6117.088662652845
+    ],
+    "load_d0_mtu_76": [
+      "robust",
+      59001.993598,
+      6128.503408388807
+    ],
+    "load_d0_mtu_77": [
+      "robust",
+      58774.48,
+      6093.806464523909
+    ],
+    "load_d0_mtu_78": [
+      "robust",
+      58558.93,
+      6076.919625255131
+    ],
+    "load_d0_mtu_79": [
+      "robust",
+      58268.105046,
+      5919.6971411934
+    ],
+    "load_d0_mtu_80": [
+      "robust",
+      57779.47,
+      5649.332088281949
+    ],
+    "load_d0_mtu_81": [
+      "robust",
+      57186.221952,
+      5415.726407907715
+    ],
+    "load_d0_mtu_82": [
+      "robust",
+      56664.31,
+      5248.649069864797
+    ],
+    "load_d0_mtu_83": [
+      "robust",
+      56122.27,
+      5035.614744349509
+    ],
+    "load_d0_mtu_84": [
+      "robust",
+      55443.075122,
+      4767.779713576258
+    ],
+    "load_d0_mtu_85": [
+      "robust",
+      54744.56,
+      4510.357643115561
+    ],
+    "load_d0_mtu_86": [
+      "robust",
+      54000.62,
+      4313.734062162041
+    ],
+    "load_d0_mtu_87": [
+      "robust",
+      53358.23,
+      4215.334627655134
+    ],
+    "load_d0_mtu_88": [
+      "robust",
+      52522.706369,
+      4165.358774070699
+    ],
+    "load_d0_mtu_89": [
+      "robust",
+      51785.809655,
+      4001.1662196726456
+    ],
+    "load_d0_mtu_90": [
+      "robust",
+      50948.82,
+      3931.4311288334884
+    ],
+    "load_d0_mtu_91": [
+      "robust",
+      50145.95,
+      3732.7624315537378
+    ],
+    "load_d0_mtu_92": [
+      "robust",
+      49174.364131,
+      3611.9803114750894
+    ],
+    "load_d0_mtu_93": [
+      "robust",
+      48453.45,
+      3550.9212694540342
+    ],
+    "load_d0_mtu_94": [
+      "robust",
+      47728.16,
+      3578.0712624593784
+    ],
+    "load_d0_mtu_95": [
+      "robust",
+      47102.096664,
+      3433.5337717537636
+    ],
+    "is_15min_market": [
+      "identity"
+    ],
+    "weekday_0": [
+      "identity"
+    ],
+    "weekday_1": [
+      "identity"
+    ],
+    "weekday_2": [
+      "identity"
+    ],
+    "weekday_3": [
+      "identity"
+    ],
+    "weekday_4": [
+      "identity"
+    ],
+    "weekday_5": [
+      "identity"
+    ],
+    "weekday_6": [
+      "identity"
+    ],
+    "is_holiday": [
+      "identity"
+    ],
+    "average_da_price_last_7d": [
+      "minmax",
+      46.207901785714284,
+      246.46924107142854
+    ]
+  }
+}

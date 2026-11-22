@@ -59,6 +59,19 @@ from pipeline.operational.runner import (
 )
 
 
+# Tests patch the Lasso classes in-process; joblib worker processes would not
+# see the patch, so the per-MTU LEAR fits run serially here.
+_SERIAL_LEAR_FITS = patch.dict(os.environ, {"LEAR_N_JOBS": "1"})
+
+
+def setUpModule():
+    _SERIAL_LEAR_FITS.start()
+
+
+def tearDownModule():
+    _SERIAL_LEAR_FITS.stop()
+
+
 class _RecordingLasso:
     fit_shapes = []
 
