@@ -69,6 +69,14 @@ from pipeline.mlp.LSTM_era5_online import (
     forecast_state,
     pretrain_state,
 )
+from pipeline.lstm_custom_loss import adaptive as lstm_cl_adaptive
+from pipeline.lstm_custom_loss import pretrained_only as lstm_cl_pretrained_only
+from pipeline.lstm_custom_loss import rolling_window as lstm_cl_rolling_window
+from pipeline.lstm_custom_loss.common import MODEL_ROOT as LSTM_CL_MODEL_ROOT
+from pipeline.lstm_custom_loss.common import CustomLossLSTMConfig
+from pipeline.lstm_custom_loss.common import ModelStore as CustomLossModelStore
+from pipeline.lstm_custom_loss.common import forecast_state as custom_loss_forecast_state
+from pipeline.lstm_custom_loss.common import pretrain_state as custom_loss_pretrain_state
 from pipeline.mlp.LSTM_exaa_enriched_price_load import (
     build_price_load_inputs,
     rolling_lstm_exaa_enriched_price_load_forecast,
@@ -96,6 +104,12 @@ PERSISTENCE_FALLBACK_CALIBRATION_DAYS = 60
 PERSISTENCE_FALLBACK_MIN_COMPLETE_DAYS = 14
 LSTM_PRICE_LOAD_START_DATE = date(2025, 10, 1)
 LSTM_ERA5_PRETRAIN_START_DATE = date(2025, 1, 1)
+# The three custom-loss LSTMs; their point forecasts are averaged for submission.
+LSTM_CL_MEMBERS = (
+    ("pretrained_only", lstm_cl_pretrained_only),
+    ("rolling_window", lstm_cl_rolling_window),
+    ("adaptive", lstm_cl_adaptive),
+)
 
 
 class InsufficientPersistenceCalibrationError(RuntimeError):
@@ -2842,6 +2856,247 @@ def execute_lstm_era5_online_pipeline(
     }
 
 
+# ====================================================================
+# Custom-loss LSTM ensemble (pretrained only, rolling window, adaptive)
+# ====================================================================
+def _lstm_cl_store(config: OperationalConfig, module) -> CustomLossModelStore:
+    root = Path(os.getenv("LSTM_CL_DIR") or LSTM_CL_MODEL_ROOT)
+    root = root if root.is_absolute() else config.repo_root / root
+    return CustomLossModelStore(root / module.MODEL_DIR.name)
+
+
+def execute_lstm_cl_pretrain(
+    config: OperationalConfig,
+    *,
+    start_date: date = LSTM_ERA5_PRETRAIN_START_DATE,
+) -> dict[str, object]:
+    """Pretrain the custom-loss LSTM once on ERA5 and store it for all three members."""
+    era5_dir = _lstm_era5_weather_root(config) / "c5"
+    era5_first, era5_last = _history_date_range(era5_dir)
+    first_day = max(start_date, era5_first)
+    print(f"LSTM_CL pretraining on ERA5 {first_day} .. {era5_last} ({era5_dir})", flush=True)
+    prices, exaa, load = _load_history_market_data(
+        config,
+        start_date=first_day - timedelta(days=7),
+        end_date=era5_last,
+    )
+    weather = _load_weather_features(
+        replace(config, icon_data_root=era5_dir.parent), 5, first_day, era5_last
+    )
+    X, Y = _online_lstm_matrices(
+        config,
+        prices=prices,
+        exaa=exaa,
+        load=load,
+        weather=weather,
+        first_feature_date=first_day,
+        target_date=era5_last,
+    )
+    cl_config = CustomLossLSTMConfig.from_env()
+    state = custom_loss_pretrain_state(
+        X,
+        Y,
+        cl_config,
+        metadata={"weather_source": "ERA5", "weather_root": str(era5_dir)},
+    )
+    # All three members start from the same pretrained network; they differ only
+    # in the daily update. Saving resets each member's daily checkpoints.
+    model_dirs = {}
+    for name, module in LSTM_CL_MEMBERS:
+        store = _lstm_cl_store(config, module)
+        store.save_pretrained(state)
+        model_dirs[name] = str(store.root)
+    print(
+        f"LSTM_CL pretrained on {state.metadata['pretrain_days']} days "
+        f"({state.metadata['pretrain_first_day']} .. {state.covers_through}); "
+        f"saved for {', '.join(model_dirs)}",
+        flush=True,
+    )
+    return {
+        "model": "LSTM_custom_loss_mean",
+        "action": "pretrain",
+        "model_dirs": model_dirs,
+        **{k: v for k, v in state.metadata.items() if k != "config"},
+    }
+
+
+def _print_lstm_cl_plan(config: OperationalConfig, target_date: date) -> None:
+    print("Point model: mean of three custom-loss LSTMs C5 (pretrained only, "
+          "rolling window, adaptive)")
+    print("Quantile model: pooled empirical D-1 persistence residuals around the mean")
+    for name, module in LSTM_CL_MEMBERS:
+        store = _lstm_cl_store(config, module)
+        if not store.has_pretrained():
+            print(f"  {name}: pretrained model MISSING in {store.root} (run --lstm-cl-pretrain)")
+            continue
+        state = store.load_latest(not_after=target_date - timedelta(days=1))
+        if module is lstm_cl_pretrained_only:
+            print(f"  {name}: pretrained through {state.covers_through} (no updates)")
+        else:
+            pending = (target_date - timedelta(days=1) - state.covers_through).days
+            print(f"  {name}: covers {state.covers_through} ({pending} update(s) pending)")
+
+
+def execute_lstm_cl_pipeline(
+    config: OperationalConfig,
+    targets: ArenaTargets,
+    *,
+    submit: bool,
+    force_download: bool = False,
+    force_submit: bool = False,
+) -> dict[str, object]:
+    """Update the three custom-loss LSTMs, forecast, and submit their mean."""
+    target_date = targets.target_date
+    cl_config = CustomLossLSTMConfig.from_env()
+    stores = {name: _lstm_cl_store(config, module) for name, module in LSTM_CL_MEMBERS}
+    missing = [name for name, store in stores.items() if not store.has_pretrained()]
+    if missing:
+        raise RuntimeError(
+            f"No pretrained custom-loss LSTM for {', '.join(missing)}. "
+            "Run `python run_pipeline.py --lstm-cl-pretrain` first."
+        )
+
+    prepare_target_dwd(
+        config,
+        target_date,
+        force_download=force_download,
+        delete_raw=config.delete_dwd_raw_after_preprocess,
+        clusters=(5,),
+    )
+    first_day = min(
+        module.first_required_feature_day(stores[name], target_date, cl_config)
+        for name, module in LSTM_CL_MEMBERS
+    )
+    prices, exaa, load = load_market_data(
+        config,
+        start_date=first_day - timedelta(days=7),
+        target_date=target_date,
+    )
+    if exaa is None or load is None:
+        raise RuntimeError("The custom-loss LSTMs require EXAA prices and the load forecast.")
+    weather, sources = _online_lstm_weather(config, first_day, target_date)
+    if sources.get(target_date) != "ICON-D2":
+        raise RuntimeError(f"Target-day ICON-D2 weather is missing for {target_date}.")
+    X, Y = _online_lstm_matrices(
+        config,
+        prices=prices,
+        exaa=exaa,
+        load=load,
+        weather=weather,
+        first_feature_date=first_day,
+        target_date=target_date,
+    )
+    day_metadata = {
+        first_day + timedelta(days=k): {
+            "weather_source": sources.get(first_day + timedelta(days=k), "missing")
+        }
+        for k in range((target_date - first_day).days)
+    }
+
+    output_dir = config.repo_root / "results" / "operational" / "mlp"
+    stem = f"forecast_{target_date.isoformat()}_lstm_custom_loss"
+    member_forecasts: dict[str, pd.DataFrame] = {}
+    member_info: dict[str, dict] = {}
+    for name, module in LSTM_CL_MEMBERS:
+        state, updates = module.advance_state(
+            stores[name], X, Y, target_date, cl_config, day_metadata=day_metadata
+        )
+        for update in updates:
+            print(
+                f"LSTM_CL {name} update covers {update['covers_through']}: {update['kind']}"
+                + (f" ({update['reason']})" if update.get("reason") else ""),
+                flush=True,
+            )
+        forecast, forecast_info = custom_loss_forecast_state(state, X, Y, target_date, cl_config)
+        validate_delivery_index(forecast.index, require_complete_days=True)
+        member_forecasts[name] = forecast
+        member_info[name] = {
+            "state_covers_through": state.covers_through.isoformat(),
+            "updates_this_run": [
+                {k: u.get(k) for k in ("covers_through", "kind", "reason") if u.get(k)}
+                for u in updates
+            ],
+            **forecast_info,
+            "mean_eur_per_mwh": float(forecast["y_pred"].mean()),
+        }
+        _atomic_frame(output_dir / f"{stem}_{name}.csv", forecast, index=True)
+        print(f"LSTM_CL {name}: mean forecast {forecast['y_pred'].mean():.2f} EUR/MWh", flush=True)
+
+    first_member = next(iter(member_forecasts.values()))
+    forecast = pd.DataFrame(
+        {
+            "y_pred": np.mean(
+                [f["y_pred"].to_numpy(dtype=float) for f in member_forecasts.values()], axis=0
+            ),
+            "y_true": first_member["y_true"].to_numpy(dtype=float),
+        },
+        index=first_member.index,
+    )
+    validate_delivery_index(forecast.index, require_complete_days=True)
+
+    quantile_forecast, quantile_metadata = build_operational_persistence_quantile_fallback(
+        prices,
+        target_date,
+        lag=1,
+        point_forecast=forecast,
+        quantiles=targets.quantile.quantiles,
+    )
+    point_payload = build_point_payload(forecast, targets.point)
+    quantile_payload = build_quantile_payload(quantile_forecast, targets.quantile)
+
+    _atomic_frame(output_dir / f"{stem}.csv", forecast, index=True)
+    _atomic_frame(output_dir / f"{stem}_quantiles.csv", quantile_forecast, index=True)
+    atomic_write_json(
+        output_dir / f"{stem}.json",
+        {
+            "target_date": target_date.isoformat(),
+            "model": "LSTM_custom_loss_mean",
+            "members": member_info,
+            "target_day_weather": sources.get(target_date),
+            "config": cl_config.to_dict(),
+            "quantile_method": quantile_metadata,
+            "submission_requested": submit,
+            "forecast_summary_eur_per_mwh": {
+                "min": float(forecast["y_pred"].min()),
+                "mean": float(forecast["y_pred"].mean()),
+                "max": float(forecast["y_pred"].max()),
+            },
+        },
+    )
+
+    submission_stream = "lstm_custom_loss_mean"
+    for target, payload in ((targets.point, point_payload), (targets.quantile, quantile_payload)):
+        atomic_write_json(
+            _payload_path(config, submission_stream, target.challenge_id, target.target_start),
+            payload,
+        )
+    submissions: dict[str, object] = {}
+    if submit:
+        submissions = _submit_arena_payloads(
+            config,
+            submission_stream,
+            (
+                ("point", targets.point, point_payload),
+                ("quantile", targets.quantile, quantile_payload),
+            ),
+            force_submit=force_submit,
+            context="custom-loss LSTM mean",
+        )
+    else:
+        print("Submission disabled; custom-loss LSTM payloads were saved locally.", flush=True)
+
+    return {
+        "target_start": targets.target_start.isoformat(),
+        "point_model": "LSTM_custom_loss_mean",
+        "members": {name: info["state_covers_through"] for name, info in member_info.items()},
+        "quantile_model": "pooled_residual_persistence_d1",
+        "quantile_calibration": quantile_metadata,
+        "forecast": str(output_dir / f"{stem}.csv"),
+        "quantile_forecast": str(output_dir / f"{stem}_quantiles.csv"),
+        "submissions": submissions,
+    }
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     variants = parser.add_mutually_exclusive_group()
@@ -2894,6 +3149,22 @@ def build_parser() -> argparse.ArgumentParser:
             "(no forecast, no submission)."
         ),
     )
+    variants.add_argument(
+        "--lstm-cl-pretrain",
+        action="store_true",
+        help=(
+            "Pretrain the three custom-loss LSTMs once on all ERA5 days "
+            "(no forecast, no submission; resets their daily checkpoints)."
+        ),
+    )
+    variants.add_argument(
+        "--lstm-cl-daily",
+        action="store_true",
+        help=(
+            "Update the three custom-loss LSTMs (pretrained only, rolling window, "
+            "adaptive), forecast, and submit the mean of their point forecasts."
+        ),
+    )
     parser.add_argument(
         "--cluster",
         type=int,
@@ -2932,7 +3203,10 @@ def build_parser() -> argparse.ArgumentParser:
         "--lstm-era5-pretrain-start",
         type=date.fromisoformat,
         default=LSTM_ERA5_PRETRAIN_START_DATE,
-        help="First ERA5 delivery day for --lstm-era5-pretrain (default 2025-01-01).",
+        help=(
+            "First ERA5 delivery day for --lstm-era5-pretrain and "
+            "--lstm-cl-pretrain (default 2025-01-01)."
+        ),
     )
     return parser
 
@@ -2944,7 +3218,12 @@ def _apply_cli(config: OperationalConfig, args: argparse.Namespace) -> Operation
             point_variant="exaa_only",
             sqra_variant="exaa_only",
         )
-    if args.lstm_era5_online or args.lstm_era5_pretrain:
+    if (
+        args.lstm_era5_online
+        or args.lstm_era5_pretrain
+        or args.lstm_cl_pretrain
+        or args.lstm_cl_daily
+    ):
         # EXAA-enriched: target-day EXAA prices are loaded and required.
         return replace(
             config,
@@ -3029,17 +3308,23 @@ def main(argv: Optional[Sequence[str]] = None, repo_root: Optional[Path] = None)
             print(f"  - {error}", file=sys.stderr)
         return 2
 
-    if args.lstm_era5_pretrain:
+    if args.lstm_era5_pretrain or args.lstm_cl_pretrain:
         # One-off training step: needs neither Energy Arena targets nor a submission.
         if args.check_setup or args.dry_run:
             era5_dir = _lstm_era5_weather_root(config) / "c5"
             first, last = _history_date_range(era5_dir)
             print(f"ERA5 weather: {first} .. {last} ({era5_dir})")
             print(f"Pretraining start: {max(first, args.lstm_era5_pretrain_start)}")
-            print(f"Model directory: {_lstm_era5_model_dir(config)}")
+            if args.lstm_cl_pretrain:
+                for name, module in LSTM_CL_MEMBERS:
+                    print(f"Model directory {name}: {_lstm_cl_store(config, module).root}")
+            else:
+                print(f"Model directory: {_lstm_era5_model_dir(config)}")
             return 0
         config.output_root.mkdir(parents=True, exist_ok=True)
-        log_path = pipeline_log_path(config, "lstm_era5_pretrain")
+        log_path = pipeline_log_path(
+            config, "lstm_cl_pretrain" if args.lstm_cl_pretrain else "lstm_era5_pretrain"
+        )
         log_path.parent.mkdir(parents=True, exist_ok=True)
         print(f"Pipeline log: {_display_path(config, log_path)}")
         with log_path.open("w", encoding="utf-8") as log:
@@ -3048,9 +3333,10 @@ def main(argv: Optional[Sequence[str]] = None, repo_root: Optional[Path] = None)
             sys.stderr = _Tee(original_stderr, log)
             try:
                 print(f"started_at={datetime.now().astimezone().isoformat()}")
-                summary = execute_lstm_era5_pretrain(
-                    config, start_date=args.lstm_era5_pretrain_start
+                pretrain = (
+                    execute_lstm_cl_pretrain if args.lstm_cl_pretrain else execute_lstm_era5_pretrain
                 )
+                summary = pretrain(config, start_date=args.lstm_era5_pretrain_start)
                 print(json.dumps(summary, indent=2))
                 print("status=success")
             except BaseException:
@@ -3092,6 +3378,8 @@ def main(argv: Optional[Sequence[str]] = None, repo_root: Optional[Path] = None)
             print("Quantile model: pooled empirical D-1 persistence residuals")
         elif args.lstm_era5_online:
             _print_lstm_era5_online_plan(config, targets.target_date)
+        elif args.lstm_cl_daily:
+            _print_lstm_cl_plan(config, targets.target_date)
         else:
             print(f"Point submission: SQRA {sqra_name}, q=0.500")
             print(f"Reference LEAR point run: {point_run.name}")
@@ -3140,6 +3428,11 @@ def main(argv: Optional[Sequence[str]] = None, repo_root: Optional[Path] = None)
             _print_lstm_era5_online_plan(config, targets.target_date)
             print(f"Submit: {submission_requested}")
             return 0
+        if args.lstm_cl_daily:
+            print(f"Target: {targets.target_start.isoformat()}")
+            _print_lstm_cl_plan(config, targets.target_date)
+            print(f"Submit: {submission_requested}")
+            return 0
         print(f"Target: {targets.target_start.isoformat()}")
         print(f"Point submission: SQRA {sqra_name}, q=0.500")
         print(f"Reference LEAR point run: {point_run.name}")
@@ -3170,6 +3463,8 @@ def main(argv: Optional[Sequence[str]] = None, repo_root: Optional[Path] = None)
                 if args.lstm_fundamental
                 else "lstm_era5_online"
                 if args.lstm_era5_online
+                else "lstm_custom_loss_mean"
+                if args.lstm_cl_daily
                 else "lstm_exaa_enriched_price_load"
                 if args.lstm_exaa_enriched_price_load
                 else "lstm_exaa_enriched"
@@ -3220,6 +3515,14 @@ def main(argv: Optional[Sequence[str]] = None, repo_root: Optional[Path] = None)
                     )
                 elif args.lstm_era5_online:
                     summary = execute_lstm_era5_online_pipeline(
+                        config,
+                        targets,
+                        submit=submission_requested,
+                        force_download=args.force_download,
+                        force_submit=args.force_submit,
+                    )
+                elif args.lstm_cl_daily:
+                    summary = execute_lstm_cl_pipeline(
                         config,
                         targets,
                         submit=submission_requested,
