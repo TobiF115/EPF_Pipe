@@ -6,6 +6,7 @@ import json
 import os
 import re
 import tempfile
+import uuid
 from datetime import date, timedelta
 from pathlib import Path
 from typing import Mapping, Sequence
@@ -269,20 +270,25 @@ def update_history(
         ).any():
             raise ValueError(f"Invalid duplicate/empty consolidated {field} history.")
 
-    with tempfile.TemporaryDirectory(prefix=".dwd_history_", dir=str(cluster_dir)) as tmp:
-        stage = Path(tmp)
-        staged_paths: dict[str, Path] = {}
+    # Stage the files directly in ``cluster_dir`` (not in a TemporaryDirectory):
+    # on Windows, Python >= 3.12.4 creates temporary directories with an ACL
+    # restricted to the creating token, and files moved out of such a directory
+    # keep that ACL, which can lock other sessions out of the history.
+    token = f"{os.getpid()}_{uuid.uuid4().hex[:8]}"
+    staged_paths: dict[str, Path] = {
+        field: cluster_dir / f".{field}.{token}.staged.parquet" for field in FORECAST_FIELDS
+    }
+    backups: dict[str, Path] = {}
+    replaced: list[str] = []
+    try:
         for field, frame in merged.items():
-            staged = stage / f"{field}.parquet"
-            frame.to_parquet(staged, index=False, engine="pyarrow", compression="zstd")
-            staged_paths[field] = staged
-
-        backups: dict[str, Path] = {}
-        replaced: list[str] = []
+            frame.to_parquet(
+                staged_paths[field], index=False, engine="pyarrow", compression="zstd"
+            )
         try:
             for field in FORECAST_FIELDS:
                 destination = history_path(cluster_dir, field)
-                backup = stage / f"{field}.previous.parquet"
+                backup = cluster_dir / f".{field}.{token}.previous.parquet"
                 if destination.exists():
                     os.replace(destination, backup)
                     backups[field] = backup
@@ -295,6 +301,9 @@ def update_history(
                 if backup.exists():
                     os.replace(backup, history_path(cluster_dir, field))
             raise
+    finally:
+        for path in (*staged_paths.values(), *backups.values()):
+            path.unlink(missing_ok=True)
 
     all_dates = sorted(
         {
