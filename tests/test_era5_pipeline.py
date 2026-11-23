@@ -129,6 +129,16 @@ class HourlyPriceFallbackTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             _prefer_quarter_hourly({}, sequence=1)
 
+    def test_newer_entsoe_resolution_keys(self):
+        # entsoe-py >= 0.7 keys parse_prices() by "15min"/"30min"/"60min".
+        from pipeline.lear.lear_model import _prefer_quarter_hourly
+
+        hourly = pd.Series(1.0, index=pd.date_range("2025-09-29 22:00", "2025-09-30 21:00", freq="1h", tz="UTC"))
+        quarter = pd.Series(2.0, index=pd.date_range("2025-09-30 22:00", "2025-10-01 21:45", freq="15min", tz="UTC"))
+        parsed = {"15min": quarter, "30min": pd.Series(dtype=float), "60min": hourly}
+        self.assertEqual(len(_prefer_quarter_hourly(parsed, sequence=1)), 24 + 96)
+        self.assertEqual(len(_prefer_quarter_hourly({"15min": quarter}, sequence=1)), 96)
+
 
 class SolarTimeAxisTests(unittest.TestCase):
     def test_time_step_hypercube_flattens_to_unique_interval_starts(self):

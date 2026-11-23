@@ -134,8 +134,13 @@ def _prefer_quarter_hourly(parsed: dict, *, sequence: int) -> pd.Series:
     hourly DE-LU prices. Callers forward-fill hourly values onto the
     15-minute grid.
     """
-    quarter = parsed.get("15T")
-    hourly = parsed.get("60T")
+    # entsoe-py keys the series by resolution; older releases use pandas'
+    # legacy aliases ("15T", "60T"), newer ones "15min"/"60min" (or "1h").
+    def by_resolution(*keys: str):
+        return next((parsed[k] for k in keys if k in parsed), None)
+
+    quarter = by_resolution("15min", "15T")
+    hourly = by_resolution("60min", "60T", "1h", "1H")
     quarter = quarter if isinstance(quarter, pd.Series) else pd.Series(dtype=float)
     hourly = hourly if isinstance(hourly, pd.Series) else pd.Series(dtype=float)
     quarter, hourly = quarter.dropna(), hourly.dropna()
