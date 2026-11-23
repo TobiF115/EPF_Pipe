@@ -395,6 +395,45 @@ def _fetch_retry(
     ) from last_error
 
 
+def _daywise_fallback(fetcher, label: str):
+    """Wrap a market fetcher so a failed range request is retried day by day.
+
+    ENTSO-E occasionally publishes nothing for single delivery days; a range
+    request covering such a day can then fail as a whole, which would also
+    discard the published days around it. Days that still fail on their own
+    are skipped and stay missing in the cache (callers request
+    ``allow_incomplete`` and the models skip incomplete days).
+    """
+
+    def fetch(start: pd.Timestamp, end: pd.Timestamp) -> pd.DataFrame:
+        try:
+            return fetcher(start, end)
+        except Exception as exc:  # noqa: BLE001 - entsoe-py raises plain exceptions
+            range_error = exc
+        frames: list[pd.DataFrame] = []
+        skipped: list[str] = []
+        day, last = start.date(), end.date()
+        while day <= last:
+            day_ts = pd.Timestamp(day, tz=start.tz)
+            try:
+                frames.append(fetcher(day_ts, day_ts))
+            except Exception:  # noqa: BLE001
+                skipped.append(day.isoformat())
+            day += timedelta(days=1)
+        print(
+            f"WARNING: {label} request {start.date()} .. {end.date()} failed "
+            f"({_exception_summary(range_error)}); fetched day by day. "
+            f"Unavailable day(s): {', '.join(skipped) or 'none'}",
+            flush=True,
+        )
+        if not frames:
+            raise range_error
+        combined = pd.concat(frames).sort_index()
+        return combined[~combined.index.duplicated(keep="last")]
+
+    return fetch
+
+
 def _read_cache_only(
     path: Path,
     start: date,
@@ -463,10 +502,13 @@ def _load_entsoe_prices(
                 cache_path,
                 start,
                 realized_end,
-                partial(
-                    fetch_prices,
-                    api_key=config.entsoe_api_key,
-                    target_tz=config.timezone,
+                _daywise_fallback(
+                    partial(
+                        fetch_prices,
+                        api_key=config.entsoe_api_key,
+                        target_tz=config.timezone,
+                    ),
+                    "ENTSO-E prices",
                 ),
                 timezone=config.timezone,
                 allow_incomplete=True,
@@ -526,8 +568,13 @@ def load_market_data(
     *,
     start_date: date,
     target_date: date,
+    allow_incomplete_load: bool = False,
 ) -> tuple[pd.DataFrame, Optional[pd.DataFrame], Optional[pd.DataFrame]]:
-    """Load exactly the market inputs available before the target is realized."""
+    """Load exactly the market inputs available before the target is realized.
+
+    ``allow_incomplete_load`` keeps unpublished historical load days as NaN
+    instead of failing (for models that skip incomplete training days).
+    """
     if not config.entsoe_api_key or config.entsoe_api_key == "your_api_key_here":
         raise ValueError("ENTSOE_API_KEY is missing from .env.")
     start = _timestamp(start_date, config.timezone)
@@ -565,10 +612,13 @@ def load_market_data(
                     exaa_path,
                     start,
                     target,
-                    partial(
-                        fetch_prices_exaa,
-                        api_key=config.entsoe_api_key,
-                        target_tz=config.timezone,
+                    _daywise_fallback(
+                        partial(
+                            fetch_prices_exaa,
+                            api_key=config.entsoe_api_key,
+                            target_tz=config.timezone,
+                        ),
+                        "EXAA prices",
                     ),
                     timezone=config.timezone,
                     allow_incomplete=True,
@@ -598,12 +648,16 @@ def load_market_data(
                     config.entsoe_load_cache_dir / "load_forecast.csv",
                     start,
                     target,
-                    partial(
-                        fetch_load_forecast,
-                        api_key=config.entsoe_api_key,
-                        target_tz=config.timezone,
+                    _daywise_fallback(
+                        partial(
+                            fetch_load_forecast,
+                            api_key=config.entsoe_api_key,
+                            target_tz=config.timezone,
+                        ),
+                        "ENTSO-E load forecast",
                     ),
                     timezone=config.timezone,
+                    allow_incomplete=allow_incomplete_load,
                 ),
                 attempts=load_attempts,
                 retry_seconds=config.market_data_retry_seconds,
@@ -2971,9 +3025,15 @@ def execute_lstm_cl_pipeline(
         config,
         start_date=first_day - timedelta(days=7),
         target_date=target_date,
+        allow_incomplete_load=True,
     )
     if exaa is None or load is None:
         raise RuntimeError("The custom-loss LSTMs require EXAA prices and the load forecast.")
+    # Missing historical days (e.g. unpublished ENTSO-E prices) are skipped by the
+    # models; the target day's own inputs are checked in the forecast step.
+    _require_complete_delivery_day(
+        prices, target_date - timedelta(days=1), config.timezone, "EPEX prices (D-1)"
+    )
     weather, sources = _online_lstm_weather(config, first_day, target_date)
     if sources.get(target_date) != "ICON-D2":
         raise RuntimeError(f"Target-day ICON-D2 weather is missing for {target_date}.")
